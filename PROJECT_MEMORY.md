@@ -9,7 +9,7 @@
 * **저장소 주소:** [https://github.com/honesticoofficial-sketch/fm27-tactics-assistant](https://github.com/honesticoofficial-sketch/fm27-tactics-assistant)
 * **실시간 라이브 배포 주소:** [https://honesticoofficial-sketch.github.io/fm27-tactics-assistant/](https://honesticoofficial-sketch.github.io/fm27-tactics-assistant/)
 * **기술 스택:** 순수 웹 프론트엔드 (HTML5, Modern Vanilla JavaScript, CSS3 Deep Cyber-Pitch Glassmorphism UI)
-* **연동 AI:** Google Gemini Vision API (`gemini-2.5-flash`, BYOK)
+* **연동 AI:** Google Gemini Vision API (`gemini-3.8-flash` 최신 모델 우선 호출 및 폴백, BYOK)
 
 ---
 
