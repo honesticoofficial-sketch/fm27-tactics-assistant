@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FM27 Matchday Tactical Playbook | 매치데이 전술 연구소</title>
-  <link rel="stylesheet" href="style.css?v=5">
+  <link rel="stylesheet" href="style.css?v=6">
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
 </head>
 <body>
@@ -17,7 +17,7 @@
         <div class="brand-logo">FM27</div>
         <div class="brand-title">
           <h1>MATCHDAY TACTICAL PLAYBOOK</h1>
-          <span class="sub-title">사령탑 몰입 맞춤 공략 & 매치데이 전술 연구소</span>
+          <span class="sub-title">사령탑 몰입 맞춤 공략 & 동적 전술 피치 연구소</span>
         </div>
       </div>
 
@@ -146,7 +146,7 @@
         <!-- 우측 열: 대형 화면 연결 모니터 & 2장 캡처 슬롯 -->
         <div class="setup-col-right">
           
-          <!-- 3. 실시간 게임화면 연결 모니터 (대폭 확대!) -->
+          <!-- 3. 실시간 게임화면 연결 모니터 (260px 대형) -->
           <div class="glass-card live-stream-card">
             <div class="card-header-compact">
               <div class="header-left">
@@ -158,7 +158,6 @@
               </div>
             </div>
 
-            <!-- 대형 뷰포트 (높이 260px) -->
             <div class="video-monitor-box large-monitor" id="videoMonitorBox">
               <video id="liveVideo" autoplay playsinline muted style="display: none;"></video>
               <div class="monitor-placeholder" id="monitorPlaceholder">
@@ -169,7 +168,7 @@
             </div>
           </div>
 
-          <!-- 4. 2장 캡처 슬롯 (나란히 배치) -->
+          <!-- 4. 2장 캡처 슬롯 -->
           <div class="glass-card dual-slots-card">
             <div class="card-header-compact">
               <span class="section-tag">매치데이 캡처 슬롯 (1장만 올려도 분석 가능)</span>
@@ -237,13 +236,13 @@
             </div>
           </div>
 
-          <!-- 5. 거대 분석 요청 버튼 -->
+          <!-- 5. 분석 요청 버튼 -->
           <div class="action-bar">
             <button id="analyzeBtn" class="btn-mega-action" disabled>
               <div class="action-inner">
                 <div class="action-text-box">
                   <span class="action-title" id="analyzeBtnTitle">⚡ 사령탑 몰입 맞춤 플레이북 생성하기</span>
-                  <span class="action-desc">클릭 시 라커룸 브리핑실로 전환되어 정밀 전술이 수립됩니다</span>
+                  <span class="action-desc">원본 대형 존중 & 인터랙티브 동적 전술판 수립</span>
                 </div>
                 <div class="action-shortcut">
                   <kbd>Ctrl</kbd> + <kbd>Enter</kbd>
@@ -262,7 +261,7 @@
          ============================================================ -->
     <section id="briefingView" class="view-panel" style="display: none;">
       
-      <!-- 상단 액션 바: 돌아가기 버튼 & 상태 바 -->
+      <!-- 상단 액션 바 -->
       <div class="briefing-top-bar">
         <button id="backToSetupBtn" class="btn btn-outline btn-back">
           ← 작전 준비실로 돌아가기 (다시 설정/캡처)
@@ -274,78 +273,147 @@
         </div>
       </div>
 
-      <!-- 로딩 스캐너 (생성 중일 때 표시) -->
+      <!-- 로딩 스캐너 -->
       <div id="briefingLoadingBox" class="loading-scanner" style="display: none;">
         <div class="scanner-spinner"></div>
         <p class="scanner-title" id="loadingCoachTitle">사령탑이 전술판과 상대 데이터를 정밀 분석하고 있습니다...</p>
-        <p class="scanner-sub">상대 약점 파악, 포지션 롤 배분, 수비 요구치, 시나리오별 승리 공식을 계산 중입니다.</p>
+        <p class="scanner-sub">원본 포메이션 존중, 상대 취약점 판별, 공/수 동적 움직임 좌표를 계산 중입니다.</p>
       </div>
 
       <!-- 실제 브리핑 본문 컨테이너 -->
       <div id="briefingContentBox" class="briefing-content-container">
         
-        <!-- 1. 사령탑 라커룸 스피치 (몰입 음성 박스) -->
+        <!-- 1. 사령탑 라커룸 스피치 -->
         <div class="glass-card locker-room-speech-card">
           <div class="speech-avatar" id="speechAvatar">👔</div>
           <div class="speech-body">
             <span class="speech-author" id="speechAuthor">펩 과르디올라의 경기 전 라커룸 연설:</span>
-            <p class="speech-quote" id="speechQuote">"우리의 경기다. 상대가 누구든 공을 지배하고 하프스페이스를 찢어놓자."</p>
+            <p class="speech-quote" id="speechQuote">"우리의 경기다. 원본의 뼈대를 살리되, 상대의 빈 공간을 찌르는 핀포인트 롤로 승리를 가져오자."</p>
           </div>
         </div>
 
-        <!-- 3단 전술 섹션 그리드 -->
-        <div class="playbook-sections-grid">
-          
-          <!-- 섹션 1: 추천 진영 & 포지션별 최적 롤 -->
-          <article class="glass-card briefing-section-card">
-            <div class="section-card-header">
-              <span class="section-icon">🎯</span>
-              <div>
-                <h3>1. 추천 진영 및 포지션 최적 롤</h3>
-                <span class="section-sub">선발 포메이션과 핵심 포지션별 역할 및 필수 요구 능력치</span>
-              </div>
+        <!-- 2. 인터랙티브 동적 전술 피치 보드 (New!) -->
+        <div class="glass-card tactical-pitch-card">
+          <div class="pitch-card-header">
+            <div class="pitch-title-box">
+              <span class="pitch-badge-tag">TACTICAL PITCH BOARD</span>
+              <h3 id="pitchFormationTitle">포메이션: 4-3-2-1 비대칭 유지 (공격 시 3-2-4-1 변형)</h3>
+              <p class="pitch-reason-desc" id="pitchFormationReason">
+                "상대 4-3-3의 양 풀백 전진 뒷공간을 공략하고 중앙 3-2 빌드업으로 수적 우위를 점하기 위한 합리적 변형입니다."
+              </p>
             </div>
             
-            <div class="formation-highlight-bar" id="formationHighlight">
-              <span class="formation-label">추천 포메이션:</span>
-              <span class="formation-val" id="formationVal">4-3-3 하이브리드</span>
+            <!-- 공/수 동적 전환 토글 스위치 -->
+            <div class="pitch-phase-toggle">
+              <button type="button" class="phase-btn active" id="phaseAttackBtn" data-phase="attack">
+                ⚔️ 공격 시 전개 (In Possession)
+              </button>
+              <button type="button" class="phase-btn" id="phaseDefenseBtn" data-phase="defense">
+                🛡️ 수비 시 블록 (Out of Possession)
+              </button>
             </div>
+          </div>
 
-            <div class="roles-breakdown-list" id="rolesBreakdownList">
-              <!-- 동적 생성: 공격수 롤, 미드필더(메짤라 등), 포백(주력/지구력 요구치) -->
-            </div>
-          </article>
+          <!-- 실제 축구 피치 인터페이스 -->
+          <div class="cyber-pitch-wrapper">
+            <div class="cyber-pitch" id="cyberPitch">
+              <!-- 피치 라인 마킹 -->
+              <div class="pitch-line half-way-line"></div>
+              <div class="pitch-line center-circle"></div>
+              <div class="pitch-line center-spot"></div>
+              <div class="pitch-line penalty-box-top"></div>
+              <div class="pitch-line goal-box-top"></div>
+              <div class="pitch-line penalty-box-bottom"></div>
+              <div class="pitch-line goal-box-bottom"></div>
+              
+              <!-- 하프스페이스 점선 가이드 -->
+              <div class="half-space-lane left-lane"></div>
+              <div class="half-space-lane right-lane"></div>
 
-          <!-- 섹션 2: 실전 상성 & 공략법 -->
-          <article class="glass-card briefing-section-card">
-            <div class="section-card-header">
-              <span class="section-icon">⚔️</span>
-              <div>
-                <h3>2. 실전 상성 진단 및 핵심 공략법</h3>
-                <span class="section-sub">상대 진영에 따른 유불리 및 반드시 틀어막아야 할 위험 요인</span>
+              <!-- 11명의 선수 노드 (동적 생성 및 애니메이션 글라이딩) -->
+              <div class="pitch-players-container" id="pitchPlayersContainer">
+                <!-- 동적 11명 노드 생성 -->
               </div>
             </div>
 
-            <div class="dynamics-breakdown-list" id="dynamicsBreakdownList">
-              <!-- 동적 생성: 유리한 부분, 조심할 부분, 틀어막아야 할 상대 키맨 -->
+            <!-- 피치 하단 범례 및 안내 -->
+            <div class="pitch-legend-bar">
+              <span class="legend-tip">💡 버튼을 누르면 공격 시 전진 침투와 수비 시 콤팩트 블록으로 선수들이 스르륵 움직입니다.</span>
+              <span class="legend-current-mode" id="currentPhaseLabel">현재: ⚔️ 공격 시 공격 전개 대형</span>
             </div>
-          </article>
+          </div>
+        </div>
 
-          <!-- 섹션 3: 경기 흐름별 시나리오 대처 -->
-          <article class="glass-card briefing-section-card full-width-card">
-            <div class="section-card-header">
-              <span class="section-icon">🔄</span>
-              <div>
-                <h3>3. 경기 흐름별 시나리오 대처 (플랜 B / C)</h3>
-                <span class="section-sub">스코어 및 시간대별 인게임 슬라이더/대형 전환 지침</span>
+        <!-- 3. 4대 핵심 요약 배지 카드 그리드 (1초 컷 요약 ➜ 클릭 시 고정 모달) -->
+        <div class="summary-cards-section">
+          <div class="section-title-bar">
+            <h4>매치데이 4대 핵심 작전 브리핑</h4>
+            <span class="badge-hint">카드를 클릭하면 인게임에서 마우스로 직접 변경해야 할 세부 조작법이 팝업으로 뜹니다 🔍</span>
+          </div>
+
+          <div class="summary-badges-grid">
+            
+            <!-- 카드 1: 상성 진단 -->
+            <article class="tactical-summary-card" data-modal="matchup">
+              <div class="card-head">
+                <span class="card-icon">⚔️</span>
+                <div class="card-titles">
+                  <h5>상성 진단 & 공략 지점</h5>
+                  <span class="card-sub">상대 취약 공간 및 매치업 유불리</span>
+                </div>
+                <span class="card-chip">자세히 보기 🔍</span>
               </div>
-            </div>
+              <div class="card-summary-text" id="summaryMatchup">
+                상대 전술의 주요 공격 루트와 수비 취약 공간을 짚어냅니다.
+              </div>
+            </article>
 
-            <div class="scenarios-breakdown-list" id="scenariosBreakdownList">
-              <!-- 동적 생성: 2점 리드 시 잠그기, 1점차 균형, 열세 시 역전 총공세 (오마주 단어 없이 넌지시 비기 제공) -->
-            </div>
-          </article>
+            <!-- 카드 2: 플랜 A 인게임 조작법 -->
+            <article class="tactical-summary-card" data-modal="plana">
+              <div class="card-head">
+                <span class="card-icon">📋</span>
+                <div class="card-titles">
+                  <h5>플랜 A (스타팅 조작법)</h5>
+                  <span class="card-sub">원본 대형 존중 & 선수 롤 Before ➜ After</span>
+                </div>
+                <span class="card-chip">자세히 보기 🔍</span>
+              </div>
+              <div class="card-summary-text" id="summaryPlanA">
+                원본 포메이션을 유지하며 손봐야 할 롤과 슬라이더 조작값입니다.
+              </div>
+            </article>
 
+            <!-- 카드 3: 시나리오별 대처 -->
+            <article class="tactical-summary-card" data-modal="scenarios">
+              <div class="card-head">
+                <span class="card-icon">🔄</span>
+                <div class="card-titles">
+                  <h5>시나리오별 대처 (플랜 B/C)</h5>
+                  <span class="card-sub">2점 리드 잠그기 / 1점 접전 / 열세 역전</span>
+                </div>
+                <span class="card-chip">자세히 보기 🔍</span>
+              </div>
+              <div class="card-summary-text" id="summaryScenarios">
+                점수 차와 시간대에 따른 인게임 대형 전환 및 지침 조절법입니다.
+              </div>
+            </article>
+
+            <!-- 카드 4: 원포인트 조언 & 에이스 봉쇄 -->
+            <article class="tactical-summary-card" data-modal="onepoint">
+              <div class="card-head">
+                <span class="card-icon">💡</span>
+                <div class="card-titles">
+                  <h5>에이스 봉쇄 & 원포인트</h5>
+                  <span class="card-sub">상대 에이스 전담 마킹 & 세트피스 비기</span>
+                </div>
+                <span class="card-chip">자세히 보기 🔍</span>
+              </div>
+              <div class="card-summary-text" id="summaryOnePoint">
+                반드시 틀어막아야 할 상대 키맨과 승부를 가를 세트피스 지침입니다.
+              </div>
+            </article>
+
+          </div>
         </div>
 
       </div>
@@ -357,6 +425,28 @@
       </div>
 
     </section>
+
+    <!-- ============================================================
+         고정형 상세 모달 팝업 (게임 창 옆에 두고 따라 바꿀 수 있음)
+         ============================================================ -->
+    <div id="detailModalOverlay" class="modal-overlay" style="display: none;">
+      <div class="modal-window">
+        <header class="modal-header">
+          <div class="modal-header-title">
+            <span class="modal-icon" id="modalIcon">📋</span>
+            <h3 id="modalTitle">플랜 A 인게임 세부 조작 가이드</h3>
+          </div>
+          <button id="modalCloseBtn" class="modal-close-btn" title="닫기 (ESC)">✕</button>
+        </header>
+        <div class="modal-body" id="modalBody">
+          <!-- 상세 HTML 동적 주입 -->
+        </div>
+        <footer class="modal-footer">
+          <span class="modal-hint">FM27 게임 창을 보면서 마우스로 동일하게 클릭하여 설정해 주세요.</span>
+          <button id="modalConfirmBtn" class="btn btn-primary btn-sm">확인 완료</button>
+        </footer>
+      </div>
+    </div>
 
     <!-- 판독 불가 경고 모달 -->
     <div id="unreadableModalOverlay" class="modal-overlay" style="display: none;">
@@ -389,6 +479,6 @@
     <canvas id="snapshotCanvas" style="display: none;"></canvas>
   </div>
 
-  <script src="app.js?v=5"></script>
+  <script src="app.js?v=6"></script>
 </body>
 </html>
