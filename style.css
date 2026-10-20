@@ -1,6 +1,6 @@
 /* ============================================================
-   FM27 Matchday Tactical Playbook - Master Stylesheet (v5)
-   Theme: Deep Cyber-Pitch & Dual-View Transition
+   FM27 Matchday Tactical Playbook - Master Stylesheet (v6)
+   Theme: Deep Cyber-Pitch & Interactive Dynamic Pitch Board
    ============================================================ */
 
 :root {
@@ -13,6 +13,9 @@
   
   --pitch-green: #10b981;
   --pitch-neon: #34d399;
+  --pitch-grass-1: #0a2116;
+  --pitch-grass-2: #0e2d1e;
+  
   --accent-cyan: #06b6d4;
   --accent-amber: #f59e0b;
   --accent-rose: #f43f5e;
@@ -28,6 +31,7 @@
   --font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
   --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-smooth: 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-gliding: 0.75s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 * {
@@ -116,7 +120,6 @@ body {
   color: var(--text-muted);
 }
 
-/* API 캡슐 */
 .api-capsule {
   display: flex;
   align-items: center;
@@ -244,7 +247,7 @@ body {
 }
 
 /* ============================================================
-   화면 1: 작전 준비실 (Setup View Layout)
+   화면 1: 작전 준비실 레이아웃
    ============================================================ */
 .view-panel {
   animation: fadeIn 0.3s ease-out;
@@ -268,7 +271,6 @@ body {
   }
 }
 
-/* 감독 쇼케이스 */
 .select-inline {
   display: flex;
   align-items: center;
@@ -467,12 +469,10 @@ body {
   box-shadow: 0 0 8px rgba(6, 182, 212, 0.4);
 }
 
-/* ============================================================
-   대형 게임 화면 모니터 (높이 260px로 대폭 확장!)
-   ============================================================ */
+/* 대형 게임 화면 모니터 */
 .large-monitor {
   width: 100%;
-  height: 260px; /* 대폭 확장! */
+  height: 260px;
   background: #000;
   border-radius: var(--radius-md);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -491,7 +491,6 @@ body {
   background: #000;
 }
 
-/* 모니터 정중앙 플레이스홀더 */
 .monitor-placeholder {
   width: 100%;
   height: 100%;
@@ -658,7 +657,6 @@ body {
   justify-content: center;
 }
 
-/* 대형 분석 버튼 */
 .action-bar {
   margin-top: 14px;
 }
@@ -715,7 +713,7 @@ body {
 }
 
 /* ============================================================
-   화면 2: 라커룸 전술 브리핑실 (Briefing Room View Layout)
+   화면 2: 라커룸 전술 브리핑실 레이아웃
    ============================================================ */
 .briefing-top-bar {
   display: flex;
@@ -754,7 +752,6 @@ body {
   border: 1px solid rgba(52, 211, 153, 0.3);
 }
 
-/* 라커룸 스피치 카드 */
 .locker-room-speech-card {
   display: flex;
   align-items: center;
@@ -762,197 +759,455 @@ body {
   background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%);
   border: 1px solid var(--border-glow);
   border-radius: var(--radius-lg);
-  padding: 18px 22px;
+  padding: 16px 20px;
   margin-bottom: 20px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
 }
 
 .speech-avatar {
-  width: 48px;
-  height: 48px;
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
   background: rgba(52, 211, 153, 0.2);
   border: 2px solid var(--pitch-neon);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   flex-shrink: 0;
 }
 
 .speech-author {
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   font-weight: 800;
   color: var(--pitch-neon);
   display: block;
-  margin-bottom: 4px;
+  margin-bottom: 3px;
 }
 
 .speech-quote {
-  font-size: 0.98rem;
+  font-size: 0.95rem;
   font-weight: 600;
   color: #fff;
-  line-height: 1.5;
+  line-height: 1.4;
 }
 
-/* 3단 섹션 그리드 */
-.playbook-sections-grid {
+/* ============================================================
+   [핵심 New!] 인터랙티브 동적 전술 피치 보드
+   ============================================================ */
+.tactical-pitch-card {
+  background: rgba(10, 24, 18, 0.85);
+  border: 1px solid var(--border-glow);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  margin-bottom: 24px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.5);
+}
+
+.pitch-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.pitch-badge-tag {
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: var(--pitch-neon);
+  background: rgba(52, 211, 153, 0.12);
+  padding: 2px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+  display: inline-block;
+  margin-bottom: 4px;
+}
+
+.pitch-title-box h3 {
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.pitch-reason-desc {
+  font-size: 0.78rem;
+  color: #cbd5e1;
+  max-width: 680px;
+  line-height: 1.4;
+}
+
+/* 공/수 전환 버튼 그룹 */
+.pitch-phase-toggle {
+  display: flex;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 4px;
+  border-radius: 12px;
+  gap: 6px;
+}
+
+.phase-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  white-space: nowrap;
+}
+
+.phase-btn:hover {
+  color: #fff;
+}
+
+.phase-btn.active#phaseAttackBtn {
+  background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+  color: #fff;
+  box-shadow: 0 0 14px rgba(244, 63, 94, 0.45);
+}
+
+.phase-btn.active#phaseDefenseBtn {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #050e0a;
+  box-shadow: 0 0 14px rgba(16, 185, 129, 0.45);
+}
+
+/* 실제 축구 피치 컨테이너 */
+.cyber-pitch-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cyber-pitch {
+  width: 100%;
+  height: 440px; /* 높이감 있는 전술판 */
+  background: 
+    repeating-linear-gradient(
+      to bottom,
+      var(--pitch-grass-1) 0px,
+      var(--pitch-grass-1) 44px,
+      var(--pitch-grass-2) 44px,
+      var(--pitch-grass-2) 88px
+    );
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-radius: var(--radius-md);
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.8), 0 8px 24px rgba(0, 0, 0, 0.6);
+}
+
+/* 피치 백색 마킹 라인 */
+.pitch-line {
+  position: absolute;
+  border-color: rgba(255, 255, 255, 0.28);
+  border-style: solid;
+  pointer-events: none;
+}
+
+.half-way-line {
+  top: 50%;
+  left: 0;
+  right: 0;
+  border-top-width: 1.5px;
+}
+
+.center-circle {
+  top: 50%;
+  left: 50%;
+  width: 110px;
+  height: 110px;
+  transform: translate(-50%, -50%);
+  border-width: 1.5px;
+  border-radius: 50%;
+}
+
+.center-spot {
+  top: 50%;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.penalty-box-top {
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 240px;
+  height: 75px;
+  border-width: 0 1.5px 1.5px 1.5px;
+}
+
+.goal-box-top {
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 110px;
+  height: 30px;
+  border-width: 0 1.5px 1.5px 1.5px;
+}
+
+.penalty-box-bottom {
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 240px;
+  height: 75px;
+  border-width: 1.5px 1.5px 0 1.5px;
+}
+
+.goal-box-bottom {
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 110px;
+  height: 30px;
+  border-width: 1.5px 1.5px 0 1.5px;
+}
+
+/* 하프스페이스 가이드 점선 */
+.half-space-lane {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-left: 1px dashed rgba(255, 255, 255, 0.08);
+  pointer-events: none;
+}
+
+.left-lane { left: 32%; }
+.right-lane { right: 32%; }
+
+/* 선수 노드 (11명) - 부드러운 위치 이동 글라이딩! */
+.pitch-players-container {
+  position: absolute;
+  inset: 0;
+  pointer-events: auto;
+}
+
+.player-node {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  transition: left var(--transition-gliding), top var(--transition-gliding);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.player-node:hover {
+  z-index: 20;
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+.player-dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #0f172a;
+  border: 2.5px solid var(--pitch-neon);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  font-weight: 900;
+  color: #fff;
+  box-shadow: 0 0 12px rgba(52, 211, 153, 0.5);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* 포지션 구역별 네온 컬러 */
+.player-node.zone-attack .player-dot {
+  border-color: #f43f5e;
+  box-shadow: 0 0 12px rgba(244, 63, 94, 0.6);
+  background: #200d14;
+}
+
+.player-node.zone-midfield .player-dot {
+  border-color: #06b6d4;
+  box-shadow: 0 0 12px rgba(6, 182, 212, 0.6);
+  background: #0a1f26;
+}
+
+.player-node.zone-defense .player-dot {
+  border-color: #10b981;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.6);
+  background: #091f16;
+}
+
+.player-node.zone-gk .player-dot {
+  border-color: #f59e0b;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.6);
+  background: #231808;
+}
+
+.player-name-badge {
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: #f1f5f9;
+  background: rgba(0, 0, 0, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 1px 6px;
+  border-radius: 4px;
+  margin-top: 3px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.player-action-pill {
+  font-size: 0.6rem;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 9999px;
+  margin-top: 2px;
+  white-space: nowrap;
+  pointer-events: none;
+  animation: pulse-action 2s infinite ease-in-out;
+}
+
+@keyframes pulse-action {
+  0%, 100% { opacity: 0.75; }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+
+.player-action-pill.act-attack {
+  background: rgba(244, 63, 94, 0.25);
+  color: #fda4af;
+  border: 1px solid rgba(244, 63, 94, 0.4);
+}
+
+.player-action-pill.act-defense {
+  background: rgba(16, 185, 129, 0.25);
+  color: #a7f3d0;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+}
+
+/* 피치 하단 안내 바 */
+.pitch-legend-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-sm);
+  font-size: 0.74rem;
+}
+
+.legend-tip {
+  color: var(--text-dim);
+}
+
+.legend-current-mode {
+  font-weight: 800;
+  color: var(--pitch-neon);
+}
+
+/* ============================================================
+   3. 4대 핵심 요약 배지 카드 그리드 (1초 컷 ➜ 모달)
+   ============================================================ */
+.summary-cards-section {
+  margin-top: 8px;
+}
+
+.section-title-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.section-title-bar h4 {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.badge-hint {
+  font-size: 0.72rem;
+  color: var(--accent-cyan);
+}
+
+.summary-badges-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  gap: 14px;
 }
 
-.full-width-card {
-  grid-column: 1 / -1;
-}
-
-@media (max-width: 960px) {
-  .playbook-sections-grid {
+@media (max-width: 900px) {
+  .summary-badges-grid {
     grid-template-columns: 1fr;
   }
 }
 
-.briefing-section-card {
+.tactical-summary-card {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  cursor: pointer;
+  transition: var(--transition-smooth);
   display: flex;
   flex-direction: column;
 }
 
-.section-card-header {
+.tactical-summary-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--pitch-neon);
+  background: rgba(16, 185, 129, 0.08);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+.card-head {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
-  padding-bottom: 14px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  margin-bottom: 16px;
-}
-
-.section-icon {
-  font-size: 1.5rem;
-}
-
-.section-card-header h3 {
-  font-size: 1.05rem;
-  font-weight: 800;
-  color: #fff;
-}
-
-.section-sub {
-  font-size: 0.74rem;
-  color: var(--text-dim);
-}
-
-/* 포메이션 강조 바 */
-.formation-highlight-bar {
-  display: flex;
-  align-items: center;
   justify-content: space-between;
-  background: rgba(16, 185, 129, 0.1);
-  border: 1px solid rgba(52, 211, 153, 0.3);
-  padding: 10px 16px;
-  border-radius: var(--radius-md);
-  margin-bottom: 16px;
-}
-
-.formation-label {
-  font-size: 0.78rem;
-  font-weight: 700;
-  color: var(--text-muted);
-}
-
-.formation-val {
-  font-size: 1.15rem;
-  font-weight: 900;
-  color: var(--pitch-neon);
-  letter-spacing: 0.5px;
-}
-
-/* 세부 롤 & 상성 리스트 스타일 */
-.tactical-item-row {
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: var(--radius-md);
-  padding: 12px 14px;
   margin-bottom: 10px;
 }
 
-.tactical-item-row:last-child {
-  margin-bottom: 0;
+.card-icon {
+  font-size: 1.4rem;
+  margin-right: 10px;
 }
 
-.item-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 6px;
+.card-titles {
+  flex: 1;
 }
 
-.item-title {
-  font-size: 0.82rem;
+.card-titles h5 {
+  font-size: 0.92rem;
   font-weight: 800;
-  color: #e2e8f0;
-}
-
-.item-tag {
-  font-size: 0.68rem;
-  font-weight: 700;
-  padding: 1px 8px;
-  border-radius: 4px;
-}
-
-.tag-attack { background: rgba(244, 63, 94, 0.15); color: #fda4af; }
-.tag-mid { background: rgba(6, 182, 212, 0.15); color: #67e8f9; }
-.tag-def { background: rgba(16, 185, 129, 0.15); color: #6ee7b7; }
-.tag-adv { background: rgba(52, 211, 153, 0.15); color: var(--pitch-neon); }
-.tag-warn { background: rgba(245, 158, 11, 0.15); color: #fcd34d; }
-.tag-danger { background: rgba(244, 63, 94, 0.2); color: #ff8598; }
-
-.item-content {
-  font-size: 0.82rem;
-  color: #cbd5e1;
-  line-height: 1.6;
-}
-
-.item-content strong {
   color: #fff;
 }
 
-/* 시나리오 카드 그리드 (3열) */
-.scenario-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 12px;
+.card-sub {
+  font-size: 0.7rem;
+  color: var(--text-dim);
 }
 
-@media (max-width: 900px) {
-  .scenario-grid {
-    grid-template-columns: 1fr;
-  }
+.card-chip {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--pitch-neon);
+  background: rgba(52, 211, 153, 0.12);
+  padding: 2px 8px;
+  border-radius: 9999px;
+  white-space: nowrap;
 }
 
-.scenario-card {
-  background: rgba(0, 0, 0, 0.35);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: var(--radius-md);
-  padding: 14px;
-}
-
-.scenario-header {
-  font-size: 0.82rem;
-  font-weight: 800;
-  margin-bottom: 6px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.scenario-header.lead { color: var(--pitch-neon); }
-.scenario-header.even { color: var(--accent-cyan); }
-.scenario-header.chase { color: var(--accent-amber); }
-
-.scenario-body {
+.card-summary-text {
   font-size: 0.78rem;
   color: #cbd5e1;
   line-height: 1.5;
+  flex: 1;
 }
 
 /* 브리핑 푸터 */
@@ -1002,7 +1257,7 @@ body {
 }
 
 /* ============================================================
-   경고 모달 & 공통 버튼
+   고정형 상세 모달 (Fixed Detail Modal)
    ============================================================ */
 .modal-overlay {
   position: fixed;
@@ -1014,16 +1269,26 @@ body {
   align-items: center;
   justify-content: center;
   padding: 20px;
+  animation: fadeIn 0.2s ease-out;
 }
 
 .modal-window {
   width: 100%;
-  max-width: 560px;
+  max-width: 680px;
+  max-height: 85vh;
   background: #0b1712;
   border: 1px solid var(--border-glow);
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.8);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.8), 0 0 30px rgba(16, 185, 129, 0.2);
   border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
+  animation: modalScaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalScaleUp {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
 }
 
 .modal-header {
@@ -1041,8 +1306,15 @@ body {
   gap: 10px;
 }
 
-.modal-icon { font-size: 1.3rem; }
-.modal-header-title h3 { font-size: 1rem; font-weight: 800; color: #fff; }
+.modal-icon {
+  font-size: 1.3rem;
+}
+
+.modal-header-title h3 {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #fff;
+}
 
 .modal-close-btn {
   background: transparent;
@@ -1054,24 +1326,120 @@ body {
   border-radius: var(--radius-sm);
 }
 
+.modal-close-btn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
 .modal-body {
   padding: 20px;
-  font-size: 0.86rem;
-  color: #cbd5e1;
+  overflow-y: auto;
+  font-size: 0.88rem;
+  color: #e2e8f0;
   line-height: 1.6;
 }
 
-.warn-lead { font-size: 0.95rem; font-weight: 700; color: #fda4af; margin-bottom: 12px; }
-.warn-list { padding-left: 18px; display: flex; flex-direction: column; gap: 8px; }
-
 .modal-footer {
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
+  justify-content: space-between;
   padding: 12px 20px;
   background: rgba(0, 0, 0, 0.35);
   border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
+.modal-hint {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+}
+
+/* 모달 내부 체크리스트 및 조작 아이템 스타일 */
+.modal-check-section {
+  margin-bottom: 16px;
+}
+
+.modal-check-title {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: var(--pitch-neon);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.check-item-card {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.check-item-desc {
+  font-size: 0.82rem;
+  color: #cbd5e1;
+}
+
+.check-item-action {
+  font-size: 0.74rem;
+  font-weight: 800;
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--pitch-neon);
+  border: 1px solid rgba(52, 211, 153, 0.3);
+  padding: 2px 10px;
+  border-radius: 4px;
+}
+
+.before-after-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  margin-top: 4px;
+}
+
+.pill-before {
+  color: #94a3b8;
+  text-decoration: line-through;
+}
+
+.pill-arrow {
+  color: var(--pitch-neon);
+  font-weight: 900;
+}
+
+.pill-after {
+  color: #67e8f9;
+  font-weight: 800;
+}
+
+/* 경고 모달 */
+.modal-warning {
+  border-color: rgba(244, 63, 94, 0.4);
+}
+
+.warn-lead {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fda4af;
+  margin-bottom: 12px;
+}
+
+.warn-list {
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.82rem;
+  color: #cbd5e1;
+}
+
+/* ============================================================
+   공통 버튼 & 토스트
+   ============================================================ */
 .btn {
   padding: 8px 14px;
   border-radius: var(--radius-sm);
