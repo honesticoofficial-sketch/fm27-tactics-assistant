@@ -1,5 +1,5 @@
 // ============================================================
-// FM27 Matchday Tactical Playbook - Core Engine
+// FM27 Matchday Tactical Playbook - Core Engine (v5)
 // ============================================================
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
       motto: "\"공을 소유하면 상대는 절대 우리 골문에 도달할 수 없다.\"",
       tags: ["#점유율축구", "#인버티드풀백", "#하프스페이스", "#3-2빌드업"],
       voice: "극단적 점유율과 공간 지배. 3-2 빌드업과 하프스페이스 과부하를 집요하게 요구하는 사령관 말투.",
-      homage: "2011 바르샤 메시 펄스 나인(제로톱) 및 2023 맨시티 스톤스 인버티드 센터백 기용"
+      tacticalBias: "점유율 60% 이상 확보, 인버티드 풀백(IWB) 및 센터백 전진 배치, 숏패스 빌드업"
     },
     klopp: {
       name: "위르겐 클롭",
@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
       motto: "\"최고의 플레이메이커는 바로 게겐프레싱이다!\"",
       tags: ["#게겐프레싱", "#헤비메탈축구", "#8초역습", "#풀백폭격"],
       voice: "거칠고 에너지 넘치는 록앤롤. 상대가 숨도 못 쉬게 전방에서 즉각 압박해 8초 안에 끝내라는 열정적 말투.",
-      homage: "2019 안필드의 기적 (고강도 게겐프레싱 + 양 풀백 크로스 화력 폭격)"
+      tacticalBias: "고강도 게겐프레싱, 볼 탈취 직후 다이렉트 속공, 양 풀백의 과감한 오버래핑 크로스"
     },
     mourinho: {
       name: "조제 무리뉴",
@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
       motto: "\"실수하지 않는 자가 이긴다. 이기는 것만이 유일한 진리다.\"",
       tags: ["#2줄수비", "#실리롱카운터", "#승점3점잠그기", "#멘탈리티"],
       voice: "냉소적이고 실리적인 승부사. 점유율은 상대에게 던져주고 2줄 수비 블록 후 원샷원킬 롱카운터를 강조하는 말투.",
-      homage: "2010 인테르 캄프 누 텐백 (사무엘 에투 윙백 수비 가담) 및 2004-05 첼시 짠물 1실점 수비"
+      tacticalBias: "견고한 로우블록 2줄 수비, 다이렉트 롱카운터, 리드 시 윙어까지 수비 가담시키는 텐백 굳히기"
     },
     ancelotti: {
       name: "카를로 안첼로티",
@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
       motto: "\"축구는 간단하다. 선수가 편안하게 최고의 재능을 발휘하게 하라.\"",
       tags: ["#선수개성극대화", "#창의적자율도", "#유연한밸런스", "#챔스역전드라마"],
       voice: "차분하고 인자한 덕장. 선수들의 장점을 가장 잘 살리는 포지션 배치와 경기 후반 위닝 멘탈리티를 주문하는 말투.",
-      homage: "2022·2024 레알 마드리드 챔스 역전극 (4-3-1-2 다이아몬드 및 속공 조커 투입)"
+      tacticalBias: "선수 자율성 극대화, 유연한 4-3-1-2 / 4-3-3 밸런스, 에이스의 번뜩이는 역습 한 방"
     },
     simeone: {
       name: "디에고 시메오네",
@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
       motto: "\"우리는 전장에 나가는 전사들이다. 1초도 쉬지 마라!\"",
       tags: ["#4-4-2두줄버스", "#육탄수비", "#세트피스결정타", "#전사정신"],
       voice: "피 끓는 전사들의 대장. 빈틈없는 4-4-2 두 줄 수비 블록과 육탄 방어, 세트피스 한 방을 벼리는 투지 넘치는 말투.",
-      homage: "2014 아틀레티코 마드리드 라리가 우승 (질식 4-4-2 콤팩트 수비와 세트피스 결승골)"
+      tacticalBias: "조밀한 4-4-2 플랫 두 줄 수비, 거친 압박과 태클, 세트피스 집중 공격"
     },
     flick: {
       name: "한지 플릭",
@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
       motto: "\"라인을 극단으로 올려라. 상대 진영에서 경기를 끝내버린다.\"",
       tags: ["#무자비한하이라인", "#8-2압살프레싱", "#오프사이드트랩", "#질식공격"],
       voice: "단호하고 공격적인 완벽주의자. 하이라인과 끈질긴 오프사이드 트랩, 90분 내내 이어지는 질식 프레싱을 지시하는 말투.",
-      homage: "2020 바이에른 뮌헨 8-2 대승의 무자비한 하이라인 전방 압박과 2024 바르샤 오프사이드 트랩"
+      tacticalBias: "극단적 하이라인 수비, 전방 질식 프레싱, 오프사이드 트랩, 맹렬한 파상 공세"
     },
     arteta: {
       name: "미켈 아르테타",
@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
       motto: "\"우리는 매 순간 피치 위의 모든 1인치를 완벽히 통제해야 한다.\"",
       tags: ["#세트피스지배", "#1인치통제", "#수비전환안정", "#4-4-2하이브리드"],
       voice: "학구적이고 체계적인 전략가. 정밀한 세트피스 약속 패턴과 4-4-2 수비 블록으로 1인치의 공간도 허용하지 않는 말투.",
-      homage: "2024 아스날 세트피스 득점 지배 및 맨시티전 단단한 4-4-2 로우/미들 하이브리드 블록"
+      tacticalBias: "완벽한 세트피스 설계, 안정적인 공수 전환, 단단한 4-4-2 하이브리드 미들 블록"
     },
     ange: {
       name: "엔제 포스테코글루",
@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
       motto: "\"우리는 결코 물러서지 않는다. 그것이 우리가 플레이하는 방식이다.\"",
       tags: ["#극단적하이라인", "#낭만공격축구", "#뒤없는전진", "#압도적슈팅"],
       voice: "뚝심 있고 낭만적인 야전사령관. 몇 명이 퇴장당하든 라인을 중앙선까지 올리고 앞으로만 돌진하라는 화끈한 말투.",
-      homage: "2023 토트넘 첼시전 9명으로도 유지한 극단적 하이라인 투혼"
+      tacticalBias: "수비라인 극단 전진, 모험적인 전진 패스, 박스 안 다수 숫자 침투 공격"
     }
   };
 
@@ -113,6 +113,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // ------------------------------------------------------------
   // 3. DOM 요소 캐싱
   // ------------------------------------------------------------
+  const setupView = document.getElementById('setupView');
+  const briefingView = document.getElementById('briefingView');
+
   const apiKeyInput = document.getElementById('apiKey');
   const saveKeyBtn = document.getElementById('saveKeyBtn');
   const keyStatusDot = document.getElementById('keyStatusDot');
@@ -132,6 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const tierRows = document.querySelectorAll('.tier-row');
 
   const toggleStreamBtn = document.getElementById('toggleStreamBtn');
+  const streamStatusPill = document.getElementById('streamStatusPill');
   const liveVideo = document.getElementById('liveVideo');
   const monitorPlaceholder = document.getElementById('monitorPlaceholder');
 
@@ -151,28 +155,27 @@ document.addEventListener('DOMContentLoaded', () => {
   const slot2FileInput = document.getElementById('slot2FileInput');
 
   const analyzeBtn = document.getElementById('analyzeBtn');
-  const cooldownBar = document.getElementById('cooldownBar');
   const snapshotCanvas = document.getElementById('snapshotCanvas');
 
-  const activeCoachBadge = document.getElementById('activeCoachBadge');
-  const analysisStatusBadge = document.getElementById('analysisStatusBadge');
-  const coachVoiceBox = document.getElementById('coachVoiceBox');
-  const voiceSpeaker = document.getElementById('voiceSpeaker');
-  const voiceQuote = document.getElementById('voiceQuote');
-  const loadingScanner = document.getElementById('loadingScanner');
-  const summaryCardsContainer = document.getElementById('summaryCardsContainer');
+  // 브리핑 뷰 요소
+  const backToSetupBtn = document.getElementById('backToSetupBtn');
+  const bottomBackBtn = document.getElementById('bottomBackBtn');
+  const briefingCoachTag = document.getElementById('briefingCoachTag');
+  const briefingTiersTag = document.getElementById('briefingTiersTag');
+  const copySummaryBtn = document.getElementById('copySummaryBtn');
 
-  const previewMatchup = document.getElementById('previewMatchup');
-  const previewPlanA = document.getElementById('previewPlanA');
-  const previewScenarios = document.getElementById('previewScenarios');
-  const previewOnePoint = document.getElementById('previewOnePoint');
+  const briefingLoadingBox = document.getElementById('briefingLoadingBox');
+  const loadingCoachTitle = document.getElementById('loadingCoachTitle');
+  const briefingContentBox = document.getElementById('briefingContentBox');
 
-  const detailModalOverlay = document.getElementById('detailModalOverlay');
-  const modalIcon = document.getElementById('modalIcon');
-  const modalTitle = document.getElementById('modalTitle');
-  const modalBody = document.getElementById('modalBody');
-  const modalCloseBtn = document.getElementById('modalCloseBtn');
-  const modalConfirmBtn = document.getElementById('modalConfirmBtn');
+  const speechAvatar = document.getElementById('speechAvatar');
+  const speechAuthor = document.getElementById('speechAuthor');
+  const speechQuote = document.getElementById('speechQuote');
+
+  const formationVal = document.getElementById('formationVal');
+  const rolesBreakdownList = document.getElementById('rolesBreakdownList');
+  const dynamicsBreakdownList = document.getElementById('dynamicsBreakdownList');
+  const scenariosBreakdownList = document.getElementById('scenariosBreakdownList');
 
   const unreadableModalOverlay = document.getElementById('unreadableModalOverlay');
   const unreadableCloseBtn = document.getElementById('unreadableCloseBtn');
@@ -182,7 +185,25 @@ document.addEventListener('DOMContentLoaded', () => {
   const toastContainer = document.getElementById('toastContainer');
 
   // ------------------------------------------------------------
-  // 4. 유틸리티 함수: 토스트 알림
+  // 4. 화면 전환 함수 (화면 1: 준비실 ↔ 화면 2: 브리핑실)
+  // ------------------------------------------------------------
+  function switchView(viewName) {
+    if (viewName === 'briefing') {
+      setupView.style.display = 'none';
+      briefingView.style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      briefingView.style.display = 'none';
+      setupView.style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  backToSetupBtn.addEventListener('click', () => switchView('setup'));
+  bottomBackBtn.addEventListener('click', () => switchView('setup'));
+
+  // ------------------------------------------------------------
+  // 5. 토스트 알림 함수
   // ------------------------------------------------------------
   function showToast(message, duration = 3000) {
     const toast = document.createElement('div');
@@ -197,7 +218,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ------------------------------------------------------------
-  // 5. API 키 설정 (BYOK 및 LocalStorage)
+  // 6. API 키 설정 (BYOK 및 LocalStorage)
   // ------------------------------------------------------------
   function updateKeyStatus() {
     const key = apiKeyInput.value.trim();
@@ -230,7 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ------------------------------------------------------------
-  // 6. 감독 쇼케이스 렌더링 & 페르소나 변경
+  // 7. 감독 쇼케이스 렌더링 & 페르소나 변경
   // ------------------------------------------------------------
   function updateCoachProfile(coachKey) {
     STATE.selectedCoachKey = coachKey;
@@ -245,7 +266,6 @@ document.addEventListener('DOMContentLoaded', () => {
       avatarFallback.style.display = 'block';
       avatarFallback.textContent = '👔';
       coachTagsContainer.innerHTML = '<span class="coach-tag-pill">#커스텀전술</span><span class="coach-tag-pill">#독창적철학</span>';
-      activeCoachBadge.textContent = `사령탑: ${cName}`;
       return;
     }
 
@@ -269,8 +289,6 @@ document.addEventListener('DOMContentLoaded', () => {
     coachTagsContainer.innerHTML = coach.tags
       .map(tag => `<span class="coach-tag-pill">${tag}</span>`)
       .join('');
-
-    activeCoachBadge.textContent = `사령탑: ${coach.name}`;
   }
 
   managerSelect.addEventListener('change', (e) => {
@@ -299,7 +317,6 @@ document.addEventListener('DOMContentLoaded', () => {
         opt.style.display = 'none';
       }
     });
-    // 첫 보이는 옵션으로 선택
     const firstVisible = Array.from(options).find(opt => opt.style.display !== 'none');
     if (firstVisible) {
       managerSelect.value = firstVisible.value;
@@ -307,11 +324,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // 초기 로딩 시 기본 펩 과르디올라 프로필 설정
   updateCoachProfile('pep');
 
   // ------------------------------------------------------------
-  // 7. 상대 대비 스쿼드 체급 비교 (3구역 피치 매트릭스)
+  // 8. 상대 대비 스쿼드 체급 비교 (3구역 피치 매트릭스)
   // ------------------------------------------------------------
   tierRows.forEach(row => {
     const zone = row.dataset.zone;
@@ -326,7 +342,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ------------------------------------------------------------
-  // 8. 실시간 화면 공유 (완벽 중앙 정렬 모니터)
+  // 9. 대형 실시간 화면 공유 모니터
   // ------------------------------------------------------------
   async function startScreenShare() {
     try {
@@ -341,7 +357,9 @@ document.addEventListener('DOMContentLoaded', () => {
       toggleStreamBtn.textContent = '⏹️ 공유 중지';
       toggleStreamBtn.classList.add('btn-primary');
       toggleStreamBtn.classList.remove('btn-outline');
-      showToast('🖥️ FM27 화면이 성공적으로 연결되었습니다!');
+      streamStatusPill.textContent = '실시간 스트리밍 중';
+      streamStatusPill.classList.add('live');
+      showToast('🖥️ FM27 화면이 대형 모니터에 성공적으로 연결되었습니다!');
 
       stream.getVideoTracks()[0].onended = () => {
         stopScreenShare();
@@ -363,6 +381,8 @@ document.addEventListener('DOMContentLoaded', () => {
     toggleStreamBtn.textContent = '🖥️ 화면 공유 시작';
     toggleStreamBtn.classList.remove('btn-primary');
     toggleStreamBtn.classList.add('btn-outline');
+    streamStatusPill.textContent = '대기 중';
+    streamStatusPill.classList.remove('live');
   }
 
   toggleStreamBtn.addEventListener('click', () => {
@@ -374,7 +394,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ------------------------------------------------------------
-  // 9. 2장 캡처 슬롯 조작 & 유연한 해상도 검사
+  // 10. 2장 캡처 슬롯 조작 & 유연한 해상도 검사
   // ------------------------------------------------------------
   function setActiveSlot(slotNum) {
     STATE.activeSlot = slotNum;
@@ -403,7 +423,6 @@ document.addEventListener('DOMContentLoaded', () => {
   function applyImageToSlot(slotNum, dataUrl) {
     const imgObj = new Image();
     imgObj.onload = () => {
-      // 유연한 해상도 검문: 가로 600px 미만 시 친절한 안내 토스트
       if (imgObj.naturalWidth < 600) {
         showToast('⚠️ 이미지 가로 해상도가 600px 미만입니다. 글자가 작을 경우 분석이 제한될 수 있습니다.', 4000);
       }
@@ -528,10 +547,9 @@ document.addEventListener('DOMContentLoaded', () => {
   slot2FileInput.addEventListener('change', (e) => handleFileSelect(e, 2));
 
   // ------------------------------------------------------------
-  // 10. 전역 키보드 단축키 & 전역 Ctrl+V 리스너
+  // 11. 전역 단축키 & 전역 Ctrl+V 리스너
   // ------------------------------------------------------------
   document.addEventListener('keydown', (e) => {
-    // 텍스트 입력 중일 때는 단축키 무시
     if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) {
       return;
     }
@@ -543,7 +561,7 @@ document.addEventListener('DOMContentLoaded', () => {
       setActiveSlot(2);
       showToast('슬롯 2 [상대 분석/라인업] 선택됨');
     } else if (e.key === 'Escape') {
-      closeAllModals();
+      unreadableModalOverlay.style.display = 'none';
     } else if (e.ctrlKey && e.key === 'Enter') {
       e.preventDefault();
       if (!analyzeBtn.disabled) {
@@ -553,21 +571,16 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   window.addEventListener('paste', (e) => {
-    // API 키 입력창 등에 텍스트 붙여넣기 중이면 가로채지 않음
     if (document.activeElement === apiKeyInput || document.activeElement === customCoachNameInput) {
       return;
     }
 
     const items = (e.clipboardData || e.originalEvent.clipboardData).items;
-    let foundImage = false;
-
     for (let i = 0; i < items.length; i++) {
       if (items[i].type.indexOf('image') !== -1) {
-        foundImage = true;
         const blob = items[i].getAsFile();
         const reader = new FileReader();
         reader.onload = (event) => {
-          // 비어있는 슬롯에 먼저 채우고, 둘 다 채워져 있으면 현재 활성 슬롯에 교체
           let targetSlot = STATE.activeSlot;
           if (!STATE.slot1Image) {
             targetSlot = 1;
@@ -608,65 +621,73 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ------------------------------------------------------------
-  // 11. Gemini API 시스템 프롬프트 (사령탑 200% 몰입 & 동적 오마주)
+  // 12. 사령탑 100% 몰입 & 실전 공략 시스템 프롬프트
   // ------------------------------------------------------------
   function buildSystemPrompt() {
     let coachName = "펩 과르디올라";
     let coachVoiceGuide = "";
-    let coachHomageRef = "";
+    let coachBias = "";
 
     if (STATE.selectedCoachKey === 'custom') {
       coachName = customCoachNameInput.value.trim() || "세계적 명장";
-      coachVoiceGuide = `당신은 ${coachName} 감독 본인입니다. 당신의 실제 인터뷰 말투, 독창적인 축구 철학, 시그니처 전술관을 200% 완벽히 빙의(Role-play)하여 지휘하십시오.`;
-      coachHomageRef = `해당 감독이 실제 역사 속에서 강팀이나 난적을 상대로 보여준 전술적 승부수를 현재 상황에 맞춰 처방하십시오.`;
+      coachVoiceGuide = `당신은 ${coachName} 감독 본인입니다. 당신의 실제 인터뷰 말투, 독창적인 축구 철학, 승리관에 100% 완벽히 몰입(Role-play)하여 지휘하십시오.`;
+      coachBias = `해당 감독의 실제 축구 철학에 기반하되, 경기에서 반드시 이길 수 있는 현실적인 전술 지침`;
     } else {
       const coach = COACH_DATABASE[STATE.selectedCoachKey];
       coachName = coach.name;
       coachVoiceGuide = coach.voice;
-      coachHomageRef = coach.homage;
+      coachBias = coach.tacticalBias;
     }
 
     return `당신은 세계 최고의 축구 전술 사령탑인 [${coachName}] 감독 본인입니다.
-당신은 FM27(Football Manager) 게임의 전술 및 상대 분석 스크린샷을 분석하여 경기 시작 전 완벽한 승리 공식을 제공하는 '매치데이 전술 연구소'의 수석 사령관입니다.
+당신은 FM27(Football Manager) 게임의 전술판 및 상대 스카우팅 스크린샷을 분석하여 경기 시작 전 완벽한 승리 공식을 제공하는 '매치데이 전술 연구소'의 최고 사령관입니다.
 
-[사령탑 페르소나 및 화법 지침 (극도로 중요!)]:
-- 당신은 ${coachName} 감독의 말투, 철학, 축구관에 완전히 몰입(Role-play)해야 합니다.
-- 화법 가이드: "${coachVoiceGuide}"
-- FM 유저가 읽었을 때 "진짜 ${coachName} 감독이 라커룸에서 나에게 브리핑하는 것 같다!"는 전율을 느껴야 합니다.
+[사령탑 100% 몰입 및 전술 철학 원칙 (절대적 필수 지침)]:
+- 당신은 ${coachName} 감독 본인으로 완벽히 빙의(Role-play)해야 합니다.
+- 말투와 어조: "${coachVoiceGuide}"
+- 전술적 성향: "${coachBias}"
+- 모든 조언과 추천은 당신의 축구 성향과 철학대로 흘러가야 합니다.
+- 단, 이상론에 그치지 않고 현재 상대팀의 전술적 약점을 파고들어 **"반드시 이길 수 있는 방향"**으로 확실한 실전 해법을 제시하십시오.
 
 [상황별 체급 비교 데이터]:
 - 상대 대비 공격진: [${STATE.squadTiers.attack}]
 - 상대 대비 미드필더: [${STATE.squadTiers.midfield}]
 - 상대 대비 수비진: [${STATE.squadTiers.defense}]
 
-[엄격한 필터링 원칙 및 오마주 가이드라인]:
-- 역사적 오마주 참고: "${coachHomageRef}"
-- 억지로 오마주 이름을 팔거나 상황에 안 맞는데 끼워 맞추지 마십시오.
-- 오직 현재 스크린샷의 상대 포메이션, 취약 공간, 그리고 위의 체급 비교 결과가 당신의 시그니처 전술이 실제로 빛을 발할 수 있는 '정확한 상황'일 때만 은근하고 깊이 있게 인게임 FM 전술 버튼(역할 롤, 수비 라인, 패스 템포, 전술 지침) 조작값으로 녹여내어 추천하십시오.
+[★ 오마주 관련 절대 규칙 ★]:
+- 경기 상황이나 시나리오 중 당신의 역사 속 유명 명경기에서 썼던 시그니처 비책이 있다면 활용하십시오.
+- **단, 절대로 "이것은 2010년 인테르 텐백 오마주입니다" 같은 단어나 언급을 입 밖으로 내지 마십시오.**
+- 굳이 오마주라는 단어를 쓰지 말고, 단지 당신의 당연하고 자연스러운 실전 비기이자 작전 지침인 것처럼 답변에 넌지시 녹여내어 추천하십시오.
 
-[안전장치 - 판독 불가 규칙 (매우 중요!)]:
+[안전장치 - 판독 불가 규칙]:
 - 만약 업로드된 이미지가 축구 게임(FM27) 화면이 전혀 아니거나, 글자 및 전술판이 너무 심하게 깨져 판독이 불가능하다면 아무 말도 덧붙이지 말고 정확히 "UNREADABLE_SCREEN" 이 한 단어만 출력하십시오.
 
 [출력 형식 - 순수 JSON]:
 반드시 마크다운 백틱(\`\`\`json) 없는 순수한 유효한 JSON 형식으로만 응답해야 합니다.
 JSON 구조는 다음과 같아야 합니다:
 {
-  "coach_voice_intro": "사령탑 본인의 생생한 라커룸 한마디 (2~3문장)",
-  "summary_badges": {
-    "matchup": "상대 약점 및 상성 진단 한눈 요약 (2~3줄)",
-    "plana": "플랜 A 선발 포메이션 및 핵심 지침 요약 (2~3줄)",
-    "scenarios": "리드 시 굳히기(플랜 B) & 열세 시 역전(플랜 C) 요약 (2~3줄)",
-    "onepoint": "상대 에이스 전담 마크 및 세트피스/오마주 요약 (2~3줄)"
+  "coach_speech": "경기 전 사령탑 본인의 라커룸 출사표 연설 (2~3문장)",
+  "formation": "추천 진영 포메이션 (예: 4-4-2, 4-3-3 하이브리드, 4-2-3-1, 3-5-2 등)",
+  "roles": {
+    "attack": "공격수 롤 및 세부 지침 (예: 포처 + 딥라잉 포워드 조합, 박스 침투 지침 등 구체적 역할 명시)",
+    "midfield": "미드필더 롤 추천 (예: 메짤라 + 딥라잉 플레이메이커 등 구체적 역할 명시)",
+    "defense": "포백/수비진 추천 및 요구 능력치 (예: 주력 빠른 커버 센터백 필수, 지구력 위주 풀백, 인버티드 풀백 등 구체적 명시)"
   },
-  "matchup_detail": "HTML 포맷의 상세 상성 진단 (상대 핵심 공격 루트, 수비 취약 공간, 우리 스쿼드와의 맞대결 유불리)",
-  "plan_a_detail": "HTML 포맷의 플랜 A 스타팅 오더 (추천 포메이션, 핵심 선수 3인의 세부 롤, 그리고 템포/패스직접도/수비라인/압박선 슬라이더 수치)",
-  "scenario_detail": "HTML 포맷의 시나리오별 대처 (60분경 1:0 리드 시 잠그는 플랜 B 세부 수치 vs 0:1 열세 시 총공세로 뒤집는 플랜 C 세부 수치)",
-  "onepoint_detail": "HTML 포맷의 원포인트 조언 (특정 상대 선수 맨마킹, 세트피스 수비/공격 지침, 그리고 이번 경기에 딱 맞는 역사적 오마주 비기)"
+  "dynamics": {
+    "advantage": "상대방 진영에 따라 어떤 부분이 유리한지 (공략할 상대 취약 공간)",
+    "caution": "어딜 조심해야 하는지 (상대의 주요 위협 루트 및 아군 위험 구역)",
+    "key_player": "누굴 반드시 틀어막아야 하는지 (상대 핵심 에이스 선수/포지션 및 구체적 마킹/압박 지침)"
+  },
+  "scenarios": {
+    "lead_2": "2점 유리/리드 시 대처법 (예: 3백 전환, 템포 다운, 잠그기 등)",
+    "even_1": "1점차 접전 시 대처법 (경기 템포 조율, 균형 유지)",
+    "trailing": "열세 / 1점 뒤질 때 역전 대처법 (공격 라인 상승, 총공세 오버로드)"
+  }
 }`;
   }
 
   // ------------------------------------------------------------
-  // 12. 분석 실행 (Gemini Vision API 호출)
+  // 13. 분석 실행 (Gemini Vision API 호출 및 화면 전환)
   // ------------------------------------------------------------
   analyzeBtn.addEventListener('click', async () => {
     const apiKey = apiKeyInput.value.trim();
@@ -683,43 +704,40 @@ JSON 구조는 다음과 같아야 합니다:
 
     STATE.isAnalyzing = true;
     updateAnalyzeButtonState();
-    loadingScanner.style.display = 'flex';
-    summaryCardsContainer.style.opacity = '0.3';
-    coachVoiceBox.style.display = 'none';
-    analysisStatusBadge.textContent = '분석 중...';
-    analysisStatusBadge.style.color = 'var(--pitch-neon)';
+
+    // 화면 2(브리핑실)로 부드럽게 전환 후 로딩 상태 표시
+    switchView('briefing');
+    briefingLoadingBox.style.display = 'flex';
+    briefingContentBox.style.display = 'none';
+
+    const coachName = STATE.selectedCoachKey === 'custom' 
+      ? (customCoachNameInput.value.trim() || '사령탑')
+      : COACH_DATABASE[STATE.selectedCoachKey].name;
+
+    loadingCoachTitle.textContent = `${coachName} 감독이 전술판과 상대 데이터를 정밀 분석하고 있습니다...`;
+    briefingCoachTag.textContent = `사령탑: ${coachName}`;
+    briefingTiersTag.textContent = `체급: 공격 ${STATE.squadTiers.attack} / 미드 ${STATE.squadTiers.midfield} / 수비 ${STATE.squadTiers.defense}`;
 
     try {
       const systemInstruction = buildSystemPrompt();
 
-      // 전송할 이미지 파트 구성
       const parts = [
         { text: systemInstruction }
       ];
 
       if (STATE.slot1Image) {
         const base64Data1 = STATE.slot1Image.split(',')[1];
+        parts.push({ text: "[슬롯 1: 내 전술판 (My Tactics 화면)]" });
         parts.push({
-          text: "[슬롯 1: 내 전술판 (My Tactics 화면)]"
-        });
-        parts.push({
-          inlineData: {
-            mimeType: "image/jpeg",
-            data: base64Data1
-          }
+          inlineData: { mimeType: "image/jpeg", data: base64Data1 }
         });
       }
 
       if (STATE.slot2Image) {
         const base64Data2 = STATE.slot2Image.split(',')[1];
+        parts.push({ text: "[슬롯 2: 상대 분석 스카우팅 / 라인업 (Opponent 화면)]" });
         parts.push({
-          text: "[슬롯 2: 상대 분석 스카우팅 / 라인업 (Opponent 화면)]"
-        });
-        parts.push({
-          inlineData: {
-            mimeType: "image/jpeg",
-            data: base64Data2
-          }
+          inlineData: { mimeType: "image/jpeg", data: base64Data2 }
         });
       }
 
@@ -741,13 +759,13 @@ JSON 구조는 다음과 같아야 합니다:
 
       // 판독 불가 여부 검사
       if (rawText.trim().includes('UNREADABLE_SCREEN')) {
+        briefingLoadingBox.style.display = 'none';
+        switchView('setup');
         unreadableModalOverlay.style.display = 'flex';
-        analysisStatusBadge.textContent = '판독 실패';
-        analysisStatusBadge.style.color = 'var(--accent-rose)';
         return;
       }
 
-      // JSON 파싱 (마크다운 백틱 청소)
+      // JSON 파싱
       let cleanedJsonStr = rawText.trim();
       if (cleanedJsonStr.startsWith('```json')) {
         cleanedJsonStr = cleanedJsonStr.replace(/^```json\s*/, '').replace(/\s*```$/, '');
@@ -758,113 +776,168 @@ JSON 구조는 다음과 같아야 합니다:
       const parsedData = JSON.parse(cleanedJsonStr);
       STATE.latestResultData = parsedData;
 
-      // 화면에 브리핑 결과 렌더링
-      renderPlaybookResults(parsedData);
-      showToast('🎉 매치데이 전술 플레이북이 완성되었습니다!');
+      // 브리핑실에 결과 렌더링
+      renderPlaybookBriefing(parsedData);
+      showToast('🎉 사령탑의 실전 전술 플레이북이 완성되었습니다!');
 
     } catch (err) {
       console.error("Analysis Error:", err);
       STATE.lastErrorLog = `${new Date().toISOString()} - ${err.message}`;
       showToast(`❌ 분석 중 오류가 발생했습니다: ${err.message}`, 5000);
-      analysisStatusBadge.textContent = '오류 발생';
-      analysisStatusBadge.style.color = 'var(--accent-rose)';
+      switchView('setup');
     } finally {
       STATE.isAnalyzing = false;
       updateAnalyzeButtonState();
-      loadingScanner.style.display = 'none';
-      summaryCardsContainer.style.opacity = '1';
+      briefingLoadingBox.style.display = 'none';
     }
   });
 
   // ------------------------------------------------------------
-  // 13. 브리핑 결과 렌더링
+  // 14. 브리핑실 렌더링 (유저 요청 구조 완벽 반영)
   // ------------------------------------------------------------
-  function renderPlaybookResults(data) {
+  function renderPlaybookBriefing(data) {
+    briefingContentBox.style.display = 'block';
+
     const coachName = STATE.selectedCoachKey === 'custom' 
       ? (customCoachNameInput.value.trim() || '사령탑')
       : COACH_DATABASE[STATE.selectedCoachKey].name;
 
-    // 사령탑 인트로 음성 박스
-    if (data.coach_voice_intro) {
-      voiceSpeaker.textContent = `${coachName} 감독의 라커룸 브리핑:`;
-      voiceQuote.textContent = `"${data.coach_voice_intro}"`;
-      coachVoiceBox.style.display = 'flex';
-    }
+    // 사령탑 라커룸 스피치
+    speechAuthor.textContent = `${coachName} 감독의 경기 전 라커룸 연설:`;
+    speechQuote.textContent = `"${data.coach_speech || '오늘 경기는 반드시 우리 철학대로 승리한다.'}"`;
 
-    // 4대 요약 카드 프리뷰 업데이트
-    if (data.summary_badges) {
-      previewMatchup.innerHTML = `<p>${data.summary_badges.matchup}</p>`;
-      previewPlanA.innerHTML = `<p>${data.summary_badges.plana}</p>`;
-      previewScenarios.innerHTML = `<p>${data.summary_badges.scenarios}</p>`;
-      previewOnePoint.innerHTML = `<p>${data.summary_badges.onepoint}</p>`;
-    }
+    // 추천 포메이션
+    formationVal.textContent = data.formation || '4-4-2';
 
-    analysisStatusBadge.textContent = '작전 수립 완료';
-    analysisStatusBadge.style.color = 'var(--pitch-neon)';
+    // 1. 포지션별 롤 리스트 (공격수, 미드필더, 포백/수비진)
+    rolesBreakdownList.innerHTML = `
+      <div class="tactical-item-row">
+        <div class="item-header">
+          <span class="item-title">⚔️ 공격수 (공격진 롤 및 움직임)</span>
+          <span class="item-tag tag-attack">ATTACK</span>
+        </div>
+        <div class="item-content">${data.roles?.attack || '역할 지침 없음'}</div>
+      </div>
+
+      <div class="tactical-item-row">
+        <div class="item-header">
+          <span class="item-title">⚙️ 미드필더 (중원 롤 및 조합)</span>
+          <span class="item-tag tag-mid">MIDFIELD</span>
+        </div>
+        <div class="item-content">${data.roles?.midfield || '역할 지침 없음'}</div>
+      </div>
+
+      <div class="tactical-item-row">
+        <div class="item-header">
+          <span class="item-title">🛡️ 포백 / 수비진 (필수 요구 능력치 및 수비 롤)</span>
+          <span class="item-tag tag-def">DEFENSE</span>
+        </div>
+        <div class="item-content">${data.roles?.defense || '역할 지침 없음'}</div>
+      </div>
+    `;
+
+    // 2. 실전 상성 & 공략법 리스트 (유리한 점, 조심할 점, 틀어막을 키맨)
+    dynamicsBreakdownList.innerHTML = `
+      <div class="tactical-item-row">
+        <div class="item-header">
+          <span class="item-title">🟢 상대 진영 대비 유리한 점 (공략 포인트)</span>
+          <span class="item-tag tag-adv">ADVANTAGE</span>
+        </div>
+        <div class="item-content">${data.dynamics?.advantage || '공략 지점 없음'}</div>
+      </div>
+
+      <div class="tactical-item-row">
+        <div class="item-header">
+          <span class="item-title">🟡 어딜 조심해야 하는지 (취약 구역 및 상대 역습)</span>
+          <span class="item-tag tag-warn">CAUTION</span>
+        </div>
+        <div class="item-content">${data.dynamics?.caution || '주의 사항 없음'}</div>
+      </div>
+
+      <div class="tactical-item-row">
+        <div class="item-header">
+          <span class="item-title">🔴 누굴 반드시 틀어막아야 하는지 (상대 에이스 전담 마킹)</span>
+          <span class="item-tag tag-danger">TARGET MARK</span>
+        </div>
+        <div class="item-content">${data.dynamics?.key_player || '타겟 선수 지침 없음'}</div>
+      </div>
+    `;
+
+    // 3. 경기 흐름별 시나리오 대처 (2점 리드, 1점차 접전, 열세 역전)
+    scenariosBreakdownList.innerHTML = `
+      <div class="scenario-grid">
+        <div class="scenario-card">
+          <div class="scenario-header lead">
+            <span>🛡️ 2점 차 리드 시</span>
+          </div>
+          <div class="scenario-body">${data.scenarios?.lead_2 || '3백 전환 및 템포 조율'}</div>
+        </div>
+
+        <div class="scenario-card">
+          <div class="scenario-header even">
+            <span>⚖️ 1점 차 접전 시</span>
+          </div>
+          <div class="scenario-body">${data.scenarios?.even_1 || '무리한 모험 지양, 안정적 경기 운용'}</div>
+        </div>
+
+        <div class="scenario-card">
+          <div class="scenario-header chase">
+            <span>⚡ 열세 / 실점 시 역전</span>
+          </div>
+          <div class="scenario-body">${data.scenarios?.trailing || '라인 전진 및 총공세 전환'}</div>
+        </div>
+      </div>
+    `;
   }
 
   // ------------------------------------------------------------
-  // 14. 고정형 상세 모달 팝업 열기/닫기
+  // 15. 전술 텍스트 클립보드 복사
   // ------------------------------------------------------------
-  const summaryCards = document.querySelectorAll('.playbook-badge-card');
-  summaryCards.forEach(card => {
-    card.addEventListener('click', () => {
-      if (!STATE.latestResultData) {
-        showToast('먼저 [전술 플레이북 생성]을 실행해 주세요!');
-        return;
-      }
+  copySummaryBtn.addEventListener('click', () => {
+    if (!STATE.latestResultData) return;
+    const d = STATE.latestResultData;
+    const coachName = STATE.selectedCoachKey === 'custom' 
+      ? (customCoachNameInput.value.trim() || '사령탑')
+      : COACH_DATABASE[STATE.selectedCoachKey].name;
 
-      const cardType = card.dataset.card;
-      openDetailModal(cardType);
+    const summaryText = `[FM27 매치데이 전술 플레이북 - ${coachName} 감독]
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+💬 라커룸 연설: "${d.coach_speech}"
+🎯 추천 포메이션: ${d.formation}
+
+[1. 포지션별 최적 롤]
+- 공격수: ${d.roles?.attack}
+- 미드필더: ${d.roles?.midfield}
+- 수비진(포백): ${d.roles?.defense}
+
+[2. 실전 상성 및 공략법]
+- 유리한 점: ${d.dynamics?.advantage}
+- 조심할 점: ${d.dynamics?.caution}
+- 틀어막을 키맨: ${d.dynamics?.key_player}
+
+[3. 시나리오별 대처]
+- 2점 리드 시: ${d.scenarios?.lead_2}
+- 1점차 접전 시: ${d.scenarios?.even_1}
+- 열세/실점 시: ${d.scenarios?.trailing}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`;
+
+    navigator.clipboard.writeText(summaryText).then(() => {
+      showToast('📋 전술 요약본이 클립보드에 깔끔하게 복사되었습니다!');
+    }).catch(() => {
+      showToast('복사에 실패했습니다.');
     });
   });
 
-  function openDetailModal(cardType) {
-    const data = STATE.latestResultData;
-    if (!data) return;
-
-    if (cardType === 'matchup') {
-      modalIcon.textContent = '⚔️';
-      modalTitle.textContent = '상성 진단 (상대 약점 및 매치업 정밀 분석)';
-      modalBody.innerHTML = data.matchup_detail || data.summary_badges?.matchup || '상세 내용이 없습니다.';
-    } else if (cardType === 'plana') {
-      modalIcon.textContent = '📋';
-      modalTitle.textContent = '플랜 A (스타팅 오더 & 인게임 지침 슬라이더)';
-      modalBody.innerHTML = data.plan_a_detail || data.summary_badges?.plana || '상세 내용이 없습니다.';
-    } else if (cardType === 'scenarios') {
-      modalIcon.textContent = '🔄';
-      modalTitle.textContent = '시나리오별 대처 (플랜 B 리드 잠그기 vs 플랜 C 역전 총공세)';
-      modalBody.innerHTML = data.scenario_detail || data.summary_badges?.scenarios || '상세 내용이 없습니다.';
-    } else if (cardType === 'onepoint') {
-      modalIcon.textContent = '💡';
-      modalTitle.textContent = '원포인트 조언 (상대 에이스 맨마크 & 역사적 오마주 비기)';
-      modalBody.innerHTML = data.onepoint_detail || data.summary_badges?.onepoint || '상세 내용이 없습니다.';
-    }
-
-    detailModalOverlay.style.display = 'flex';
-  }
-
-  function closeAllModals() {
-    detailModalOverlay.style.display = 'none';
+  // ------------------------------------------------------------
+  // 16. 경고 모달 닫기 & 오류 제보
+  // ------------------------------------------------------------
+  unreadableCloseBtn.addEventListener('click', () => {
     unreadableModalOverlay.style.display = 'none';
-  }
-
-  modalCloseBtn.addEventListener('click', closeAllModals);
-  modalConfirmBtn.addEventListener('click', closeAllModals);
-  unreadableCloseBtn.addEventListener('click', closeAllModals);
-  unreadableConfirmBtn.addEventListener('click', closeAllModals);
-
-  detailModalOverlay.addEventListener('click', (e) => {
-    if (e.target === detailModalOverlay) closeAllModals();
+  });
+  unreadableConfirmBtn.addEventListener('click', () => {
+    unreadableModalOverlay.style.display = 'none';
   });
 
-  unreadableModalOverlay.addEventListener('click', (e) => {
-    if (e.target === unreadableModalOverlay) closeAllModals();
-  });
-
-  // ------------------------------------------------------------
-  // 15. 오류 제보 / 로그 클립보드 복사
-  // ------------------------------------------------------------
   errorReportBtn.addEventListener('click', () => {
     const reportData = {
       timestamp: new Date().toISOString(),
