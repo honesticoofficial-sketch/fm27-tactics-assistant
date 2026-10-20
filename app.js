@@ -741,17 +741,35 @@ JSON 구조는 다음과 같아야 합니다:
         });
       }
 
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts }]
-        })
-      });
+      // 최신 권장 모델 gemini-3.8-flash 우선 호출 (필요시 폴백 지원)
+      const candidateModels = ['gemini-3.8-flash', 'gemini-2.5-flash', 'gemini-1.5-flash'];
+      let response = null;
+      let lastErrText = '';
 
-      if (!response.ok) {
-        const errText = await response.text();
-        throw new Error(`API 요청 실패 (${response.status}): ${errText}`);
+      for (const modelName of candidateModels) {
+        try {
+          const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts }]
+            })
+          });
+
+          if (res.ok) {
+            response = res;
+            break;
+          } else {
+            lastErrText = await res.text();
+            console.warn(`Model ${modelName} failed, trying next model...`);
+          }
+        } catch (e) {
+          lastErrText = e.message;
+        }
+      }
+
+      if (!response) {
+        throw new Error(`API 요청 실패: ${lastErrText}`);
       }
 
       const resJson = await response.json();
