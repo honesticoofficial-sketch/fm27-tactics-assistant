@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FM27 AI 전술 코치 (FM27 Tactics Assistant)</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    <!-- 헤더 -->
+    <header class="header">
+      <div class="logo">
+        <span class="badge">FM27</span>
+        <h1>AI 실시간 전술 코칭실</h1>
+      </div>
+      <div class="api-key-box">
+        <label for="apiKey">🔑 Gemini API 키:</label>
+        <input type="password" id="apiKey" placeholder="AI Studio 키를 붙여넣으세요">
+        <button id="saveKeyBtn" class="btn-sm">저장</button>
+      </div>
+    </header>
+
+    <!-- 메인 컨텐츠 영역 -->
+    <main class="main-grid">
+      <!-- 왼쪽: 게임 화면 및 제어 패널 -->
+      <section class="screen-section">
+        <div class="video-container">
+          <video id="gameVideo" autoplay playsinline></video>
+          <div id="videoPlaceholder" class="video-placeholder">
+            <p>📺 [게임 화면 공유] 버튼을 눌러<br>FM27 게임 창을 지정해 주세요.</p>
+          </div>
+        </div>
+
+        <div class="control-bar">
+          <button id="startShareBtn" class="btn btn-primary">
+            🖥️ 게임 화면 공유 시작
+          </button>
+          <button id="stopShareBtn" class="btn btn-secondary" style="display: none;">
+            ⏹️ 공유 중지
+          </button>
+          <button id="analyzeBtn" class="btn btn-accent" disabled>
+            ⚡ 전술 조언 요청 (스냅샷 분석)
+          </button>
+        </div>
+      </section>
+
+      <!-- 오른쪽: 전술 코치 설정 & 분석 결과 -->
+      <section class="tactics-section">
+        <!-- 감독 선택 카드 -->
+        <div class="card manager-card">
+          <h2>👔 전술 코치 (감독) 선택</h2>
+          
+          <div class="form-group">
+            <label for="countryFilter">🌍 국가/리그 선택:</label>
+            <select id="countryFilter">
+              <option value="all">전체 명장 보기</option>
+              <option value="epl">잉글랜드 (EPL)</option>
+              <option value="laliga">스페인 (라리가)</option>
+              <option value="seriea">이탈리아 (세리에 A)</option>
+              <option value="custom">자유 커스텀 성향 (직접 입력)</option>
+            </select>
+          </div>
+
+          <div class="form-group" id="managerSelectGroup">
+            <label for="managerSelect">감독 페르소나:</label>
+            <select id="managerSelect">
+              <option value="pep">펩 과르디올라 (점유율, 하프스페이스, 인버티드 풀백)</option>
+              <option value="klopp">위르겐 클롭 (게겐프레싱, 높은 템포, 즉각 역습)</option>
+              <option value="mourinho">조제 무리뉴 (2줄 수비 블록, 실리적 롱카운터, 굳히기)</option>
+              <option value="ancelotti">카를로 안첼로티 (높은 창의성, 선수 개성 극대화, 유연한 전환)</option>
+              <option value="arteta">미켈 아르테타 (세트피스, 안정적 수비 전환, 정교한 지공)</option>
+              <option value="ange">엔제 포스테코글루 (극단적 하이라인, 닥공, 전진 축구)</option>
+              <option value="simeone">디에고 시메오네 (질식 4-4-2, 투지 육탄 방어, 거친 압박)</option>
+              <option value="flick">한지 플릭 (초고강도 전방 압박, 오프사이드 트랩, 직선적 타격)</option>
+            </select>
+          </div>
+
+          <!-- 커스텀 성향 입력창 (자유 커스텀 선택 시 표시) -->
+          <div class="form-group" id="customStyleGroup" style="display: none;">
+            <label for="customPrompt">나만의 전술 지침 / 감독 스타일:</label>
+            <textarea id="customPrompt" rows="3" placeholder="예: '황선홍 감독 스타일: 빠른 측면 침투와 정통 타겟터 활용' 또는 '대한민국 국대 맞춤형 4-2-3-1 밸런스 전술'"></textarea>
+          </div>
+        </div>
+
+        <!-- AI 분석 결과 카드 -->
+        <div class="card result-card">
+          <div class="result-header">
+            <h2>📋 감독의 실시간 전술 브리핑</h2>
+            <span id="cooldownTimer" class="timer-badge">준비 완료</span>
+          </div>
+
+          <div id="loadingSpinner" class="loading-spinner" style="display: none;">
+            <div class="spinner"></div>
+            <p>감독님이 경기 화면을 면밀히 분석 중입니다...</p>
+          </div>
+
+          <div id="adviceContent" class="advice-content">
+            <p class="placeholder-text">게임 화면을 공유하고 [전술 조언 요청] 버튼을 누르면, 선택한 감독 스타일로 FM27 맞춤 3줄 브리핑이 제공됩니다.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- 보이지 않는 임시 캡처용 캔버스 (화면 캡처 메모리 처리용) -->
+    <canvas id="snapshotCanvas" style="display: none;"></canvas>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
