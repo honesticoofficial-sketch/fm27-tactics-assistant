@@ -3,107 +3,199 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FM27 AI 전술 코치 (FM27 Tactics Assistant)</title>
+  <title>FM27 Tactical Command Center | 실시간 AI 전술 코칭 대시보드</title>
   <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
 </head>
 <body>
-  <div class="app-container">
-    <!-- 헤더 -->
-    <header class="header">
-      <div class="logo">
-        <span class="badge">FM27</span>
-        <h1>AI 실시간 전술 코칭실</h1>
+  <div class="dashboard-wrapper">
+    <!-- 상단 글로벌 네비게이션 바 -->
+    <header class="top-nav">
+      <div class="brand">
+        <div class="brand-glow-dot"></div>
+        <div class="brand-logo">FM27</div>
+        <div class="brand-title">
+          <h1>TACTICAL COMMAND CENTER</h1>
+          <span class="sub-title">실시간 AI 비전 전술 코치 대시보드</span>
+        </div>
       </div>
-      <div class="api-key-box">
-        <label for="apiKey">🔑 Gemini API 키:</label>
-        <input type="password" id="apiKey" placeholder="AI Studio 키를 붙여넣으세요">
-        <button id="saveKeyBtn" class="btn-sm">저장</button>
+
+      <!-- 상단 API 키 설정 캡슐 -->
+      <div class="api-capsule">
+        <div class="key-status-indicator" id="keyStatusDot"></div>
+        <span class="capsule-label">Gemini API:</span>
+        <input type="password" id="apiKey" placeholder="AI Studio API 키 입력" spellcheck="false" autocomplete="off">
+        <button id="saveKeyBtn" class="capsule-btn">저장</button>
       </div>
     </header>
 
-    <!-- 메인 컨텐츠 영역 -->
-    <main class="main-grid">
-      <!-- 왼쪽: 게임 화면 및 제어 패널 -->
-      <section class="screen-section">
-        <div class="video-container">
-          <video id="gameVideo" autoplay playsinline></video>
-          <div id="videoPlaceholder" class="video-placeholder">
-            <p>📺 [게임 화면 공유] 버튼을 눌러<br>FM27 게임 창을 지정해 주세요.</p>
+    <!-- 2열 메인 대시보드 그리드 -->
+    <main class="dashboard-grid">
+      <!-- 좌측: 경기 제어 & 설정 패널 -->
+      <aside class="control-panel">
+        
+        <!-- 게임 화면 뷰포트 카드 -->
+        <section class="glass-card screen-card">
+          <div class="card-header">
+            <div class="header-title">
+              <span class="icon">📺</span>
+              <h3>FM27 라이브 매치 피드</h3>
+            </div>
+            <span class="status-pill status-offline" id="streamStatusPill">연결 대기 중</span>
           </div>
-        </div>
 
-        <div class="control-bar">
-          <button id="startShareBtn" class="btn btn-primary">
-            🖥️ 게임 화면 공유 시작
+          <div class="viewport-frame">
+            <video id="gameVideo" autoplay playsinline></video>
+            <div id="videoPlaceholder" class="viewport-placeholder">
+              <div class="radar-scan"></div>
+              <div class="placeholder-content">
+                <span class="big-icon">⚽</span>
+                <p class="main-msg">FM27 게임 화면이 연결되지 않았습니다</p>
+                <p class="sub-msg">아래 [게임 화면 공유] 버튼을 눌러 FM27 창을 선택하세요.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="screen-actions">
+            <button id="startShareBtn" class="btn btn-primary-glow">
+              <span class="btn-icon">🖥️</span> 게임 화면 공유 시작
+            </button>
+            <button id="stopShareBtn" class="btn btn-danger-glow" style="display: none;">
+              <span class="btn-icon">⏹️</span> 화면 공유 중지
+            </button>
+          </div>
+        </section>
+
+        <!-- 감독 전술 철학 설정 카드 -->
+        <section class="glass-card manager-setup-card">
+          <div class="card-header">
+            <div class="header-title">
+              <span class="icon">👔</span>
+              <h3>전술 코치 페르소나</h3>
+            </div>
+            <span class="badge-mini">FM27 철학 엔진</span>
+          </div>
+
+          <div class="input-group">
+            <label for="countryFilter">리그 / 국가 카테고리</label>
+            <div class="select-wrapper">
+              <select id="countryFilter">
+                <option value="all">🌍 전 세계 명장 (EPL, 라리가, 세리에 A)</option>
+                <option value="epl">🏴󠁧󠁢󠁥󠁮󠁧󠁿 잉글랜드 프리미어리그 (EPL)</option>
+                <option value="laliga">🇪🇸 스페인 라리가 (La Liga)</option>
+                <option value="seriea">🇮🇹 이탈리아 세리에 A (Serie A)</option>
+                <option value="custom">✨ 나만의 커스텀 전술 성향 (직접 입력)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="input-group" id="managerSelectGroup">
+            <label for="managerSelect">사령탑 선택</label>
+            <div class="select-wrapper">
+              <select id="managerSelect">
+                <option value="pep">펩 과르디올라 • 점유율 / 하프스페이스 / IWB / 3-2 빌드업</option>
+                <option value="klopp">위르겐 클롭 • 게겐프레싱 / 높은 템포 / 즉각 역습 / 전방 압박</option>
+                <option value="mourinho">조제 무리뉴 • 2줄 수비 블록 / 실리적 롱카운터 / 잠그기</option>
+                <option value="ancelotti">카를로 안첼로티 • 창의적 자유도 / 선수 개성 극대화 / 유연한 밸런스</option>
+                <option value="arteta">미켈 아르테타 • 정교한 세트피스 / 풀백 수비 전환 / 체계적 지공</option>
+                <option value="ange">엔제 포스테코글루 • 극단적 하이라인 / 타협 없는 닥공 전진 축구</option>
+                <option value="simeone">디에고 시메오네 • 질식 4-4-2 두 줄 수비 / 육탄 방어 / 세컨볼 장악</option>
+                <option value="flick">한지 플릭 • 초고강도 전방 압박 / 칼같은 오프사이드 트랩 / 직선 타격</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="input-group" id="customStyleGroup" style="display: none;">
+            <label for="customPrompt">나만의 전술 지침 및 감독 스타일</label>
+            <textarea id="customPrompt" rows="3" placeholder="예: '황선홍 감독 스타일: 빠른 측면 돌파와 정통 타겟맨 머리 노리기' 또는 '단단한 3백 역습 전술'"></textarea>
+          </div>
+        </section>
+
+        <!-- 전술 분석 요청 대형 액션 버튼 -->
+        <section class="action-section">
+          <button id="analyzeBtn" class="btn-mega-action" disabled>
+            <div class="action-inner">
+              <div class="action-text-box">
+                <span class="action-title">⚡ 실시간 전술 조언 요청</span>
+                <span class="action-desc">현재 경기 스냅샷 AI 비전 정밀 분석</span>
+              </div>
+              <div class="action-shortcut">
+                <kbd>Ctrl</kbd> + <kbd>Enter</kbd>
+              </div>
+            </div>
+            <div class="cooldown-progress-bar" id="cooldownBar"></div>
           </button>
-          <button id="stopShareBtn" class="btn btn-secondary" style="display: none;">
-            ⏹️ 공유 중지
-          </button>
-          <button id="analyzeBtn" class="btn btn-accent" disabled>
-            ⚡ 전술 조언 요청 (스냅샷 분석)
-          </button>
-        </div>
-      </section>
+        </section>
 
-      <!-- 오른쪽: 전술 코치 설정 & 분석 결과 -->
-      <section class="tactics-section">
-        <!-- 감독 선택 카드 -->
-        <div class="card manager-card">
-          <h2>👔 전술 코치 (감독) 선택</h2>
-          
-          <div class="form-group">
-            <label for="countryFilter">🌍 국가/리그 선택:</label>
-            <select id="countryFilter">
-              <option value="all">전체 명장 보기</option>
-              <option value="epl">잉글랜드 (EPL)</option>
-              <option value="laliga">스페인 (라리가)</option>
-              <option value="seriea">이탈리아 (세리에 A)</option>
-              <option value="custom">자유 커스텀 성향 (직접 입력)</option>
-            </select>
+      </aside>
+
+      <!-- 우측: 전술 브리핑 보드 -->
+      <section class="briefing-panel">
+        <div class="glass-card result-dashboard">
+          <div class="card-header dashboard-header">
+            <div class="header-title">
+              <span class="icon">📋</span>
+              <h3>전술 브리핑 대시보드</h3>
+            </div>
+            <div class="header-tags">
+              <span class="current-coach-pill" id="coachDisplayBadge">감독: 대기 중</span>
+              <span class="timer-pill" id="cooldownTimer">준비 완료</span>
+            </div>
           </div>
 
-          <div class="form-group" id="managerSelectGroup">
-            <label for="managerSelect">감독 페르소나:</label>
-            <select id="managerSelect">
-              <option value="pep">펩 과르디올라 (점유율, 하프스페이스, 인버티드 풀백)</option>
-              <option value="klopp">위르겐 클롭 (게겐프레싱, 높은 템포, 즉각 역습)</option>
-              <option value="mourinho">조제 무리뉴 (2줄 수비 블록, 실리적 롱카운터, 굳히기)</option>
-              <option value="ancelotti">카를로 안첼로티 (높은 창의성, 선수 개성 극대화, 유연한 전환)</option>
-              <option value="arteta">미켈 아르테타 (세트피스, 안정적 수비 전환, 정교한 지공)</option>
-              <option value="ange">엔제 포스테코글루 (극단적 하이라인, 닥공, 전진 축구)</option>
-              <option value="simeone">디에고 시메오네 (질식 4-4-2, 투지 육탄 방어, 거친 압박)</option>
-              <option value="flick">한지 플릭 (초고강도 전방 압박, 오프사이드 트랩, 직선적 타격)</option>
-            </select>
+          <!-- 로딩 스캐너 애니메이션 -->
+          <div id="loadingScanner" class="loading-scanner" style="display: none;">
+            <div class="scanner-laser"></div>
+            <div class="scanner-spinner"></div>
+            <p class="scanner-title">경기 화면 비전 스캐닝 중...</p>
+            <p class="scanner-sub">선수 평점, 체력, 포메이션 대형, xG 및 라인 간격을 정밀 계산하고 있습니다.</p>
           </div>
 
-          <!-- 커스텀 성향 입력창 (자유 커스텀 선택 시 표시) -->
-          <div class="form-group" id="customStyleGroup" style="display: none;">
-            <label for="customPrompt">나만의 전술 지침 / 감독 스타일:</label>
-            <textarea id="customPrompt" rows="3" placeholder="예: '황선홍 감독 스타일: 빠른 측면 침투와 정통 타겟터 활용' 또는 '대한민국 국대 맞춤형 4-2-3-1 밸런스 전술'"></textarea>
-          </div>
-        </div>
+          <!-- 대시보드 카드 3단 구조 -->
+          <div id="briefingCardsContainer" class="briefing-cards">
+            
+            <!-- 카드 1: 취약점 및 경기 흐름 분석 -->
+            <article class="tactical-card card-diagnosis">
+              <div class="card-top">
+                <span class="card-icon">🔍</span>
+                <h4>경기 흐름 및 취약점 진단</h4>
+                <span class="card-seq">STEP 1</span>
+              </div>
+              <div class="card-body" id="diagnosisContent">
+                <p class="empty-state">화면 공유 후 [전술 조언 요청]을 누르면 현재 경기 상황의 핵심 문제점을 짚어냅니다.</p>
+              </div>
+            </article>
 
-        <!-- AI 분석 결과 카드 -->
-        <div class="card result-card">
-          <div class="result-header">
-            <h2>📋 감독의 실시간 전술 브리핑</h2>
-            <span id="cooldownTimer" class="timer-badge">준비 완료</span>
-          </div>
+            <!-- 카드 2: 전술 지침 즉시 변경 권고 -->
+            <article class="tactical-card card-tactics">
+              <div class="card-top">
+                <span class="card-icon">⚙️</span>
+                <h4>전술 지침 즉시 변경 권고</h4>
+                <span class="card-seq">STEP 2</span>
+              </div>
+              <div class="card-body" id="tacticsContent">
+                <p class="empty-state">라인 높이, 압박 강도, 패스 템포, 빌드업 형태 등 즉시 수정해야 할 전술 슬라이더를 안내합니다.</p>
+              </div>
+            </article>
 
-          <div id="loadingSpinner" class="loading-spinner" style="display: none;">
-            <div class="spinner"></div>
-            <p>감독님이 경기 화면을 면밀히 분석 중입니다...</p>
-          </div>
+            <!-- 카드 3: 선수 교체 및 개인 롤 지침 -->
+            <article class="tactical-card card-subs">
+              <div class="card-top">
+                <span class="card-icon">🔄</span>
+                <h4>선수 교체 & 개인 롤(Role) 지침</h4>
+                <span class="card-seq">STEP 3</span>
+              </div>
+              <div class="card-body" id="subsContent">
+                <p class="empty-state">지친 선수 교체 권고 및 특정 포지션(IWB, IF, DLP 등) 세부 역할 변경을 추천합니다.</p>
+              </div>
+            </article>
 
-          <div id="adviceContent" class="advice-content">
-            <p class="placeholder-text">게임 화면을 공유하고 [전술 조언 요청] 버튼을 누르면, 선택한 감독 스타일로 FM27 맞춤 3줄 브리핑이 제공됩니다.</p>
           </div>
         </div>
       </section>
     </main>
 
-    <!-- 보이지 않는 임시 캡처용 캔버스 (화면 캡처 메모리 처리용) -->
+    <!-- 보이지 않는 고해상도 캡처 캔버스 -->
     <canvas id="snapshotCanvas" style="display: none;"></canvas>
   </div>
 
