@@ -1,19 +1,23 @@
-// 전술 코치(감독 페르소나) 데이터베이스
+// ============================================================
+// FM27 AI Tactical Command Center - Logic Engine
+// ============================================================
+
+// 8대 명장 전술 사전
 const PERSONAS = {
   pep: {
     name: "펩 과르디올라",
     league: "epl",
-    style: "점유율 60% 이상 확보, 인버티드 풀백(IWB) 및 하프스페이스 공략, 3-2 빌드업 대형 유지. 상대 블록을 인내심 있게 흔드는 짧은 패스 축구 강조."
+    style: "점유율 60% 이상 확보, 인버티드 풀백(IWB) 및 하프스페이스 점유, 3-2 빌드업 대형 유지. 상대 수비 블록을 인내심 있게 흔드는 짧은 패스 지공."
   },
   klopp: {
     name: "위르겐 클롭",
     league: "epl",
-    style: "전방 게겐프레싱, 볼 탈취 직후 8초 이내 빠른 역습 전개, 극한의 활동량과 높은 템포. 윙어의 중앙 침투와 풀백의 적극적인 오버래핑 강조."
+    style: "전방 게겐프레싱, 볼 탈취 직후 8초 이내 빠른 역습 전개, 극한의 활동량과 높은 템포. 윙어의 중앙 침투와 풀백의 적극적인 오버래핑."
   },
   mourinho: {
     name: "조제 무리뉴",
     league: "seriea",
-    style: "철저한 2줄 수비 블록, 라인을 낮추고 실리적인 다이렉트 롱카운터(역습). 리드 시 미드필더를 내려 잠그기 운영."
+    style: "철저한 2줄 수비 블록, 라인을 낮추고 실리적인 다이렉트 롱카운터(역습). 리드 시 미드필더 숫자를 늘려 잠그기 운영."
   },
   ancelotti: {
     name: "카를로 안첼로티",
@@ -42,69 +46,109 @@ const PERSONAS = {
   }
 };
 
-// HTML 요소 참조
+// DOM 요소 참조
 const apiKeyInput = document.getElementById('apiKey');
 const saveKeyBtn = document.getElementById('saveKeyBtn');
+const keyStatusDot = document.getElementById('keyStatusDot');
+
+const streamStatusPill = document.getElementById('streamStatusPill');
 const gameVideo = document.getElementById('gameVideo');
 const videoPlaceholder = document.getElementById('videoPlaceholder');
 const startShareBtn = document.getElementById('startShareBtn');
 const stopShareBtn = document.getElementById('stopShareBtn');
-const analyzeBtn = document.getElementById('analyzeBtn');
+
 const countryFilter = document.getElementById('countryFilter');
 const managerSelect = document.getElementById('managerSelect');
 const managerSelectGroup = document.getElementById('managerSelectGroup');
 const customStyleGroup = document.getElementById('customStyleGroup');
 const customPrompt = document.getElementById('customPrompt');
-const adviceContent = document.getElementById('adviceContent');
-const loadingSpinner = document.getElementById('loadingSpinner');
+
+const analyzeBtn = document.getElementById('analyzeBtn');
+const cooldownBar = document.getElementById('cooldownBar');
 const cooldownTimer = document.getElementById('cooldownTimer');
+const coachDisplayBadge = document.getElementById('coachDisplayBadge');
+
+const loadingScanner = document.getElementById('loadingScanner');
+const briefingCardsContainer = document.getElementById('briefingCardsContainer');
+const diagnosisContent = document.getElementById('diagnosisContent');
+const tacticsContent = document.getElementById('tacticsContent');
+const subsContent = document.getElementById('subsContent');
+
 const snapshotCanvas = document.getElementById('snapshotCanvas');
 
 let screenStream = null;
 let isCooldown = false;
 
-// 1. API 키 로컬 저장소 연동 (편의성)
+// 1. API 키 저장 및 상태 표시
+function updateKeyStatus() {
+  const key = apiKeyInput.value.trim();
+  if (key) {
+    keyStatusDot.classList.add('connected');
+    keyStatusDot.title = "Gemini API 키 연결됨";
+  } else {
+    keyStatusDot.classList.remove('connected');
+    keyStatusDot.title = "API 키 필요";
+  }
+}
+
 const savedKey = localStorage.getItem('fm27_gemini_api_key');
 if (savedKey) {
   apiKeyInput.value = savedKey;
+  updateKeyStatus();
 }
 
 saveKeyBtn.addEventListener('click', () => {
   const key = apiKeyInput.value.trim();
   if (key) {
     localStorage.setItem('fm27_gemini_api_key', key);
-    alert('Gemini API 키가 저장되었습니다!');
+    updateKeyStatus();
+    alert('✅ Gemini API 키가 브라우저에 안전하게 저장되었습니다!');
   } else {
     localStorage.removeItem('fm27_gemini_api_key');
+    updateKeyStatus();
     alert('API 키가 삭제되었습니다.');
   }
 });
 
-// 2. 국가/리그 필터 변경 시 감독 목록 업데이트
+// 2. 사령탑 배지 실시간 동기화
+function updateCoachBadge() {
+  if (countryFilter.value === 'custom') {
+    coachDisplayBadge.textContent = "감독: 커스텀 전술";
+  } else {
+    const selectedKey = managerSelect.value;
+    const coach = PERSONAS[selectedKey];
+    coachDisplayBadge.textContent = `감독: ${coach ? coach.name : "미선택"}`;
+  }
+}
+updateCoachBadge();
+
+managerSelect.addEventListener('change', updateCoachBadge);
+
+// 리그 필터 변경
 countryFilter.addEventListener('change', () => {
   const selectedLeague = countryFilter.value;
 
   if (selectedLeague === 'custom') {
     managerSelectGroup.style.display = 'none';
     customStyleGroup.style.display = 'block';
-    return;
-  }
+  } else {
+    managerSelectGroup.style.display = 'block';
+    customStyleGroup.style.display = 'none';
+    managerSelect.innerHTML = '';
 
-  managerSelectGroup.style.display = 'block';
-  customStyleGroup.style.display = 'none';
-  managerSelect.innerHTML = '';
-
-  for (const [key, p] of Object.entries(PERSONAS)) {
-    if (selectedLeague === 'all' || p.league === selectedLeague) {
-      const option = document.createElement('option');
-      option.value = key;
-      option.textContent = `${p.name} (${p.style.slice(0, 24)}...)`;
-      managerSelect.appendChild(option);
+    for (const [key, p] of Object.entries(PERSONAS)) {
+      if (selectedLeague === 'all' || p.league === selectedLeague) {
+        const option = document.createElement('option');
+        option.value = key;
+        option.textContent = `${p.name} • ${p.style.slice(0, 30)}...`;
+        managerSelect.appendChild(option);
+      }
     }
   }
+  updateCoachBadge();
 });
 
-// 3. 브라우저 화면 공유 (FM27 게임 창 가져오기)
+// 3. 브라우저 화면 공유 제어
 startShareBtn.addEventListener('click', async () => {
   try {
     screenStream = await navigator.mediaDevices.getDisplayMedia({
@@ -123,14 +167,16 @@ startShareBtn.addEventListener('click', async () => {
     stopShareBtn.style.display = 'inline-flex';
     analyzeBtn.disabled = false;
 
-    // 사용자가 브라우저 상단에서 공유를 직접 중단했을 때 처리
+    streamStatusPill.textContent = "라이브 피드 연결됨";
+    streamStatusPill.className = "status-pill status-live";
+
     screenStream.getVideoTracks()[0].addEventListener('ended', () => {
       stopScreenSharing();
     });
 
   } catch (err) {
     console.error("화면 공유 에러:", err);
-    alert("화면 공유가 취소되었거나 권한이 없습니다.");
+    alert("화면 공유가 취소되었거나 브라우저 권한이 없습니다.");
   }
 });
 
@@ -148,51 +194,57 @@ function stopScreenSharing() {
   startShareBtn.style.display = 'inline-flex';
   stopShareBtn.style.display = 'none';
   analyzeBtn.disabled = true;
+
+  streamStatusPill.textContent = "연결 대기 중";
+  streamStatusPill.className = "status-pill status-offline";
 }
 
-// 4. 화면 스냅샷 캡처 (선명도 최우선 메모리 처리)
+// 4. 고해상도 캡처
 function captureSnapshot() {
   const videoWidth = gameVideo.videoWidth;
   const videoHeight = gameVideo.videoHeight;
-
   if (!videoWidth || !videoHeight) return null;
 
-  // 원본 해상도를 그대로 유지하여 작은 텍스트(선수 평점, 체력 등) 보존
   snapshotCanvas.width = videoWidth;
   snapshotCanvas.height = videoHeight;
 
   const ctx = snapshotCanvas.getContext('2d');
   ctx.drawImage(gameVideo, 0, 0, videoWidth, videoHeight);
 
-  // JPEG 92% 품질로 Base64 추출 (메모리에서만 즉시 사용)
   const dataUrl = snapshotCanvas.toDataURL('image/jpeg', 0.92);
-  return dataUrl.split(',')[1]; // pure base64
+  return dataUrl.split(',')[1];
 }
 
-// 5. 쿨다운 타이머 (5초)
+// 5. 쿨다운 타이머 (5초) 및 프로그레스 바
 function startCooldown() {
   isCooldown = true;
   analyzeBtn.disabled = true;
   let remaining = 5;
+  const total = 5;
 
-  cooldownTimer.textContent = `대기 시간: ${remaining}초`;
+  cooldownTimer.textContent = `쿨다운: ${remaining}초`;
   cooldownTimer.style.color = '#f59e0b';
+  cooldownBar.style.width = '100%';
 
   const timer = setInterval(() => {
     remaining -= 1;
+    const percent = (remaining / total) * 100;
+    cooldownBar.style.width = `${percent}%`;
+
     if (remaining <= 0) {
       clearInterval(timer);
       isCooldown = false;
       if (screenStream) analyzeBtn.disabled = false;
       cooldownTimer.textContent = '준비 완료';
-      cooldownTimer.style.color = '#38bdf8';
+      cooldownTimer.style.color = '#10b981';
+      cooldownBar.style.width = '0%';
     } else {
-      cooldownTimer.textContent = `대기 시간: ${remaining}초`;
+      cooldownTimer.textContent = `쿨다운: ${remaining}초`;
     }
   }, 1000);
 }
 
-// 6. 단축키 지원 (스페이스바 또는 Ctrl + Enter로 전술 요청)
+// 6. 단축키 지원 (Ctrl + Enter)
 window.addEventListener('keydown', (e) => {
   if (e.ctrlKey && e.key === 'Enter') {
     if (!analyzeBtn.disabled && !isCooldown) {
@@ -201,7 +253,7 @@ window.addEventListener('keydown', (e) => {
   }
 });
 
-// 7. Gemini API 호출 및 조언 요청
+// 7. Gemini AI 분석 및 3개 구조화 카드 렌더링
 analyzeBtn.addEventListener('click', async () => {
   const apiKey = apiKeyInput.value.trim();
   if (!apiKey) {
@@ -216,12 +268,11 @@ analyzeBtn.addEventListener('click', async () => {
     return;
   }
 
-  // 현재 선택된 감독/스타일 파악
   let personaName = "";
   let personaStyle = "";
 
   if (countryFilter.value === 'custom') {
-    personaName = "커스텀 감독";
+    personaName = "커스텀 전술 감독";
     personaStyle = customPrompt.value.trim() || "상황에 맞는 균형 잡힌 실전 전술";
   } else {
     const selectedKey = managerSelect.value;
@@ -230,35 +281,34 @@ analyzeBtn.addEventListener('click', async () => {
     personaStyle = p.style;
   }
 
-  // AI 프롬프트 구성 (FM27 게임 맞춤형 3줄 브리핑)
+  // AI 프롬프트 (정확히 3단 카드로 분리되도록 헤더 구조화 요청)
   const systemInstruction = `
-당신은 세계적인 명장 '${personaName}'입니다. 
-당신의 전술 철학은 다음과 같습니다: [${personaStyle}].
+당신은 세계적인 축구 명장 '${personaName}'입니다. 
+당신의 확고한 전술 철학: [${personaStyle}]
 
-제공된 이미지는 'Football Manager 2027(FM27)' 게임 화면 스냅샷입니다.
-화면의 경기 시간, 스코어, 선수 평점, 체력/상태, xG(기대득점), 포메이션 대형, 점유율 등을 정밀하게 분석하세요.
+제공된 이미지는 Football Manager 2027(FM27) 게임 화면 스냅샷입니다.
+경기 시간, 스코어, 선수 평점, 체력/상태, xG, 포메이션, 점유율 등을 정밀 분석하세요.
 
-반드시 다음 규칙을 지켜 답변하세요:
-1. '${personaName}' 감독 특유의 말투(자신감 넘치고 명확한 어조)로 조언하세요.
-2. FM 게임에서 즉시 적용 가능한 실제 게임 내 전술 용어(예: 롤-포지션(IWB, DLP, IF 등), 템포 조절, 압박 강도, 라인 높이, 즉각 교체 추천)를 명확히 짚어주세요.
-3. 정확히 세 가지 핵심 포인트(3줄)로 요약하여 출력하세요. 각 줄은 불렛포인트(•)로 시작해야 합니다.
-  - 1줄: [현 경기 흐름 진단 및 문제점 지적]
-  - 2줄: [즉시 변경해야 할 전술/지침 수정 (라인, 템포, 롤 등)]
-  - 3줄: [선수 교체 또는 개인 지침 권고]
+반드시 다음 3개 섹션 태그를 사용하여 한국어로 명확하고 전문적인 FM27 전술 조언을 제공하세요:
+
+[진단]
+현재 경기 흐름, 상대에게 밀리는 지점, 체력 저하 선수, 취약한 공간 등 문제점을 '${personaName}' 감독 특유의 어조로 1~2문장으로 짚어주세요.
+
+[전술]
+FM27 인게임에서 즉시 수정해야 할 구체적인 전술 지침(예: 압박 강도, 수비 라인 높이, 패스 템포, 전개 방식, 포메이션 변형 등)을 실제 게임 용어로 명확히 작성하세요.
+
+[교체]
+당장 교체 아웃시켜야 할 포지션/선수 및 특정 포지션에 부여할 세부 롤(Role, 예: IWB 지원, 인버티드 윙어 공격, 딥라잉 플레이메이커 방어 등)을 추천하세요.
 `;
 
-  // UI 상태 업데이트
   startCooldown();
-  loadingSpinner.style.display = 'flex';
-  adviceContent.innerHTML = '';
+  loadingScanner.style.display = 'flex';
+  briefingCardsContainer.style.opacity = '0.3';
 
   try {
-    // Gemini 2.5 Flash / Gemini 1.5 Flash 모델 호출
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         contents: [
           {
@@ -285,36 +335,47 @@ analyzeBtn.addEventListener('click', async () => {
     const candidateText = result.candidates?.[0]?.content?.parts?.[0]?.text;
 
     if (candidateText) {
-      // 줄바꿈으로 나누어 리스트로 변환
-      const lines = candidateText
-        .split('\n')
-        .map(l => l.trim())
-        .filter(l => l.length > 0);
+      // [진단], [전술], [교체] 태그 파싱
+      let diagText = "";
+      let tactText = "";
+      let subsText = "";
 
-      let html = `<span class="persona-tag">감독 코칭: ${personaName}</span>`;
-      html += '<ul class="briefing-list">';
-      lines.forEach(line => {
-        // 불렛포인트 기호 제거 후 깔끔하게 표시
-        const cleanLine = line.replace(/^[•\-\*\d\.\s]+/, '');
-        html += `<li>${cleanLine}</li>`;
-      });
-      html += '</ul>';
+      const diagMatch = candidateText.match(/\[진단\]([\s\S]*?)(?=\[전술\]|\[교체\]|$)/i);
+      const tactMatch = candidateText.match(/\[전술\]([\s\S]*?)(?=\[교체\]|$)/i);
+      const subsMatch = candidateText.match(/\[교체\]([\s\S]*?)$/i);
 
-      adviceContent.innerHTML = html;
-    } else {
-      adviceContent.innerHTML = '<p class="placeholder-text">답변을 생성하지 못했습니다. 다시 시도해 주세요.</p>';
+      if (diagMatch || tactMatch || subsMatch) {
+        diagText = diagMatch ? diagMatch[1].trim() : "분석 내용 없음";
+        tactText = tactMatch ? tactMatch[1].trim() : "분석 내용 없음";
+        subsText = subsMatch ? subsMatch[1].trim() : "분석 내용 없음";
+      } else {
+        // 태그 매칭이 안 된 경우 줄바꿈 기준 3등분
+        const lines = candidateText.split('\n').filter(l => l.trim().length > 0);
+        diagText = lines[0] || candidateText;
+        tactText = lines[1] || "세부 전술 지침 유지";
+        subsText = lines.slice(2).join(' ') || "현재 라인업 유지 권고";
+      }
+
+      diagnosisContent.innerHTML = `<p>${formatTacticalText(diagText)}</p>`;
+      tacticsContent.innerHTML = `<p>${formatTacticalText(tactText)}</p>`;
+      subsContent.innerHTML = `<p>${formatTacticalText(subsText)}</p>`;
     }
 
   } catch (error) {
-    console.error("Gemini API 호출 실패:", error);
-    adviceContent.innerHTML = `
-      <p style="color: #ef4444; font-weight: bold;">⚠️ 오류 발생</p>
-      <p style="color: #cbd5e1; font-size: 0.85rem; margin-top: 6px;">
-        ${error.message}<br>
-        (API 키가 올바른지, 인터넷 연결 상태가 정상인지 확인해 주세요.)
-      </p>
-    `;
+    console.error("Gemini API 호출 에러:", error);
+    diagnosisContent.innerHTML = `<p style="color: #f43f5e; font-weight: bold;">⚠️ 분석 오류: ${error.message}</p>`;
+    tacticsContent.innerHTML = `<p style="color: #94a3b8;">API 키가 정확한지, 인터넷 연결이 정상인지 확인해 주세요.</p>`;
+    subsContent.innerHTML = `<p style="color: #94a3b8;">잠시 후 다시 시도해 주세요.</p>`;
   } finally {
-    loadingSpinner.style.display = 'none';
+    loadingScanner.style.display = 'none';
+    briefingCardsContainer.style.opacity = '1';
   }
 });
+
+// 전문 축구/FM 전술 키워드 하이라이트 포맷 함수
+function formatTacticalText(text) {
+  return text
+    .replace(/\n/g, '<br>')
+    .replace(/(IWB|IF|DLP|B2B|AF|압박 강도|수비 라인|패스 템포|게겐프레싱|하프스페이스|오프사이드 트랩)/g, 
+      '<span class="briefing-highlight">$1</span>');
+}
