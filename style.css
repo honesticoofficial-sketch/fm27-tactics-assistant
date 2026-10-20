@@ -1,6 +1,6 @@
 /* ============================================================
-   FM27 Matchday Tactical Playbook - Master Stylesheet
-   Theme: Deep Cyber-Pitch & Glassmorphism
+   FM27 Matchday Tactical Playbook - Master Stylesheet (v5)
+   Theme: Deep Cyber-Pitch & Dual-View Transition
    ============================================================ */
 
 :root {
@@ -50,24 +50,24 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* ============================================================
-   글로벌 래퍼 & 헤더
-   ============================================================ */
 .dashboard-wrapper {
-  max-width: 1600px;
+  max-width: 1540px;
   margin: 0 auto;
-  padding: 16px 24px 32px;
+  padding: 16px 20px 40px;
 }
 
+/* ============================================================
+   상단 글로벌 헤더
+   ============================================================ */
 .top-nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 20px;
+  padding: 14px 22px;
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(14px);
   margin-bottom: 20px;
 }
 
@@ -92,7 +92,7 @@ body {
 }
 
 .brand-logo {
-  font-size: 1.3rem;
+  font-size: 1.25rem;
   font-weight: 900;
   letter-spacing: -0.5px;
   background: linear-gradient(135deg, #34d399 0%, #06b6d4 100%);
@@ -112,11 +112,11 @@ body {
 }
 
 .brand-title .sub-title {
-  font-size: 0.75rem;
+  font-size: 0.74rem;
   color: var(--text-muted);
 }
 
-/* API 키 캡슐 */
+/* API 캡슐 */
 .api-capsule {
   display: flex;
   align-items: center;
@@ -142,7 +142,7 @@ body {
 }
 
 .capsule-label {
-  font-size: 0.75rem;
+  font-size: 0.74rem;
   font-weight: 600;
   color: var(--text-muted);
 }
@@ -166,7 +166,7 @@ body {
   color: var(--pitch-neon);
   border-radius: 9999px;
   padding: 4px 12px;
-  font-size: 0.75rem;
+  font-size: 0.74rem;
   font-weight: 600;
   cursor: pointer;
   transition: var(--transition-fast);
@@ -178,22 +178,8 @@ body {
 }
 
 /* ============================================================
-   메인 대시보드 2열 그리드
+   글래스 카드 공통
    ============================================================ */
-.dashboard-grid {
-  display: grid;
-  grid-template-columns: 460px 1fr;
-  gap: 20px;
-  align-items: start;
-}
-
-@media (max-width: 1100px) {
-  .dashboard-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* 글래스 카드 기본 스타일 */
 .glass-card {
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
@@ -205,7 +191,7 @@ body {
 }
 
 .glass-card:hover {
-  border-color: rgba(52, 211, 153, 0.25);
+  border-color: rgba(52, 211, 153, 0.3);
 }
 
 .card-header-compact {
@@ -213,6 +199,12 @@ body {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 12px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .section-tag {
@@ -236,9 +228,47 @@ body {
   border-radius: 9999px;
 }
 
+.monitor-status-pill {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.08);
+  padding: 1px 8px;
+  border-radius: 9999px;
+}
+
+.monitor-status-pill.live {
+  color: var(--pitch-neon);
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(52, 211, 153, 0.3);
+}
+
 /* ============================================================
-   1. 감독 페르소나 카드
+   화면 1: 작전 준비실 (Setup View Layout)
    ============================================================ */
+.view-panel {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.setup-layout-grid {
+  display: grid;
+  grid-template-columns: 440px 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+@media (max-width: 1100px) {
+  .setup-layout-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 감독 쇼케이스 */
 .select-inline {
   display: flex;
   align-items: center;
@@ -355,9 +385,7 @@ body {
   margin-top: 8px;
 }
 
-/* ============================================================
-   2. 상대 대비 스쿼드 체급 바 (3구역 피치 매트릭스)
-   ============================================================ */
+/* 상대 대비 체급 (피치 매트릭스) */
 .pitch-tier-matrix {
   display: flex;
   flex-direction: column;
@@ -440,28 +468,30 @@ body {
 }
 
 /* ============================================================
-   3. 실시간 화면공유 모니터 (완벽 중앙 정렬 해결!)
+   대형 게임 화면 모니터 (높이 260px로 대폭 확장!)
    ============================================================ */
-.video-monitor-box {
+.large-monitor {
   width: 100%;
-  height: 120px;
+  height: 260px; /* 대폭 확장! */
   background: #000;
   border-radius: var(--radius-md);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   overflow: hidden;
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.8);
 }
 
-.video-monitor-box video {
+.large-monitor video {
   width: 100%;
   height: 100%;
   object-fit: contain;
+  background: #000;
 }
 
-/* 중앙 정렬 플레이스홀더 */
+/* 모니터 정중앙 플레이스홀더 */
 .monitor-placeholder {
   width: 100%;
   height: 100%;
@@ -470,43 +500,42 @@ body {
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 12px;
-  background: radial-gradient(circle, rgba(16, 185, 129, 0.05) 0%, rgba(0, 0, 0, 0.6) 80%);
+  padding: 24px;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.08) 0%, rgba(0, 0, 0, 0.75) 80%);
 }
 
 .monitor-icon {
-  font-size: 1.6rem;
-  margin-bottom: 6px;
-  opacity: 0.8;
+  font-size: 2.2rem;
+  margin-bottom: 10px;
+  opacity: 0.85;
 }
 
 .monitor-main-text {
-  font-size: 0.78rem;
+  font-size: 0.88rem;
   font-weight: 700;
-  color: #e2e8f0;
-  margin-bottom: 2px;
+  color: #f1f5f9;
+  margin-bottom: 6px;
 }
 
 .monitor-sub-text {
-  font-size: 0.68rem;
-  color: var(--text-dim);
-  max-width: 380px;
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  max-width: 480px;
+  line-height: 1.4;
 }
 
-/* ============================================================
-   4. 2장 캡처 슬롯 (나란히 배치 & 퀵 액션)
-   ============================================================ */
+/* 2장 캡처 슬롯 */
 .dual-slots-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: 14px;
 }
 
 .capture-slot {
   background: rgba(0, 0, 0, 0.35);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: var(--radius-md);
-  padding: 10px;
+  padding: 12px;
   cursor: pointer;
   transition: var(--transition-fast);
   display: flex;
@@ -520,7 +549,7 @@ body {
 .capture-slot.active {
   border-color: var(--pitch-neon);
   box-shadow: 0 0 12px rgba(52, 211, 153, 0.25);
-  background: rgba(16, 185, 129, 0.05);
+  background: rgba(16, 185, 129, 0.06);
 }
 
 .slot-header {
@@ -540,7 +569,7 @@ body {
 }
 
 .slot-title {
-  font-size: 0.74rem;
+  font-size: 0.76rem;
   font-weight: 700;
   color: #fff;
 }
@@ -549,14 +578,14 @@ body {
   background: transparent;
   border: none;
   color: var(--accent-rose);
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   cursor: pointer;
   padding: 0 4px;
 }
 
 .slot-preview {
   width: 100%;
-  height: 95px;
+  height: 105px;
   background: rgba(0, 0, 0, 0.45);
   border: 1px dashed rgba(255, 255, 255, 0.12);
   border-radius: var(--radius-sm);
@@ -583,18 +612,18 @@ body {
 }
 
 .empty-icon {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   opacity: 0.6;
 }
 
 .empty-lead {
-  font-size: 0.72rem;
+  font-size: 0.74rem;
   font-weight: 600;
   color: #cbd5e1;
 }
 
 .empty-hint {
-  font-size: 0.64rem;
+  font-size: 0.66rem;
   color: var(--text-dim);
 }
 
@@ -608,8 +637,8 @@ body {
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: #e2e8f0;
-  font-size: 0.66rem;
-  padding: 4px 2px;
+  font-size: 0.68rem;
+  padding: 5px 2px;
   border-radius: var(--radius-sm);
   cursor: pointer;
   text-align: center;
@@ -629,9 +658,7 @@ body {
   justify-content: center;
 }
 
-/* ============================================================
-   5. 거대 분석 요청 버튼
-   ============================================================ */
+/* 대형 분석 버튼 */
 .action-bar {
   margin-top: 14px;
 }
@@ -641,12 +668,10 @@ body {
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   border: 1px solid var(--pitch-neon);
   border-radius: var(--radius-md);
-  padding: 14px 18px;
+  padding: 16px 20px;
   color: #050e0a;
   cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.35);
+  box-shadow: 0 4px 22px rgba(16, 185, 129, 0.35);
   transition: var(--transition-fast);
 }
 
@@ -660,7 +685,7 @@ body {
 
 .btn-mega-action:not(:disabled):hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 24px rgba(16, 185, 129, 0.55);
+  box-shadow: 0 6px 28px rgba(16, 185, 129, 0.6);
 }
 
 .action-inner {
@@ -669,19 +694,15 @@ body {
   justify-content: space-between;
 }
 
-.action-text-box {
-  text-align: left;
-}
-
 .action-title {
   display: block;
-  font-size: 0.95rem;
+  font-size: 1rem;
   font-weight: 900;
   letter-spacing: -0.2px;
 }
 
 .action-desc {
-  font-size: 0.72rem;
+  font-size: 0.74rem;
   opacity: 0.85;
 }
 
@@ -689,124 +710,259 @@ body {
   background: rgba(0, 0, 0, 0.3);
   padding: 2px 6px;
   border-radius: 4px;
-  font-size: 0.68rem;
+  font-size: 0.7rem;
   font-weight: 700;
 }
 
-.cooldown-progress-bar {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  height: 4px;
-  width: 0%;
-  background: #fff;
-  transition: width 0.1s linear;
-}
-
 /* ============================================================
-   우측 패널: 플레이북 브리핑 보드 (4대 배지 ➜ 모달)
+   화면 2: 라커룸 전술 브리핑실 (Briefing Room View Layout)
    ============================================================ */
-.result-dashboard {
-  min-height: 600px;
-  display: flex;
-  flex-direction: column;
-}
-
-.result-header {
+.briefing-top-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-bottom: 14px;
-  border-bottom: 1px solid var(--border-subtle);
-  margin-bottom: 16px;
+  padding: 12px 18px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  margin-bottom: 20px;
 }
 
-.result-title-box {
+.btn-back {
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.briefing-meta-tags {
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
-.status-indicator-live {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--pitch-neon);
-  box-shadow: 0 0 8px var(--pitch-neon);
-}
-
-.result-title-box h3 {
-  font-size: 1.05rem;
-  font-weight: 800;
-  color: #fff;
-}
-
-.result-badges {
-  display: flex;
-  gap: 8px;
-}
-
-.badge-coach, .badge-status {
-  font-size: 0.72rem;
+.meta-badge {
+  font-size: 0.74rem;
   font-weight: 600;
-  padding: 3px 10px;
+  padding: 4px 12px;
   border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #e2e8f0;
 }
 
-.badge-coach {
+#briefingCoachTag {
   background: rgba(16, 185, 129, 0.15);
   color: var(--pitch-neon);
   border: 1px solid rgba(52, 211, 153, 0.3);
 }
 
-.badge-status {
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--text-muted);
-}
-
-/* 사령탑 라커룸 음성 인트로 박스 */
-.coach-voice-box {
+/* 라커룸 스피치 카드 */
+.locker-room-speech-card {
   display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(6, 182, 212, 0.08) 100%);
-  border: 1px solid rgba(52, 211, 153, 0.3);
-  border-radius: var(--radius-md);
-  padding: 12px 14px;
-  margin-bottom: 16px;
-  animation: fadeIn 0.4s ease-out;
+  align-items: center;
+  gap: 16px;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%);
+  border: 1px solid var(--border-glow);
+  border-radius: var(--radius-lg);
+  padding: 18px 22px;
+  margin-bottom: 20px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
 }
 
-.voice-avatar-mini {
-  width: 36px;
-  height: 36px;
+.speech-avatar {
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   background: rgba(52, 211, 153, 0.2);
+  border: 2px solid var(--pitch-neon);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   flex-shrink: 0;
-  border: 1px solid var(--pitch-neon);
 }
 
-.voice-content {
-  flex: 1;
-}
-
-.voice-speaker {
-  font-size: 0.72rem;
+.speech-author {
+  font-size: 0.78rem;
   font-weight: 800;
   color: var(--pitch-neon);
   display: block;
-  margin-bottom: 2px;
+  margin-bottom: 4px;
 }
 
-.voice-quote {
-  font-size: 0.85rem;
-  color: #f1f5f9;
-  line-height: 1.4;
-  font-weight: 500;
+.speech-quote {
+  font-size: 0.98rem;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.5;
+}
+
+/* 3단 섹션 그리드 */
+.playbook-sections-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.full-width-card {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 960px) {
+  .playbook-sections-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.briefing-section-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.section-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 16px;
+}
+
+.section-icon {
+  font-size: 1.5rem;
+}
+
+.section-card-header h3 {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.section-sub {
+  font-size: 0.74rem;
+  color: var(--text-dim);
+}
+
+/* 포메이션 강조 바 */
+.formation-highlight-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(52, 211, 153, 0.3);
+  padding: 10px 16px;
+  border-radius: var(--radius-md);
+  margin-bottom: 16px;
+}
+
+.formation-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.formation-val {
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: var(--pitch-neon);
+  letter-spacing: 0.5px;
+}
+
+/* 세부 롤 & 상성 리스트 스타일 */
+.tactical-item-row {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  margin-bottom: 10px;
+}
+
+.tactical-item-row:last-child {
+  margin-bottom: 0;
+}
+
+.item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.item-title {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #e2e8f0;
+}
+
+.item-tag {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 1px 8px;
+  border-radius: 4px;
+}
+
+.tag-attack { background: rgba(244, 63, 94, 0.15); color: #fda4af; }
+.tag-mid { background: rgba(6, 182, 212, 0.15); color: #67e8f9; }
+.tag-def { background: rgba(16, 185, 129, 0.15); color: #6ee7b7; }
+.tag-adv { background: rgba(52, 211, 153, 0.15); color: var(--pitch-neon); }
+.tag-warn { background: rgba(245, 158, 11, 0.15); color: #fcd34d; }
+.tag-danger { background: rgba(244, 63, 94, 0.2); color: #ff8598; }
+
+.item-content {
+  font-size: 0.82rem;
+  color: #cbd5e1;
+  line-height: 1.6;
+}
+
+.item-content strong {
+  color: #fff;
+}
+
+/* 시나리오 카드 그리드 (3열) */
+.scenario-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
+
+@media (max-width: 900px) {
+  .scenario-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.scenario-card {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-md);
+  padding: 14px;
+}
+
+.scenario-header {
+  font-size: 0.82rem;
+  font-weight: 800;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.scenario-header.lead { color: var(--pitch-neon); }
+.scenario-header.even { color: var(--accent-cyan); }
+.scenario-header.chase { color: var(--accent-amber); }
+
+.scenario-body {
+  font-size: 0.78rem;
+  color: #cbd5e1;
+  line-height: 1.5;
+}
+
+/* 브리핑 푸터 */
+.briefing-footer-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 24px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 /* 로딩 스캐너 */
@@ -815,18 +971,18 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 60px 20px;
+  padding: 80px 20px;
   text-align: center;
 }
 
 .scanner-spinner {
-  width: 48px;
-  height: 48px;
+  width: 52px;
+  height: 52px;
   border: 3px solid rgba(52, 211, 153, 0.15);
   border-top-color: var(--pitch-neon);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
-  margin-bottom: 16px;
+  margin-bottom: 18px;
 }
 
 @keyframes spin {
@@ -834,154 +990,40 @@ body {
 }
 
 .scanner-title {
-  font-size: 0.95rem;
-  font-weight: 700;
+  font-size: 1.05rem;
+  font-weight: 800;
   color: #fff;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
 .scanner-sub {
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   color: var(--text-muted);
 }
 
-/* 4대 요약 배지 카드 그리드 */
-.summary-cards-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-  flex: 1;
-}
-
-@media (max-width: 900px) {
-  .summary-cards-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-.playbook-badge-card {
-  background: rgba(0, 0, 0, 0.35);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: var(--radius-md);
-  padding: 16px;
-  cursor: pointer;
-  transition: var(--transition-smooth);
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  overflow: hidden;
-}
-
-.playbook-badge-card:hover {
-  transform: translateY(-3px);
-  border-color: var(--pitch-neon);
-  background: rgba(16, 185, 129, 0.08);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-}
-
-.badge-card-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  margin-bottom: 12px;
-}
-
-.badge-title-wrap {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.badge-icon {
-  font-size: 1.4rem;
-}
-
-.badge-title-wrap h4 {
-  font-size: 0.92rem;
-  font-weight: 800;
-  color: #fff;
-}
-
-.badge-desc {
-  font-size: 0.7rem;
-  color: var(--text-dim);
-}
-
-.click-chip {
-  font-size: 0.68rem;
-  font-weight: 700;
-  color: var(--pitch-neon);
-  background: rgba(52, 211, 153, 0.12);
-  padding: 2px 8px;
-  border-radius: 9999px;
-  white-space: nowrap;
-}
-
-.badge-card-preview {
-  flex: 1;
-  font-size: 0.78rem;
-  color: #cbd5e1;
-  line-height: 1.5;
-}
-
-.empty-preview {
-  color: var(--text-dim);
-  font-style: italic;
-}
-
-/* 하단 푸터 바 */
-.dashboard-footer-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 16px;
-  padding-top: 12px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.footer-tip {
-  font-size: 0.72rem;
-  color: var(--text-dim);
-}
-
 /* ============================================================
-   고정형 상세 모달 (Fixed Detail Modal)
+   경고 모달 & 공통 버튼
    ============================================================ */
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.75);
+  background: rgba(0, 0, 0, 0.8);
   backdrop-filter: blur(10px);
   z-index: 9999;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
-  animation: fadeIn 0.2s ease-out;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
 }
 
 .modal-window {
   width: 100%;
-  max-width: 680px;
-  max-height: 85vh;
+  max-width: 560px;
   background: #0b1712;
   border: 1px solid var(--border-glow);
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.8), 0 0 30px rgba(16, 185, 129, 0.2);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.8);
   border-radius: var(--radius-lg);
-  display: flex;
-  flex-direction: column;
   overflow: hidden;
-  animation: modalScaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-@keyframes modalScaleUp {
-  from { transform: scale(0.95); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
 }
 
 .modal-header {
@@ -999,15 +1041,8 @@ body {
   gap: 10px;
 }
 
-.modal-icon {
-  font-size: 1.3rem;
-}
-
-.modal-header-title h3 {
-  font-size: 1rem;
-  font-weight: 800;
-  color: #fff;
-}
+.modal-icon { font-size: 1.3rem; }
+.modal-header-title h3 { font-size: 1rem; font-weight: 800; color: #fff; }
 
 .modal-close-btn {
   background: transparent;
@@ -1017,123 +1052,26 @@ body {
   cursor: pointer;
   padding: 4px 8px;
   border-radius: var(--radius-sm);
-  transition: var(--transition-fast);
-}
-
-.modal-close-btn:hover {
-  color: #fff;
-  background: rgba(255, 255, 255, 0.1);
 }
 
 .modal-body {
   padding: 20px;
-  overflow-y: auto;
-  font-size: 0.88rem;
-  color: #e2e8f0;
+  font-size: 0.86rem;
+  color: #cbd5e1;
   line-height: 1.6;
 }
 
+.warn-lead { font-size: 0.95rem; font-weight: 700; color: #fda4af; margin-bottom: 12px; }
+.warn-list { padding-left: 18px; display: flex; flex-direction: column; gap: 8px; }
+
 .modal-footer {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   padding: 12px 20px;
   background: rgba(0, 0, 0, 0.35);
   border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-.modal-hint {
-  font-size: 0.72rem;
-  color: var(--text-dim);
-}
-
-/* 모달 내부 서식 스타일 (슬라이더, 롤 카드 등) */
-.modal-section-title {
-  font-size: 0.82rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  color: var(--pitch-neon);
-  margin-top: 14px;
-  margin-bottom: 6px;
-  letter-spacing: 0.5px;
-}
-
-.modal-slider-box {
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: var(--radius-md);
-  padding: 12px;
-  margin: 10px 0;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-}
-
-.slider-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 4px 6px;
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 4px;
-  font-size: 0.78rem;
-}
-
-.slider-name {
-  color: var(--text-muted);
-}
-
-.slider-val {
-  font-weight: 700;
-  color: var(--pitch-neon);
-}
-
-.role-badge {
-  display: inline-block;
-  background: rgba(6, 182, 212, 0.15);
-  border: 1px solid rgba(6, 182, 212, 0.3);
-  color: #67e8f9;
-  font-size: 0.75rem;
-  font-weight: 700;
-  padding: 2px 8px;
-  border-radius: 4px;
-  margin: 2px 4px 2px 0;
-}
-
-.homage-banner {
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(244, 63, 94, 0.1) 100%);
-  border-left: 3px solid var(--accent-amber);
-  padding: 10px 14px;
-  border-radius: 0 var(--radius-md) var(--radius-md) 0;
-  margin: 12px 0;
-  font-size: 0.82rem;
-  color: #fef3c7;
-}
-
-/* 경고 모달 */
-.modal-warning {
-  border-color: rgba(244, 63, 94, 0.4);
-}
-
-.warn-lead {
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: #fda4af;
-  margin-bottom: 12px;
-}
-
-.warn-list {
-  padding-left: 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  font-size: 0.82rem;
-  color: #cbd5e1;
-}
-
-/* ============================================================
-   공통 버튼 & 토스트
-   ============================================================ */
 .btn {
   padding: 8px 14px;
   border-radius: var(--radius-sm);
@@ -1144,39 +1082,13 @@ body {
   transition: var(--transition-fast);
 }
 
-.btn-sm {
-  padding: 5px 10px;
-  font-size: 0.72rem;
-}
-
-.btn-primary {
-  background: var(--pitch-neon);
-  color: #050e0a;
-}
-
-.btn-primary:hover {
-  background: #6ee7b7;
-}
-
-.btn-outline {
-  background: transparent;
-  border: 1px solid var(--border-glow);
-  color: var(--pitch-neon);
-}
-
-.btn-outline:hover {
-  background: rgba(52, 211, 153, 0.15);
-}
-
-.btn-ghost {
-  background: transparent;
-  color: var(--text-muted);
-}
-
-.btn-ghost:hover {
-  color: #fff;
-  background: rgba(255, 255, 255, 0.08);
-}
+.btn-sm { padding: 5px 10px; font-size: 0.72rem; }
+.btn-primary { background: var(--pitch-neon); color: #050e0a; }
+.btn-primary:hover { background: #6ee7b7; }
+.btn-outline { background: transparent; border: 1px solid var(--border-glow); color: var(--pitch-neon); }
+.btn-outline:hover { background: rgba(52, 211, 153, 0.15); }
+.btn-ghost { background: transparent; color: var(--text-muted); }
+.btn-ghost:hover { color: #fff; background: rgba(255, 255, 255, 0.08); }
 
 .toast-container {
   position: fixed;
