@@ -915,7 +915,7 @@ sliders 내부의 tempo, directness, def_line, press의 val(0~100 숫자)과 tex
         });
       }
 
-      const candidateModels = ['gemini-2.5-flash', 'gemini-1.5-flash', 'gemini-2.0-flash'];
+      const candidateModels = ['gemini-3.8-flash', 'gemini-3.5-flash', 'gemini-3.0-flash', 'gemini-2.5-flash'];
       let response = null;
       let lastErrText = '';
 
