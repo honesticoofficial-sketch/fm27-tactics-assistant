@@ -99,7 +99,7 @@
           <!-- 2. 상대 대비 스쿼드 체급 비교 (3구역 피드) -->
           <div class="glass-card squad-tier-card">
             <div class="card-header-compact">
-              <span class="section-tag">상대 대비 전력 체급 (Matchup Tier)</span>
+              <span class="section-tag"><i data-lucide="scale" class="icon-inline icon-neon"></i> 상대 대비 전력 체급 (Matchup Tier)</span>
               <span class="helper-sub">이번 상대와 비교했을 때 우리 팀의 체급</span>
             </div>
 
@@ -107,7 +107,7 @@
               <!-- 공격진 -->
               <div class="tier-row" data-zone="attack">
                 <div class="tier-zone-label">
-                  <span class="zone-icon">⚔️</span>
+                  <i data-lucide="swords" class="zone-icon icon-rose"></i>
                   <span class="zone-name">공격진 (결정력/속도)</span>
                 </div>
                 <div class="tier-btn-group">
@@ -120,7 +120,7 @@
               <!-- 미드필더 -->
               <div class="tier-row" data-zone="midfield">
                 <div class="tier-zone-label">
-                  <span class="zone-icon">⚙️</span>
+                  <i data-lucide="cog" class="zone-icon icon-amber"></i>
                   <span class="zone-name">미드필더 (중원 장악력)</span>
                 </div>
                 <div class="tier-btn-group">
@@ -133,7 +133,7 @@
               <!-- 수비진 -->
               <div class="tier-row" data-zone="defense">
                 <div class="tier-zone-label">
-                  <span class="zone-icon">🛡️</span>
+                  <i data-lucide="shield" class="zone-icon icon-cyan"></i>
                   <span class="zone-name">수비진 (포백/수비력)</span>
                 </div>
                 <div class="tier-btn-group">
@@ -142,6 +142,81 @@
                   <button type="button" class="tier-btn" data-val="열세">열세</button>
                 </div>
               </div>
+            </div>
+          </div>
+
+          <!-- 2-1. 우리 팀 고유 체질 (Team DNA: 강점 & 약점 설정) -->
+          <div class="glass-card team-dna-card" id="teamDnaCard">
+            <div class="card-header-compact">
+              <div class="header-left">
+                <span class="section-tag"><i data-lucide="dna" class="icon-inline icon-cyan"></i> 우리 팀 고유 체질 (Team DNA)</span>
+                <span class="helper-sub">설정 시 자동 저장되어 다음 경기에도 유지됩니다</span>
+              </div>
+              <div class="header-right">
+                <label class="toggle-switch-wrap" title="Team DNA 켜기/끄기">
+                  <input type="checkbox" id="teamDnaToggle">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <!-- 체질 설정 본문 (토글 OFF 시 접힘) -->
+            <div class="team-dna-body" id="teamDnaBody">
+              
+              <!-- 1. 핵심 강점 행 -->
+              <div class="dna-row">
+                <div class="dna-label-group">
+                  <span class="dna-badge badge-strength"><i data-lucide="zap" class="icon-inline"></i> 우리 팀 장점</span>
+                </div>
+                <div class="dna-controls">
+                  <div class="dna-select-wrap">
+                    <select id="teamStrengthSelect" class="dna-select">
+                      <option value="pace">⚡ 폭발적 주력/치달 (치고 달리기 &amp; 속공 전개)</option>
+                      <option value="crossing">🎯 택배 크로스/뚝배기 헤더 (측면 고공 폭격)</option>
+                      <option value="playmaker">🧠 탈압박 &amp; 중원 킬패스 (플레이메이커 지휘)</option>
+                      <option value="defense">🧱 철벽 포백 대인방어 (피지컬 &amp; 1:1 차단 우위)</option>
+                      <option value="dribble">🌪️ 원톱/윙어 크랙 드리블 (수비진 균열 &amp; 돌파)</option>
+                      <option value="workrate">🔥 강철 체력 &amp; 왕성한 활동량 (게겐프레싱 압박)</option>
+                    </select>
+                  </div>
+                  <div class="level-btn-group" id="strengthLevelGroup" data-target="strength">
+                    <button type="button" class="level-btn active" data-val="high" title="장점 강도: 상 (월드클래스급)">상</button>
+                    <button type="button" class="level-btn" data-val="mid" title="장점 강도: 중 (준수한 수준)">중</button>
+                    <button type="button" class="level-btn" data-val="low" title="장점 강도: 하 (평범한 수준)">하</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 2. 핵심 약점 행 -->
+              <div class="dna-row">
+                <div class="dna-label-group">
+                  <span class="dna-badge badge-weakness"><i data-lucide="alert-triangle" class="icon-inline"></i> 우리 팀 약점</span>
+                </div>
+                <div class="dna-controls">
+                  <div class="dna-select-wrap">
+                    <select id="teamWeaknessSelect" class="dna-select">
+                      <option value="slow_backline">🐢 느림보 수비라인 (발이 느려 뒷공간 털림 주의)</option>
+                      <option value="stamina_drop">🪫 조루 체력/60분 방전 (후반 실점 위기 &amp; 붕괴)</option>
+                      <option value="injury_prone">🩹 유리몸/선수층 얇음 (부상·카드 누적 시 파멸)</option>
+                      <option value="poor_finishing">💨 소녀슛/결정력 부족 (빅찬스 미스 &amp; 홈런 남발)</option>
+                      <option value="flank_leak">🕳️ 풀백 자동문 (측면 수비 붕괴 &amp; 복귀 지연)</option>
+                      <option value="air_weak">☁️ 제공권 열세 (세트피스/헤더 실점 빈발)</option>
+                    </select>
+                  </div>
+                  <div class="level-btn-group" id="weaknessLevelGroup" data-target="weakness">
+                    <button type="button" class="level-btn active" data-val="high" title="약점 심각도: 심각(상) - 최우선 보정 필요">심각</button>
+                    <button type="button" class="level-btn" data-val="mid" title="약점 심각도: 보통(중) - 전술적 주의">보통</button>
+                    <button type="button" class="level-btn" data-val="low" title="약점 심각도: 경미(하) - 약간의 보완">경미</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 안내 툴팁 -->
+              <div class="dna-hint-box">
+                <i data-lucide="info" class="icon-inline icon-cyan"></i>
+                <span>사령탑 AI가 위 체질을 감안하여 약점은 전술로 커버하고 장점은 극대화하는 조작값을 계산합니다.</span>
+              </div>
+
             </div>
           </div>
 
@@ -451,6 +526,7 @@
         <div class="briefing-meta-tags">
           <span class="meta-badge" id="briefingCoachTag"><i data-lucide="user" class="icon-inline icon-cyan"></i> 사령탑: 펩 과르디올라</span>
           <span class="meta-badge" id="briefingTiersTag"><i data-lucide="scale" class="icon-inline icon-neon"></i> 체급: 공격 호각 / 미드 호각 / 수비 호각</span>
+          <span class="meta-badge" id="briefingDnaTag" style="display: none;"><i data-lucide="dna" class="icon-inline icon-purple"></i> 체질: ⚡치달(상) / 🐢수비느림(심각)</span>
           <button id="captureSummaryBtn" class="btn btn-sm btn-primary"><i data-lucide="camera" class="icon-inline"></i> 전술 카드 (PNG 저장)</button>
           <button id="captureGifBtn" class="btn btn-sm btn-secondary"><i data-lucide="film" class="icon-inline"></i> 전술 움짤 (GIF 저장)</button>
         </div>
