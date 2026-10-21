@@ -203,8 +203,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // 피치 보드 요소
   const pitchFormationTitle = document.getElementById('pitchFormationTitle');
   const pitchFormationReason = document.getElementById('pitchFormationReason');
-  const orientLandscapeBtn = document.getElementById('orientLandscapeBtn');
-  const orientPortraitBtn = document.getElementById('orientPortraitBtn');
   const phaseAttackBtn = document.getElementById('phaseAttackBtn');
   const phaseDefenseBtn = document.getElementById('phaseDefenseBtn');
   const cyberPitch = document.getElementById('cyberPitch');
@@ -250,6 +248,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
   backToSetupBtn.addEventListener('click', () => switchView('setup'));
   bottomBackBtn.addEventListener('click', () => switchView('setup'));
+
+  const brandHomeBtn = document.getElementById('brandHomeBtn') || document.querySelector('.brand');
+  if (brandHomeBtn) {
+    brandHomeBtn.addEventListener('click', () => {
+      clearSlot(1);
+      clearSlot(2);
+      STATE.latestResultData = null;
+      STATE.pitchPlayers = [];
+      updateAnalyzeButtonState();
+      switchView('setup');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      showToast('🏟️ 새로운 매치데이를 위해 준비실로 리셋되었습니다.');
+    });
+  }
 
   // ------------------------------------------------------------
   // 5. 토스트 알림
@@ -837,6 +849,28 @@ ${advancedContext}
     "def_line": { "val": 75, "text": "높은 수비 라인" },
     "press": { "val": 80, "text": "더 자주 강하게 (전방 1차 압박)" }
   },
+  "player_instructions": [
+    {
+      "player": "핵심 선수명 (예: 에제)",
+      "role": "세부 롤 (예: AP-지원)",
+      "instruction": "인게임 개인 지침 (예: 위험을 감수하라, 하프스페이스 침투, 더 넓게 배치)"
+    },
+    {
+      "player": "핵심 선수명 (예: 무뇨스)",
+      "role": "세부 롤 (예: WB-공격)",
+      "instruction": "인게임 개인 지침 (예: 오버래핑 빈도 증가, 먼 포스트로 크로스)"
+    }
+  ],
+  "scenarios_detail": {
+    "lead": "2점 차 이상 리드 시 (잠그기 & 승점 굳히기): 템포 낮추기, 패스 짧게, 풀백 안정화 등 구체적 인게임 조작값 (2문장)",
+    "tight": "1점 차 접전 / 동점 시 (65~75분 승부처): 체력 방전 선수 1:1 교체 및 승부처 템포 조율 지침 (2문장)",
+    "chase": "1점 차 열세 / 실점 시 (역전 총공세 모드): 라인 전진, 전방 압박 극대화, 공격수 투입 조작값 (2문장)"
+  },
+  "onepoint_detail": {
+    "ace_mark": "상대 핵심 에이스/키맨 이름 및 구체적 전담 마크 설정법 (약발 유도, 강하게 압박, 전담 마킹)",
+    "setpiece": "이번 경기 세트피스(코너킥/프리킥) 득점 패턴 및 수비 배치 비기",
+    "signature": "사령탑 감독 고유의 시그니처 원포인트 실전 비기"
+  },
   "summary_badges": {
     "matchup": "상대 약점 및 상성 진단 한눈 요약 (2줄)",
     "plana": "원본 유지 여부 및 롤 미세조정 한눈 요약 (2줄)",
@@ -845,13 +879,14 @@ ${advancedContext}
   },
   "modal_details": {
     "matchup": "HTML 포맷: 상대 공격 루트, 수비 취약 공간, 우리 스쿼드와의 맞대결 유불리 상세",
-    "plana": "HTML 포맷: 인게임 마우스 클릭 체크리스트 (선수 롤 Before ➜ After 변경점, 팀 지침 슬라이더 템포/패스/라인 조작값, 개인 지침)",
-    "scenarios": "HTML 포맷: 2점 리드 시 잠그기 지침 vs 1점차 접전 vs 열세/실점 시 역전 총공세 조작값",
-    "onepoint": "HTML 포맷: 상대 에이스 전담 마크 설정법, 세트피스 지침, 넌지시 녹여낸 실전 비기"
+    "plana": "HTML 포맷: 인게임 마우스 클릭 체크리스트 (선수 롤 Before ➜ After 변경점, 팀 지침 슬라이더 템포/패스/라인 조작값, 개인 지침)"
   }
 }
-[★ sliders 슬라이더 값 엄격 지침]:
-sliders 내부의 tempo, directness, def_line, press의 val(0~100 숫자)과 text(FM 인게임 라벨)는 반드시 아래 modal_details.plana에 기술할 체크리스트 전술 지침 및 당신의 전술 철학과 100% 모순 없이 완벽히 일치해야 합니다.`;
+[★ 세부 지침 및 슬라이더 엄격 규칙]:
+1. sliders의 tempo, directness, def_line, press의 val(0~100 숫자)과 text는 추천 전술 지침과 100% 모순 없이 완벽히 일치해야 합니다.
+2. player_instructions에는 이번 경기의 승부처가 될 핵심 선수 2~3명의 인게임 개인 지침(PI)을 구체적으로 명시하십시오.
+3. scenarios_detail에는 2점차 리드(lead), 1점차 접전(tight), 1점차 열세(chase) 3대 상황별 대처법을 인게임 조작값과 함께 명시하십시오.
+4. onepoint_detail에는 상대 에이스 봉쇄(ace_mark), 세트피스 설계(setpiece), 사령탑 비기(signature)를 각각 명확히 작성하십시오.`;
   }
 
   // ------------------------------------------------------------
@@ -1017,8 +1052,9 @@ sliders 내부의 tempo, directness, def_line, press의 val(0~100 숫자)과 tex
     STATE.pitchPlayers = normalizePitchPlayers(pitchData.players);
     STATE.currentPitchPhase = 'attack';
     
-    // 피치 방향 동기화 및 렌더링
-    setPitchOrientation(STATE.pitchOrientation);
+    // 세로 피치 보드 초기화 및 렌더링
+    initPitchOrientation();
+    updatePitchPhaseUI('attack');
 
     // 4대 요약 배지 업데이트
     if (data.summary_badges) {
@@ -1065,55 +1101,77 @@ sliders 내부의 tempo, directness, def_line, press의 val(0~100 숫자)과 tex
     });
   }
 
-  // 가로/세로 좌표 변환기 (가로 모드 시 90도 회전 수학 매핑)
+  // ------------------------------------------------------------
+  // FM 공식 역할(Role) 영문 약어 매핑 딕셔너리
+  // ------------------------------------------------------------
+  const FM_ROLE_MAP = {
+    // 공격수 (Striker)
+    'af': 'AF', '포처': 'P', 'poacher': 'P', '전진형': 'AF', '타깃': 'TF', '타겟': 'TF', 'tf': 'TF', 'target': 'TF',
+    'pf': 'PF', '프레싱': 'PF', 'pressing': 'PF', '완성형': 'CF', 'cf': 'CF', 'complete': 'CF',
+    '딥라잉포워드': 'DLF', 'dlf': 'DLF', '가짜9번': 'F9', 'f9': 'F9', 'f-9': 'F9', 'false nine': 'F9',
+    // 윙어 / 2선 공격
+    'if': 'IF', '인사이드포워드': 'IF', 'inside forward': 'IF', 'iw': 'IW', '인버티드윙': 'IW', 'inverted winger': 'IW',
+    'w': 'W', '윙어': 'W', 'winger': 'W', 'ap': 'AP', '어드밴스드': 'AP', 'advanced playmaker': 'AP',
+    'am': 'AM', '공격형미드': 'AM', 'attacking midfielder': 'AM', 'ss': 'SS', '섀도우': 'SS', 'shadow striker': 'SS',
+    'wt': 'WT', '와이드타깃': 'WT', 'rmd': 'RMD', '라움도이터': 'RMD',
+    // 미드필더 (Midfielder)
+    'b2b': 'B2B', 'bb': 'B2B', '박스투박스': 'B2B', 'box to box': 'B2B', 'dlp': 'DLP', '딥라잉플레이메이커': 'DLP', 'deep lying playmaker': 'DLP',
+    'bwm': 'BWM', '볼위닝': 'BWM', 'ball winning': 'BWM', 'mez': 'MEZ', '메짤라': 'MEZ', 'mezzala': 'MEZ',
+    'cm': 'CM', '중앙미드': 'CM', 'central midfielder': 'CM', 'car': 'CAR', '카릴레로': 'CAR',
+    'rpm': 'RPM', '로밍': 'RPM', 'roaming playmaker': 'RPM',
+    // 수비형 미드필더 (DM)
+    'dm': 'DM', '수비형미드': 'DM', 'defensive midfielder': 'DM', 'a': 'A', '앵커': 'A', 'anchor': 'A',
+    'hb': 'HB', '하프백': 'HB', 'half back': 'HB', 'vol': 'VOL', '볼란테': 'VOL', 'segundo volante': 'VOL',
+    'reg': 'REG', '레지스타': 'REG',
+    // 풀백 / 윙백 (FB / WB)
+    'iwb': 'IWB', '인버티드풀백': 'IWB', 'inverted wing back': 'IWB', 'wb': 'WB', '윙백': 'WB', 'wing back': 'WB',
+    'fb': 'FB', '풀백': 'FB', 'full back': 'FB', 'cwb': 'CWB', '완성형윙백': 'CWB',
+    // 센터백 (CB)
+    'cb': 'CB', '센터백': 'CB', 'central defender': 'CB', 'cd': 'CD', '중앙수비': 'CD',
+    'bpd': 'BPD', '볼플레잉': 'BPD', 'ball playing defender': 'BPD', 'wcb': 'WCB', '와이드센터백': 'WCB',
+    'l': 'L', '리베로': 'L', 'libero': 'L', 'nfb': 'NFB',
+    // 골키퍼 (GK)
+    'sk': 'SK', '스위퍼키퍼': 'SK', 'sweeper keeper': 'SK', 'gk': 'GK', '골키퍼': 'GK', 'goalkeeper': 'GK'
+  };
+
+  function getRoleAbbr(rawRole, zone) {
+    if (!rawRole) {
+      if (zone === 'gk') return 'SK';
+      if (zone === 'attack') return 'PF';
+      if (zone === 'defense') return 'CD';
+      return 'CM';
+    }
+
+    const clean = rawRole.toLowerCase().replace(/[\(\)\[\]\-_]/g, ' ').trim();
+    const parts = clean.split(/\s+/);
+    for (const p of parts) {
+      if (FM_ROLE_MAP[p]) return FM_ROLE_MAP[p];
+    }
+    for (const [key, val] of Object.entries(FM_ROLE_MAP)) {
+      if (clean.includes(key)) return val;
+    }
+    const match = rawRole.match(/^[A-Za-z]{1,4}/);
+    if (match) return match[0].toUpperCase();
+
+    if (zone === 'gk') return 'SK';
+    if (zone === 'attack') return 'PF';
+    if (zone === 'defense') return 'CD';
+    return 'CM';
+  }
+
+  // 세로 피치 전용 좌표 변환기 (FM 인게임 세로 축구장 고정)
   function calcPitchCoords(pos) {
-    if (STATE.pitchOrientation === 'horizontal') {
-      // 가로 모드: 상대팀 골대 좌측(x=0), 아군 골대 우측(x=100)
-      // 세로 모드의 y(상->하)가 가로의 x(좌->우)로 매핑
-      // 세로 모드의 x(좌->우 윙)가 가로의 y(상->하 윙)로 매핑
-      const screenX = Math.max(5, Math.min(95, pos.y));
-      const screenY = Math.max(8, Math.min(92, pos.x));
-      return { x: screenX, y: screenY };
-    } else {
-      // 세로 모드
-      const screenX = Math.max(6, Math.min(94, pos.x));
-      const screenY = Math.max(6, Math.min(94, pos.y));
-      return { x: screenX, y: screenY };
-    }
+    const screenX = Math.max(6, Math.min(94, pos.x));
+    const screenY = Math.max(6, Math.min(94, pos.y));
+    return { x: screenX, y: screenY };
   }
 
-  // 피치 방향 전환 (가로형 ↔ 세로형)
-  function setPitchOrientation(orient) {
-    STATE.pitchOrientation = orient;
-    if (orient === 'horizontal') {
-      cyberPitch.classList.remove('pitch-vertical');
-      cyberPitch.classList.add('pitch-horizontal');
-      orientLandscapeBtn.classList.add('active');
-      orientPortraitBtn.classList.remove('active');
-      pitchDirectionBanner.innerHTML = `
-        <span class="dir-opp">⬅️ 상대팀 진영 (공격 목표)</span>
-        <span class="dir-mid">⚔️ 중앙 하프라인</span>
-        <span class="dir-own">아군 수비 진영 (우리 골대) ➡️</span>
-      `;
-    } else {
-      cyberPitch.classList.remove('pitch-horizontal');
-      cyberPitch.classList.add('pitch-vertical');
-      orientPortraitBtn.classList.add('active');
-      orientLandscapeBtn.classList.remove('active');
-      pitchDirectionBanner.innerHTML = `
-        <span class="dir-opp">⬆️ 상대팀 진영 (공격 목표)</span>
-        <span class="dir-mid">⚔️ 중앙 하프라인</span>
-        <span class="dir-own">아군 수비 진영 (우리 골대) ⬇️</span>
-      `;
-    }
-
-    if (STATE.pitchPlayers && STATE.pitchPlayers.length > 0) {
-      updatePitchPhaseUI(STATE.currentPitchPhase);
-    }
+  // 피치 세로 모드 고정 초기화
+  function initPitchOrientation() {
+    STATE.pitchOrientation = 'vertical';
+    cyberPitch.classList.remove('pitch-horizontal');
+    cyberPitch.classList.add('pitch-vertical');
   }
-
-  orientLandscapeBtn.addEventListener('click', () => setPitchOrientation('horizontal'));
-  orientPortraitBtn.addEventListener('click', () => setPitchOrientation('vertical'));
 
   // 피치 보드에 11명 노드 렌더링 및 위치 전환
   function updatePitchPhaseUI(phase) {
@@ -1122,16 +1180,16 @@ sliders 내부의 tempo, directness, def_line, press의 val(0~100 숫자)과 tex
     if (phase === 'attack') {
       phaseAttackBtn.classList.add('active');
       phaseDefenseBtn.classList.remove('active');
-      currentPhaseLabel.textContent = "현재: ⚔️ 공격 시 공격 전개 대형 (In Possession)";
+      currentPhaseLabel.textContent = "현재: 공격 전개 대형 (In Possession)";
       currentPhaseLabel.style.color = "#f43f5e";
     } else {
       phaseDefenseBtn.classList.add('active');
       phaseAttackBtn.classList.remove('active');
-      currentPhaseLabel.textContent = "현재: 🛡️ 수비 시 콤팩트 블록 대형 (Out of Possession)";
+      currentPhaseLabel.textContent = "현재: 수비 블록 대형 (Out of Possession)";
       currentPhaseLabel.style.color = "var(--pitch-neon)";
     }
 
-    // 노드가 이미 있으면 위치만 스르륵 글라이딩 애니메이션!
+    // 노드가 이미 있으면 위치 및 역할 텍스트만 스르륵 글라이딩 애니메이션!
     const existingNodes = pitchPlayersContainer.querySelectorAll('.player-node');
     if (existingNodes.length === STATE.pitchPlayers.length && existingNodes.length === 11) {
       STATE.pitchPlayers.forEach((player, idx) => {
@@ -1139,9 +1197,13 @@ sliders 내부의 tempo, directness, def_line, press의 val(0~100 숫자)과 tex
         const rawPos = phase === 'attack' ? player.attack_pos : player.defense_pos;
         const mappedPos = calcPitchCoords(rawPos);
         const actText = phase === 'attack' ? player.attack_action : player.defense_action;
+        const roleAbbr = getRoleAbbr(player.role, player.zone);
 
         nodeEl.style.left = `${mappedPos.x}%`;
         nodeEl.style.top = `${mappedPos.y}%`;
+
+        const dotEl = nodeEl.querySelector('.player-dot');
+        if (dotEl) dotEl.textContent = roleAbbr;
 
         const actPill = nodeEl.querySelector('.player-action-pill');
         if (actPill) {
@@ -1158,6 +1220,7 @@ sliders 내부의 tempo, directness, def_line, press의 val(0~100 숫자)과 tex
       const rawPos = phase === 'attack' ? player.attack_pos : player.defense_pos;
       const mappedPos = calcPitchCoords(rawPos);
       const actText = phase === 'attack' ? player.attack_action : player.defense_action;
+      const roleAbbr = getRoleAbbr(player.role, player.zone);
 
       const node = document.createElement('div');
       node.className = `player-node zone-${player.zone}`;
@@ -1165,13 +1228,13 @@ sliders 내부의 tempo, directness, def_line, press의 val(0~100 숫자)과 tex
       node.style.top = `${mappedPos.y}%`;
 
       node.innerHTML = `
-        <div class="player-dot">${player.role.split('-')[0] || '●'}</div>
+        <div class="player-dot">${roleAbbr}</div>
         <div class="player-name-badge">${player.name}</div>
         <div class="player-action-pill ${phase === 'attack' ? 'act-attack' : 'act-defense'}">${actText}</div>
       `;
 
       node.addEventListener('click', () => {
-        showToast(`[${player.name}] 롤: ${player.role} | ${phase === 'attack' ? '공격 움직임' : '수비 지침'}: ${actText}`);
+        showToast(`[${player.name}] 역할: ${player.role} (${roleAbbr}) | ${phase === 'attack' ? '공격 움직임' : '수비 지침'}: ${actText}`);
       });
 
       pitchPlayersContainer.appendChild(node);
@@ -1196,6 +1259,43 @@ sliders 내부의 tempo, directness, def_line, press의 val(0~100 숫자)과 tex
     });
   });
 
+  // 핵심 선수 개인 지침 (PI) 렌더러
+  function renderPlayerInstructions(list) {
+    if (Array.isArray(list) && list.length > 0) {
+      return `
+        <div class="player-pi-list">
+          ${list.map(item => `
+            <div class="player-pi-card">
+              <div class="player-pi-head">
+                <span class="player-pi-name">${item.player || '핵심 선수'}</span>
+                <span class="player-pi-role">${getRoleAbbr(item.role, 'midfield')}</span>
+              </div>
+              <div class="player-pi-text">${item.instruction || item.instructions || '공간 침투 및 위험 감수 지침 활성화'}</div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+    return `
+      <div class="player-pi-list">
+        <div class="player-pi-card">
+          <div class="player-pi-head">
+            <span class="player-pi-name">주요 공격 자원 (2선/윙어)</span>
+            <span class="player-pi-role">IF/AP</span>
+          </div>
+          <div class="player-pi-text">하프스페이스 침투 ↗, '위험을 감수하라' 및 컷백 연계 활성화</div>
+        </div>
+        <div class="player-pi-card">
+          <div class="player-pi-head">
+            <span class="player-pi-name">측면 풀백 / 윙백 자원</span>
+            <span class="player-pi-role">WB/IWB</span>
+          </div>
+          <div class="player-pi-text">상대 뒷공간 오버래핑 빈도 증가 및 신속한 수비 복귀 지시</div>
+        </div>
+      </div>
+    `;
+  }
+
   function openDetailModal(type) {
     const data = STATE.latestResultData;
     if (!data) return;
@@ -1203,13 +1303,13 @@ sliders 내부의 tempo, directness, def_line, press의 val(0~100 숫자)과 tex
     const details = data.modal_details || {};
 
     if (type === 'matchup') {
-      modalIcon.textContent = '⚔️';
+      modalIcon.innerHTML = '<i data-lucide="swords" class="icon-attack"></i>';
       modalTitle.textContent = '상성 진단 & 공략 지점 (상대 취약점 정밀 분석)';
       
       const content = details.matchup || data.summary_badges?.matchup || '상대 공격 및 수비 분석 데이터가 생성되지 않았습니다.';
       modalBody.innerHTML = `
         <div class="modal-check-section">
-          <div class="modal-check-title">🎯 상대 전술 핵심 패턴 & 취약 공간 공략</div>
+          <div class="modal-check-title"><i data-lucide="target" class="icon-inline icon-attack"></i> 상대 전술 핵심 패턴 & 취약 공간 공략</div>
           <div class="tactical-highlight-box">
             <p style="font-size: 0.88rem; line-height: 1.6; color: #f1f5f9;">
               ${content.replace(/\n/g, '<br>')}
@@ -1218,7 +1318,7 @@ sliders 내부의 tempo, directness, def_line, press의 val(0~100 숫자)과 tex
         </div>
 
         <div class="modal-check-section">
-          <div class="modal-check-title">⚖️ 라인별 전력 체급 종합 판정</div>
+          <div class="modal-check-title"><i data-lucide="scale" class="icon-inline icon-neon"></i> 라인별 전력 체급 종합 판정</div>
           <div class="fm-slider-group">
             <div class="fm-slider-item">
               <div class="fm-slider-label">
@@ -1245,7 +1345,7 @@ sliders 내부의 tempo, directness, def_line, press의 val(0~100 숫자)과 tex
         </div>
       `;
     } else if (type === 'plana') {
-      modalIcon.textContent = '📋';
+      modalIcon.innerHTML = '<i data-lucide="clipboard-list" class="icon-neon"></i>';
       modalTitle.textContent = '플랜 A 인게임 세부 조작 가이드 (인터랙티브 바인더)';
       
       const content = details.plana || data.summary_badges?.plana || '';
@@ -1265,7 +1365,7 @@ sliders 내부의 tempo, directness, def_line, press의 val(0~100 숫자)과 tex
 
       modalBody.innerHTML = `
         <div class="modal-check-section">
-          <div class="modal-check-title">🎚️ (FM) 팀 전술 슬라이더 조작값 (AI 분석 100% 동기화)</div>
+          <div class="modal-check-title"><i data-lucide="sliders" class="icon-inline icon-neon"></i> (FM) 팀 전술 슬라이더 조작값 (AI 분석 100% 동기화)</div>
           <div class="fm-slider-group">
             <div class="fm-slider-item">
               <div class="fm-slider-label">
@@ -1299,7 +1399,7 @@ sliders 내부의 tempo, directness, def_line, press의 val(0~100 숫자)과 tex
         </div>
 
         <div class="modal-check-section">
-          <div class="modal-check-title">✅ 인게임 조작 체크리스트 (클릭하여 설정 완료 표시)</div>
+          <div class="modal-check-title"><i data-lucide="check-square" class="icon-inline icon-cyan"></i> 인게임 조작 체크리스트 (클릭하여 설정 완료 표시)</div>
           <div class="interactive-checklist">
             <div class="tactical-checkbox-item">
               <div class="check-box-icon"></div>
@@ -1322,8 +1422,10 @@ sliders 내부의 tempo, directness, def_line, press의 val(0~100 숫자)과 tex
             <div class="tactical-checkbox-item">
               <div class="check-box-icon"></div>
               <div class="check-content">
-                <div class="check-title">선수 개인 지침 & 공간 침투/압박 설정</div>
-                <div class="check-desc">추천된 핵심 선수별 세부 지침 및 상대 취약 구역 집중 공략</div>
+                <div class="check-title"><i data-lucide="user-cog" class="icon-inline icon-neon"></i> 핵심 선수 인게임 개인 지침 (PI)</div>
+                <div class="check-desc">
+                  ${renderPlayerInstructions(data.player_instructions)}
+                </div>
               </div>
               <span class="check-badge-tag">지침</span>
             </div>
@@ -1341,77 +1443,76 @@ sliders 내부의 tempo, directness, def_line, press의 val(0~100 숫자)과 tex
       });
 
     } else if (type === 'scenarios') {
-      modalIcon.textContent = '🔄';
+      modalIcon.innerHTML = '<i data-lucide="repeat" class="icon-cyan"></i>';
       modalTitle.textContent = '시나리오별 대처 (점수대 및 경기 시간별 플랜 B/C)';
       
-      const content = details.scenarios || data.summary_badges?.scenarios || '';
+      const sc = data.scenarios_detail || {};
+      const leadText = sc.lead || details.scenarios || '템포를 낮추고 패스 길이를 짧게 유지하며 볼 점유율로 상대를 고사시킵니다. 공격 가담 풀백을 지원으로 내리고 수비 라인을 한 칸 내려 뒷공간 역습을 원천 봉쇄하십시오.';
+      const tightText = sc.tight || '체력이 65% 이하로 떨어진 윙어와 중원 자원을 프레시한 서브 자원으로 1:1 교체하십시오. 중앙 수적 우위를 유지하며 상대 체력 방전 구간을 겨냥한 템포 업을 지시합니다.';
+      const chaseText = sc.chase || '수비 라인을 극한으로 끌어올리고 전방 압박 강도를 최대로 설정하십시오. 타깃터 혹은 침투형 공격수를 박스 안으로 투입하고 위험을 감수하라 개인 지침을 부여합니다.';
+
       modalBody.innerHTML = `
         <div class="modal-check-section">
-          <div class="modal-check-title">⏱️ 실전 경기 국면별 즉시 대처 카드</div>
+          <div class="modal-check-title"><i data-lucide="clock" class="icon-inline icon-cyan"></i> 실전 경기 국면별 즉시 대처 지침</div>
           <div class="scenario-trio-grid">
             <div class="scenario-card-box lead">
-              <div class="scenario-card-title">🟢 2점 차 이상 리드 시 (잠그기 & 승점 굳히기)</div>
+              <div class="scenario-card-title"><i data-lucide="shield-check" class="icon-inline icon-neon"></i> 2점 차 이상 리드 시 (잠그기 & 승점 굳히기)</div>
               <div class="scenario-card-body">
-                템포를 낮추고 패스 길이를 짧게 유지하며 볼 점유율로 상대를 고사시킵니다. 공격 가담 풀백을 '지원'으로 내리고 수비 라인을 한 칸 내려 뒷공간 역습을 원천 봉쇄하십시오.
+                ${leadText.replace(/\n/g, '<br>')}
               </div>
             </div>
 
             <div class="scenario-card-box tight">
-              <div class="scenario-card-title">🟡 1점 차 접전 / 동점 시 (65~75분 승부처)</div>
+              <div class="scenario-card-title"><i data-lucide="clock" class="icon-inline icon-amber"></i> 1점 차 접전 / 동점 시 (65~75분 승부처)</div>
               <div class="scenario-card-body">
-                체력이 65% 이하로 떨어진 윙어와 중원 자원을 프레시한 서브 자원으로 1:1 교체하십시오. 중앙 수적 우위를 유지하며 상대 체력 방전 구간을 겨냥한 템포 업을 지시합니다.
+                ${tightText.replace(/\n/g, '<br>')}
               </div>
             </div>
 
             <div class="scenario-card-box chase">
-              <div class="scenario-card-title">🔴 1점 차 열세 / 실점 시 (역전 총공세 모드)</div>
+              <div class="scenario-card-title"><i data-lucide="flame" class="icon-inline icon-attack"></i> 1점 차 열세 / 실점 시 (역전 총공세 모드)</div>
               <div class="scenario-card-body">
-                수비 라인을 극한으로 끌어올리고 전방 압박 강도를 최대로 설정하십시오. 타깃터 혹은 침투형 공격수를 박스 안으로 투입하고 '위험을 감수하라' 개인 지침을 부여합니다.
+                ${chaseText.replace(/\n/g, '<br>')}
               </div>
             </div>
           </div>
         </div>
-
-        <div class="modal-check-section" style="margin-top: 14px;">
-          <div class="modal-check-title">💡 사령탑의 실전 시나리오 비책</div>
-          <div class="tactical-highlight-box">
-            <p style="font-size: 0.85rem; line-height: 1.5; color: #e2e8f0;">
-              ${content.replace(/\n/g, '<br>')}
-            </p>
-          </div>
-        </div>
       `;
     } else if (type === 'onepoint') {
-      modalIcon.textContent = '💡';
+      modalIcon.innerHTML = '<i data-lucide="sparkles" class="icon-amber"></i>';
       modalTitle.textContent = '에이스 봉쇄 & 원포인트 비기 (맨마크 및 세트피스)';
       
-      const content = details.onepoint || data.summary_badges?.onepoint || '';
+      const op = data.onepoint_detail || {};
+      const aceText = op.ace_mark || details.onepoint || '상대 핵심 키맨에게 [전담 마크], [특정 발 유도: 약발], [더 강하게 압박] 3중 지침을 인게임 상대 선수 지침에서 활성화하여 빌드업 줄기를 사전 차단하십시오.';
+      const setpieceText = op.setpiece || '공격 세트피스: 가장 헤더 능력이 뛰어난 선수를 니어포스트에 배치하고, 반대편 타깃터의 백포스트 쇄도를 유도하십시오. 세컨볼 지점에 슈팅력 좋은 미드필더를 박스 밖 대기로 고정합니다.';
+      const signatureText = op.signature || data.summary_badges?.onepoint || '사령탑 감독 고유의 철학에 맞춘 실전 킬러 전술 지침입니다.';
+
       modalBody.innerHTML = `
         <div class="modal-check-section">
-          <div class="modal-check-title">🎯 상대 에이스 & 키맨 질식 봉쇄 지침</div>
+          <div class="modal-check-title"><i data-lucide="crosshair" class="icon-inline icon-attack"></i> 상대 에이스 & 키맨 질식 봉쇄 지침</div>
           <div class="tactical-highlight-box ace">
-            <h5 style="color: #fda4af; font-size: 0.88rem; font-weight: 800; margin-bottom: 6px;">상대 핵심 플레이메이커 / 침투 공격수 전담 견제</h5>
-            <p style="font-size: 0.82rem; line-height: 1.5; color: #fecdd3;">
-              상대 키맨에게 <strong>[전담 마크], [특정 발 유도: 약발], [더 강하게 압박]</strong> 3중 지침을 인게임 상대 선수 지침에서 활성화하여 빌드업 줄기를 사전 차단하십시오.
+            <h5 style="color: #fda4af; font-size: 0.88rem; font-weight: 800; margin-bottom: 6px;"><i data-lucide="user-x" class="icon-inline"></i> 상대 키맨 밀착 전담 견제</h5>
+            <p style="font-size: 0.84rem; line-height: 1.55; color: #fecdd3;">
+              ${aceText.replace(/\n/g, '<br>')}
             </p>
           </div>
         </div>
 
         <div class="modal-check-section">
-          <div class="modal-check-title">📐 세트피스(코너킥/프리킥) 득점 패턴</div>
+          <div class="modal-check-title"><i data-lucide="corner-down-right" class="icon-inline icon-amber"></i> 세트피스(코너킥/프리킥) 득점 패턴</div>
           <div class="tactical-highlight-box setpiece">
-            <h5 style="color: #fde047; font-size: 0.88rem; font-weight: 800; margin-bottom: 6px;">공격 세트피스: 니어포스트 플릭온 & 컷백 비기</h5>
-            <p style="font-size: 0.82rem; line-height: 1.5; color: #fef08a;">
-              가장 헤더 능력이 뛰어난 선수를 니어포스트에 배치하고, 반대편 타깃터의 백포스트 쇄도를 유도하십시오. 세컨볼 지점에 슈팅력 좋은 미드필더를 '박스 밖 대기'로 고정합니다.
+            <h5 style="color: #fde047; font-size: 0.88rem; font-weight: 800; margin-bottom: 6px;"><i data-lucide="flag" class="icon-inline"></i> 공격 및 수비 세트피스 설계</h5>
+            <p style="font-size: 0.84rem; line-height: 1.55; color: #fef08a;">
+              ${setpieceText.replace(/\n/g, '<br>')}
             </p>
           </div>
         </div>
 
         <div class="modal-check-section">
-          <div class="modal-check-title">💬 사령탑 시그니처 원포인트</div>
+          <div class="modal-check-title"><i data-lucide="lightbulb" class="icon-inline icon-cyan"></i> 사령탑 시그니처 원포인트 비기</div>
           <div class="tactical-highlight-box">
-            <p style="font-size: 0.85rem; line-height: 1.5; color: #e2e8f0;">
-              ${content.replace(/\n/g, '<br>')}
+            <p style="font-size: 0.84rem; line-height: 1.55; color: #e2e8f0;">
+              ${signatureText.replace(/\n/g, '<br>')}
             </p>
           </div>
         </div>
