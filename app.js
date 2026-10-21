@@ -1,5 +1,5 @@
 // ============================================================
-// FM27 Matchday Tactical Playbook - Core Engine (v6)
+// FM Matchday Tactical Playbook - Core Engine (v7)
 // ============================================================
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -101,9 +101,19 @@ document.addEventListener('DOMContentLoaded', () => {
       midfield: '호각',
       defense: '호각'
     },
-    slot1Image: null,
-    slot2Image: null,
+    slot1Images: [], // 다중 이미지 배열 { id, dataUrl } (최대 4장)
+    slot2Images: [], // 다중 이미지 배열 { id, dataUrl } (최대 4장)
     activeSlot: 1,
+    analysisMode: 'basic', // 'basic' or 'advanced'
+    advancedOptions: {
+      location: 'home',
+      goal: 'regular',
+      stamina: 'all_in',
+      opp_style: 'auto',
+      injury: 'none',
+      weather: 'good',
+      cards: 'normal'
+    },
     mediaStream: null,
     isAnalyzing: false,
     latestResultData: null,
@@ -114,8 +124,14 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   // ------------------------------------------------------------
-  // 3. DOM 요소 캐싱
+  // 3. DOM 요소 캐싱 & 아이콘 렌더링 헬퍼
   // ------------------------------------------------------------
+  function refreshIcons() {
+    if (typeof lucide !== 'undefined') {
+      try { lucide.createIcons(); } catch (e) { console.warn("Lucide icon render error:", e); }
+    }
+  }
+
   const setupView = document.getElementById('setupView');
   const briefingView = document.getElementById('briefingView');
 
@@ -142,12 +158,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const liveVideo = document.getElementById('liveVideo');
   const monitorPlaceholder = document.getElementById('monitorPlaceholder');
 
+  // 다중 캡처 슬롯 요소
   const slot1 = document.getElementById('slot1');
   const slot2 = document.getElementById('slot2');
-  const slot1Img = document.getElementById('slot1Img');
-  const slot2Img = document.getElementById('slot2Img');
-  const slot1Preview = document.getElementById('slot1Preview');
-  const slot2Preview = document.getElementById('slot2Preview');
+  const slot1Gallery = document.getElementById('slot1Gallery');
+  const slot2Gallery = document.getElementById('slot2Gallery');
+  const slot1CountBadge = document.getElementById('slot1CountBadge');
+  const slot2CountBadge = document.getElementById('slot2CountBadge');
+  const slot1EmptyMsg = document.getElementById('slot1EmptyMsg');
+  const slot2EmptyMsg = document.getElementById('slot2EmptyMsg');
   const slot1ClearBtn = document.getElementById('slot1ClearBtn');
   const slot2ClearBtn = document.getElementById('slot2ClearBtn');
   const slot1SnapBtn = document.getElementById('slot1SnapBtn');
@@ -156,6 +175,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const slot2PasteBtn = document.getElementById('slot2PasteBtn');
   const slot1FileInput = document.getElementById('slot1FileInput');
   const slot2FileInput = document.getElementById('slot2FileInput');
+
+  // 분석 모드 요소
+  const modeBasicBtn = document.getElementById('modeBasicBtn');
+  const modeAdvancedBtn = document.getElementById('modeAdvancedBtn');
+  const advancedSettingsPanel = document.getElementById('advancedSettingsPanel');
 
   const analyzeBtn = document.getElementById('analyzeBtn');
   const snapshotCanvas = document.getElementById('snapshotCanvas');
@@ -166,6 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const briefingCoachTag = document.getElementById('briefingCoachTag');
   const briefingTiersTag = document.getElementById('briefingTiersTag');
   const captureSummaryBtn = document.getElementById('captureSummaryBtn');
+  const captureGifBtn = document.getElementById('captureGifBtn');
 
   const briefingLoadingBox = document.getElementById('briefingLoadingBox');
   const loadingCoachTitle = document.getElementById('loadingCoachTitle');
@@ -255,7 +280,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  const savedKey = localStorage.getItem('fm27_gemini_api_key');
+  const savedKey = localStorage.getItem('fm_gemini_api_key') || localStorage.getItem('fm27_gemini_api_key');
   if (savedKey) {
     apiKeyInput.value = savedKey;
     updateKeyStatus();
@@ -264,10 +289,12 @@ document.addEventListener('DOMContentLoaded', () => {
   saveKeyBtn.addEventListener('click', () => {
     const key = apiKeyInput.value.trim();
     if (key) {
+      localStorage.setItem('fm_gemini_api_key', key);
       localStorage.setItem('fm27_gemini_api_key', key);
       updateKeyStatus();
       showToast('🔑 Gemini API 키가 브라우저에 안전하게 저장되었습니다!');
     } else {
+      localStorage.removeItem('fm_gemini_api_key');
       localStorage.removeItem('fm27_gemini_api_key');
       updateKeyStatus();
       showToast('API 키가 삭제되었습니다.');
@@ -383,7 +410,7 @@ document.addEventListener('DOMContentLoaded', () => {
       toggleStreamBtn.classList.remove('btn-outline');
       streamStatusPill.textContent = '실시간 스트리밍 중';
       streamStatusPill.classList.add('live');
-      showToast('🖥️ FM27 화면이 성공적으로 연결되었습니다!');
+      showToast('🖥️ (FM) 풋볼매니저 화면이 성공적으로 연결되었습니다!');
 
       stream.getVideoTracks()[0].onended = () => {
         stopScreenShare();
@@ -418,7 +445,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ------------------------------------------------------------
-  // 10. 2장 캡처 슬롯 조작 & 해상도 검사
+  // 10. 다중 캡처 슬롯 조작 & 미니 갤러리 렌더링
   // ------------------------------------------------------------
   function setActiveSlot(slotNum) {
     STATE.activeSlot = slotNum;
@@ -435,59 +462,88 @@ document.addEventListener('DOMContentLoaded', () => {
   slot2.addEventListener('click', () => setActiveSlot(2));
 
   function updateAnalyzeButtonState() {
-    const hasAnyImage = !!(STATE.slot1Image || STATE.slot2Image);
-    analyzeBtn.disabled = !hasAnyImage || STATE.isAnalyzing;
-    if (hasAnyImage) {
-      analyzeBtn.title = "매치데이 전술 플레이북 생성 (Ctrl+Enter)";
+    const totalImages = STATE.slot1Images.length + STATE.slot2Images.length;
+    analyzeBtn.disabled = (totalImages === 0) || STATE.isAnalyzing;
+    if (totalImages > 0) {
+      analyzeBtn.title = `매치데이 전술 플레이북 생성 (총 ${totalImages}장 분석) - Ctrl+Enter`;
     } else {
       analyzeBtn.title = "슬롯에 최소 1장의 전술 이미지를 등록해 주세요";
     }
   }
 
-  function applyImageToSlot(slotNum, dataUrl) {
+  function renderSlotGallery(slotNum) {
+    const list = slotNum === 1 ? STATE.slot1Images : STATE.slot2Images;
+    const galleryEl = slotNum === 1 ? slot1Gallery : slot2Gallery;
+    const countBadge = slotNum === 1 ? slot1CountBadge : slot2CountBadge;
+    const emptyMsg = slotNum === 1 ? slot1EmptyMsg : slot2EmptyMsg;
+    const clearBtn = slotNum === 1 ? slot1ClearBtn : slot2ClearBtn;
+
+    countBadge.textContent = `${list.length} / 4장`;
+    clearBtn.style.display = list.length > 0 ? 'inline-block' : 'none';
+
+    galleryEl.innerHTML = '';
+    if (list.length === 0) {
+      galleryEl.appendChild(emptyMsg);
+      emptyMsg.style.display = 'flex';
+    } else {
+      list.forEach((item, idx) => {
+        const itemEl = document.createElement('div');
+        itemEl.className = 'gallery-thumb-item';
+        itemEl.innerHTML = `
+          <img src="${item.dataUrl}" alt="슬롯 이미지 ${idx + 1}" class="gallery-thumb-img">
+          <button type="button" class="gallery-thumb-del" title="삭제">✕</button>
+        `;
+        itemEl.querySelector('.gallery-thumb-del').addEventListener('click', (e) => {
+          e.stopPropagation();
+          removeSlotImage(slotNum, item.id);
+        });
+        galleryEl.appendChild(itemEl);
+      });
+    }
+
+    updateAnalyzeButtonState();
+    refreshIcons();
+  }
+
+  function addImageToSlot(slotNum, dataUrl) {
+    const list = slotNum === 1 ? STATE.slot1Images : STATE.slot2Images;
+    if (list.length >= 4) {
+      showToast(`⚠️ 슬롯 ${slotNum}은 최대 4장까지만 등록할 수 있습니다!`);
+      return;
+    }
+
     const imgObj = new Image();
     imgObj.onload = () => {
       if (imgObj.naturalWidth < 600) {
         showToast('⚠️ 이미지 가로 해상도가 600px 미만입니다. 글자가 작을 경우 분석이 제한될 수 있습니다.', 4000);
       }
-
-      if (slotNum === 1) {
-        STATE.slot1Image = dataUrl;
-        slot1Img.src = dataUrl;
-        slot1Img.style.display = 'block';
-        slot1Preview.querySelector('.empty-slot-msg').style.display = 'none';
-        slot1ClearBtn.style.display = 'block';
-        showToast('📋 슬롯 1에 [내 전술판]이 등록되었습니다!');
-      } else {
-        STATE.slot2Image = dataUrl;
-        slot2Img.src = dataUrl;
-        slot2Img.style.display = 'block';
-        slot2Preview.querySelector('.empty-slot-msg').style.display = 'none';
-        slot2ClearBtn.style.display = 'block';
-        showToast('🎯 슬롯 2에 [상대 분석/라인업]이 등록되었습니다!');
-      }
-      updateAnalyzeButtonState();
+      const id = Date.now() + Math.random().toString(36).substring(2, 7);
+      list.push({ id, dataUrl });
+      renderSlotGallery(slotNum);
+      showToast(`📸 슬롯 ${slotNum}에 이미지가 추가되었습니다! (${list.length}/4장)`);
     };
     imgObj.src = dataUrl;
   }
 
+  function removeSlotImage(slotNum, id) {
+    if (slotNum === 1) {
+      STATE.slot1Images = STATE.slot1Images.filter(item => item.id !== id);
+    } else {
+      STATE.slot2Images = STATE.slot2Images.filter(item => item.id !== id);
+    }
+    renderSlotGallery(slotNum);
+  }
+
   function clearSlot(slotNum) {
     if (slotNum === 1) {
-      STATE.slot1Image = null;
-      slot1Img.src = '';
-      slot1Img.style.display = 'none';
-      slot1Preview.querySelector('.empty-slot-msg').style.display = 'flex';
-      slot1ClearBtn.style.display = 'none';
+      STATE.slot1Images = [];
       slot1FileInput.value = '';
     } else {
-      STATE.slot2Image = null;
-      slot2Img.src = '';
-      slot2Img.style.display = 'none';
-      slot2Preview.querySelector('.empty-slot-msg').style.display = 'flex';
-      slot2ClearBtn.style.display = 'none';
+      STATE.slot2Images = [];
       slot2FileInput.value = '';
     }
-    updateAnalyzeButtonState();
+    renderSlotGallery(slotNum);
+    showToast(`슬롯 ${slotNum}의 모든 이미지가 삭제되었습니다.`);
   }
 
   slot1ClearBtn.addEventListener('click', (e) => {
@@ -502,7 +558,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function snapFromLiveVideo(slotNum) {
     if (!STATE.mediaStream || liveVideo.videoWidth === 0) {
-      showToast('먼저 [화면 공유 시작] 버튼을 눌러 FM27 창을 연결해 주세요!');
+      showToast('먼저 [화면 공유 시작] 버튼을 눌러 (FM) 풋볼매니저 창을 연결해 주세요!');
       return;
     }
     snapshotCanvas.width = liveVideo.videoWidth;
@@ -510,7 +566,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const ctx = snapshotCanvas.getContext('2d');
     ctx.drawImage(liveVideo, 0, 0, snapshotCanvas.width, snapshotCanvas.height);
     const dataUrl = snapshotCanvas.toDataURL('image/jpeg', 0.9);
-    applyImageToSlot(slotNum, dataUrl);
+    addImageToSlot(slotNum, dataUrl);
   }
 
   slot1SnapBtn.addEventListener('click', (e) => {
@@ -532,7 +588,7 @@ document.addEventListener('DOMContentLoaded', () => {
           if (imageType) {
             const blob = await item.getType(imageType);
             const reader = new FileReader();
-            reader.onload = (e) => applyImageToSlot(slotNum, e.target.result);
+            reader.onload = (e) => addImageToSlot(slotNum, e.target.result);
             reader.readAsDataURL(blob);
             return;
           }
@@ -556,19 +612,57 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   function handleFileSelect(e, slotNum) {
-    const file = e.target.files[0];
-    if (file && file.type.startsWith('image/')) {
-      const reader = new FileReader();
-      reader.onload = (evt) => applyImageToSlot(slotNum, evt.target.result);
-      reader.readAsDataURL(file);
-    }
+    const files = Array.from(e.target.files);
+    files.forEach(file => {
+      if (file && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = (evt) => addImageToSlot(slotNum, evt.target.result);
+        reader.readAsDataURL(file);
+      }
+    });
   }
 
   slot1FileInput.addEventListener('change', (e) => handleFileSelect(e, 1));
   slot2FileInput.addEventListener('change', (e) => handleFileSelect(e, 2));
 
   // ------------------------------------------------------------
-  // 11. 전역 단축키 & Ctrl+V
+  // 10-1. 분석 모드 (기본 모드 vs 고급 설정 모드 7대 변수)
+  // ------------------------------------------------------------
+  modeBasicBtn.addEventListener('click', () => {
+    STATE.analysisMode = 'basic';
+    modeBasicBtn.classList.add('active');
+    modeAdvancedBtn.classList.remove('active');
+    advancedSettingsPanel.style.display = 'none';
+    showToast('⚡ 기본 모드 (빠른 생성)가 선택되었습니다.');
+  });
+
+  modeAdvancedBtn.addEventListener('click', () => {
+    STATE.analysisMode = 'advanced';
+    modeAdvancedBtn.classList.add('active');
+    modeBasicBtn.classList.remove('active');
+    advancedSettingsPanel.style.display = 'block';
+    refreshIcons();
+    showToast('⚙️ 고급 설정 모드가 활성화되었습니다. 특별한 상황을 1~2개 선택해 주세요.');
+  });
+
+  // 고급 설정 칩 선택 이벤트
+  document.querySelectorAll('.adv-group').forEach(group => {
+    const category = group.dataset.adv;
+    const chips = group.querySelectorAll('.adv-chip');
+    chips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        chips.forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        const val = chip.dataset.val;
+        STATE.advancedOptions[category] = val;
+        const mainText = chip.querySelector('.chip-main')?.textContent || val;
+        showToast(`[${group.querySelector('.adv-label')?.textContent.trim()}] ➔ ${mainText}`);
+      });
+    });
+  });
+
+  // ------------------------------------------------------------
+  // 11. 전역 단축키 & Ctrl+V 연속 붙여넣기
   // ------------------------------------------------------------
   document.addEventListener('keydown', (e) => {
     if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) {
@@ -577,10 +671,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (e.key === '1') {
       setActiveSlot(1);
-      showToast('슬롯 1 [내 전술판] 선택됨');
+      showToast('슬롯 1 [내 전술 정보] 선택됨');
     } else if (e.key === '2') {
       setActiveSlot(2);
-      showToast('슬롯 2 [상대 분석/라인업] 선택됨');
+      showToast('슬롯 2 [상대 스카우팅/라인업] 선택됨');
     } else if (e.key === 'Escape') {
       detailModalOverlay.style.display = 'none';
       unreadableModalOverlay.style.display = 'none';
@@ -603,16 +697,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const blob = items[i].getAsFile();
         const reader = new FileReader();
         reader.onload = (event) => {
-          let targetSlot = STATE.activeSlot;
-          if (!STATE.slot1Image) {
-            targetSlot = 1;
-          } else if (!STATE.slot2Image) {
-            targetSlot = 2;
-          }
-          setActiveSlot(targetSlot);
-          applyImageToSlot(targetSlot, event.target.result);
+          addImageToSlot(STATE.activeSlot, event.target.result);
         };
         reader.readAsDataURL(blob);
+        e.preventDefault();
         break;
       }
     }
@@ -637,8 +725,59 @@ document.addEventListener('DOMContentLoaded', () => {
       coachBias = coach.tacticalBias;
     }
 
+    let advancedContext = "";
+    if (STATE.analysisMode === 'advanced') {
+      const adv = STATE.advancedOptions;
+      const locMap = { home: "홈 경기 (적극적 주도권 / 홈 팬 응원)", away: "원정 경기 (실점 억제 및 안정적 밸런스 중시)" };
+      const goalMap = {
+        regular: "리그 정규 경기 (승점 3점 추구)",
+        draw_ok: "무승부 이상 실리 축구 (패배 방지 및 승점 1점 확보 우선)",
+        tournament: "단판 토너먼트/결승전 (연장/승부차기 대비 및 실수 금지)",
+        high_score: "다득점 대승 필수 (골득실 우위 필요, 파상공세 지향)"
+      };
+      const stamMap = {
+        all_in: "주전 총력전 (체력 소모 감수, 90분 풀가동)",
+        manage: "후반 체력 안배 필수 (60분 이후 템포 조절 및 교체카드 대비)",
+        rotation: "로테이션 가동 중 (주전 휴식, 저강도 안정 운영)"
+      };
+      const oppStyleMap = {
+        auto: "상대 전술 자동 진단",
+        low_block: "상대 텐백/극단적 밀집 수비 (밀집 블록 해체 전술 필요)",
+        high_press: "상대 하이라인 게겐프레싱 (압박 회피 및 뒷공간 침투 패스 필요)",
+        fast_counter: "상대 빠른 측면 롱카운터 (수비 전환 시 파울 차단 및 라인 제어)"
+      };
+      const injMap = {
+        none: "전력 누수 없음 (베스트 라인업 가동)",
+        no_striker: "주전 스트라이커 부재 (가짜 9번 제로톱 또는 2선 침투 공격 설계)",
+        no_mid: "주전 미드필더 부재 (중원 패스 줄기 단순화 및 측면 우회)",
+        slow_cb: "센터백 부상 또는 주력 느림 (수비라인 전진 자제, 뒷공간 커버 필수)"
+      };
+      const weatherMap = {
+        good: "기본/양호한 잔디 (정상적인 패스 및 빌드업)",
+        rain: "수중전/폭우 (잔디 미끄러움, 패스 감속, 롱볼 및 세컨볼 집중 권장)",
+        narrow: "좁은 경기장 (중원 밀집, 세트피스 및 피지컬 경합 중요)",
+        wide: "넓은 경기장 (측면 공간 광활, 윙어/풀백 기동력 극대화)"
+      };
+      const cardMap = {
+        normal: "보통 (정상적인 수비 태클)",
+        careful: "주전 경고 누적 주의 (태클 강도 완화, 불필요한 퇴장 방지)",
+        foul_break: "거친 파울로 상대 역습 흐름 끊기 (전술적 파울 적극 활용)"
+      };
+
+      advancedContext = `
+[★ 유저가 설정한 실전 7대 경기 변수 (반드시 전술 수치와 지침에 최우선 반영) ★]:
+- 홈/원정 환경: ${locMap[adv.location] || adv.location}
+- 경기 목표: ${goalMap[adv.goal] || adv.goal}
+- 선수단 체력/일정: ${stamMap[adv.stamina] || adv.stamina}
+- 상대 전술 성향: ${oppStyleMap[adv.opp_style] || adv.opp_style}
+- 핵심 포지션 공백: ${injMap[adv.injury] || adv.injury}
+- 구장 및 잔디/날씨: ${weatherMap[adv.weather] || adv.weather}
+- 카드 및 태클 관리: ${cardMap[adv.cards] || adv.cards}
+`;
+    }
+
     return `당신은 세계 최고의 축구 전술 사령탑인 [${coachName}] 감독 본인입니다.
-당신은 FM27(Football Manager) 게임의 전술판 및 상대 스카우팅 스크린샷을 분석하여 경기 시작 전 완벽한 승리 공식을 제공하는 '매치데이 전술 연구소'의 최고 사령관입니다.
+당신은 FM(Football Manager) 게임의 전술판 및 상대 스카우팅 스크린샷을 분석하여 경기 시작 전 완벽한 승리 공식을 제공하는 '매치데이 전술 연구소'의 최고 사령관입니다.
 
 [사령탑 100% 몰입 원칙 (절대적 필수 지침)]:
 - 당신은 ${coachName} 감독 본인으로 완벽히 빙의(Role-play)하십시오.
@@ -666,6 +805,7 @@ document.addEventListener('DOMContentLoaded', () => {
 - 상대 대비 공격진: [${STATE.squadTiers.attack}]
 - 상대 대비 미드필더: [${STATE.squadTiers.midfield}]
 - 상대 대비 수비진: [${STATE.squadTiers.defense}]
+${advancedContext}
 
 [안전장치 - 판독 불가 규칙]:
 - 만약 업로드된 이미지가 축구 게임(FM) 화면이 전혀 아니거나 글자 판독이 불가능하다면 정확히 "UNREADABLE_SCREEN"만 출력하십시오.
@@ -691,6 +831,12 @@ document.addEventListener('DOMContentLoaded', () => {
       // ... 총 11명 (공격수, 미드필더, 수비수, 골키퍼)
     ]
   },
+  "sliders": {
+    "tempo": { "val": 70, "text": "약간 빠르게 (경기 템포 통제)" },
+    "directness": { "val": 40, "text": "짧은 패스 위주 (점유율 기반)" },
+    "def_line": { "val": 75, "text": "높은 수비 라인" },
+    "press": { "val": 80, "text": "더 자주 강하게 (전방 1차 압박)" }
+  },
   "summary_badges": {
     "matchup": "상대 약점 및 상성 진단 한눈 요약 (2줄)",
     "plana": "원본 유지 여부 및 롤 미세조정 한눈 요약 (2줄)",
@@ -703,11 +849,13 @@ document.addEventListener('DOMContentLoaded', () => {
     "scenarios": "HTML 포맷: 2점 리드 시 잠그기 지침 vs 1점차 접전 vs 열세/실점 시 역전 총공세 조작값",
     "onepoint": "HTML 포맷: 상대 에이스 전담 마크 설정법, 세트피스 지침, 넌지시 녹여낸 실전 비기"
   }
-}`;
+}
+[★ sliders 슬라이더 값 엄격 지침]:
+sliders 내부의 tempo, directness, def_line, press의 val(0~100 숫자)과 text(FM 인게임 라벨)는 반드시 아래 modal_details.plana에 기술할 체크리스트 전술 지침 및 당신의 전술 철학과 100% 모순 없이 완벽히 일치해야 합니다.`;
   }
 
   // ------------------------------------------------------------
-  // 13. 분석 실행 (Gemini 호출)
+  // 13. 분석 실행 (Gemini 호출 - 다중 이미지 지원)
   // ------------------------------------------------------------
   analyzeBtn.addEventListener('click', async () => {
     const apiKey = apiKeyInput.value.trim();
@@ -717,8 +865,9 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    if (!STATE.slot1Image && !STATE.slot2Image) {
-      showToast('최소 1장의 전술 화면(슬롯 1 권장)을 등록해 주세요!');
+    const totalImages = STATE.slot1Images.length + STATE.slot2Images.length;
+    if (totalImages === 0) {
+      showToast('최소 1장의 전술 화면(슬롯 1 또는 슬롯 2)을 등록해 주세요!');
       return;
     }
 
@@ -733,7 +882,7 @@ document.addEventListener('DOMContentLoaded', () => {
       ? (customCoachNameInput.value.trim() || '사령탑')
       : COACH_DATABASE[STATE.selectedCoachKey].name;
 
-    loadingCoachTitle.textContent = `${coachName} 감독이 전술판과 상대 데이터를 정밀 분석하고 있습니다...`;
+    loadingCoachTitle.textContent = `${coachName} 감독이 전술판(${totalImages}장)과 상대 데이터를 정밀 분석하고 있습니다...`;
     briefingCoachTag.textContent = `사령탑: ${coachName}`;
     briefingTiersTag.textContent = `체급: 공격 ${STATE.squadTiers.attack} / 미드 ${STATE.squadTiers.midfield} / 수비 ${STATE.squadTiers.defense}`;
 
@@ -744,23 +893,29 @@ document.addEventListener('DOMContentLoaded', () => {
         { text: systemInstruction }
       ];
 
-      if (STATE.slot1Image) {
-        const base64Data1 = STATE.slot1Image.split(',')[1];
-        parts.push({ text: "[슬롯 1: 내 전술판 (My Tactics 화면)]" });
-        parts.push({
-          inlineData: { mimeType: "image/jpeg", data: base64Data1 }
+      // 슬롯 1 다중 이미지 멀티모달 첨부
+      if (STATE.slot1Images.length > 0) {
+        STATE.slot1Images.forEach((item, idx) => {
+          const base64Data = item.dataUrl.split(',')[1];
+          parts.push({ text: `[슬롯 1: 내 전술판/세부지침/선수단 스크린샷 #${idx + 1}]` });
+          parts.push({
+            inlineData: { mimeType: "image/jpeg", data: base64Data }
+          });
         });
       }
 
-      if (STATE.slot2Image) {
-        const base64Data2 = STATE.slot2Image.split(',')[1];
-        parts.push({ text: "[슬롯 2: 상대 분석 스카우팅 / 라인업 (Opponent 화면)]" });
-        parts.push({
-          inlineData: { mimeType: "image/jpeg", data: base64Data2 }
+      // 슬롯 2 다중 이미지 멀티모달 첨부
+      if (STATE.slot2Images.length > 0) {
+        STATE.slot2Images.forEach((item, idx) => {
+          const base64Data = item.dataUrl.split(',')[1];
+          parts.push({ text: `[슬롯 2: 상대 분석/라인업/스카우팅 스크린샷 #${idx + 1}]` });
+          parts.push({
+            inlineData: { mimeType: "image/jpeg", data: base64Data }
+          });
         });
       }
 
-      const candidateModels = ['gemini-3.8-flash', 'gemini-2.5-flash', 'gemini-1.5-flash'];
+      const candidateModels = ['gemini-2.5-flash', 'gemini-1.5-flash', 'gemini-2.0-flash'];
       let response = null;
       let lastErrText = '';
 
@@ -872,6 +1027,8 @@ document.addEventListener('DOMContentLoaded', () => {
       summaryScenarios.textContent = data.summary_badges.scenarios || "시나리오별 대처 요약";
       summaryOnePoint.textContent = data.summary_badges.onepoint || "에이스 봉쇄 요약";
     }
+
+    refreshIcons();
   }
 
   // 11명 선수 좌표 표준화 (누락 방지 안전망)
@@ -1092,37 +1249,51 @@ document.addEventListener('DOMContentLoaded', () => {
       modalTitle.textContent = '플랜 A 인게임 세부 조작 가이드 (인터랙티브 바인더)';
       
       const content = details.plana || data.summary_badges?.plana || '';
+      const sliders = data.sliders || {};
+
+      const tempoVal = Math.max(5, Math.min(100, Number(sliders.tempo?.val) || 70));
+      const tempoText = sliders.tempo?.text || '약간 빠르게 (경기 템포 통제)';
+
+      const directnessVal = Math.max(5, Math.min(100, Number(sliders.directness?.val) || 40));
+      const directnessText = sliders.directness?.text || '짧은 패스 위주 (점유율 기반)';
+
+      const defLineVal = Math.max(5, Math.min(100, Number(sliders.def_line?.val) || 75));
+      const defLineText = sliders.def_line?.text || '높은 수비 라인';
+
+      const pressVal = Math.max(5, Math.min(100, Number(sliders.press?.val) || 80));
+      const pressText = sliders.press?.text || '더 자주 강하게 (전방 1차 압박)';
+
       modalBody.innerHTML = `
         <div class="modal-check-section">
-          <div class="modal-check-title">🎚️ FM27 팀 전술 슬라이더 조작값 (인게임 일치)</div>
+          <div class="modal-check-title">🎚️ (FM) 팀 전술 슬라이더 조작값 (AI 분석 100% 동기화)</div>
           <div class="fm-slider-group">
             <div class="fm-slider-item">
               <div class="fm-slider-label">
                 <span>템포 (Tempo)</span>
-                <span class="fm-slider-val">약간 빠르게 (경기 템포 통제)</span>
+                <span class="fm-slider-val">${tempoText}</span>
               </div>
-              <div class="fm-slider-bar"><div class="fm-slider-fill" style="width: 70%"></div></div>
+              <div class="fm-slider-bar"><div class="fm-slider-fill" style="width: ${tempoVal}%"></div></div>
             </div>
             <div class="fm-slider-item">
               <div class="fm-slider-label">
                 <span>패스 길이 (Directness)</span>
-                <span class="fm-slider-val">짧은 패스 위주 (점유율 기반)</span>
+                <span class="fm-slider-val">${directnessText}</span>
               </div>
-              <div class="fm-slider-bar"><div class="fm-slider-fill" style="width: 40%"></div></div>
+              <div class="fm-slider-bar"><div class="fm-slider-fill" style="width: ${directnessVal}%"></div></div>
             </div>
             <div class="fm-slider-item">
               <div class="fm-slider-label">
                 <span>수비 라인 (Defensive Line)</span>
-                <span class="fm-slider-val">높은 수비 라인</span>
+                <span class="fm-slider-val">${defLineText}</span>
               </div>
-              <div class="fm-slider-bar"><div class="fm-slider-fill" style="width: 75%"></div></div>
+              <div class="fm-slider-bar"><div class="fm-slider-fill" style="width: ${defLineVal}%"></div></div>
             </div>
             <div class="fm-slider-item">
               <div class="fm-slider-label">
                 <span>압박 기준선 (Trigger Press)</span>
-                <span class="fm-slider-val">더 자주 강하게 (전방 1차 압박)</span>
+                <span class="fm-slider-val">${pressText}</span>
               </div>
-              <div class="fm-slider-bar"><div class="fm-slider-fill" style="width: 80%"></div></div>
+              <div class="fm-slider-bar"><div class="fm-slider-fill" style="width: ${pressVal}%"></div></div>
             </div>
           </div>
         </div>
@@ -1151,8 +1322,8 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="tactical-checkbox-item">
               <div class="check-box-icon"></div>
               <div class="check-content">
-                <div class="check-title">선수 개인 지침: 하프스페이스 공략 & 컷백</div>
-                <div class="check-desc">윙어/풀백에게 공간으로 패스 및 오버래핑/언더래핑 활성화</div>
+                <div class="check-title">선수 개인 지침 & 공간 침투/압박 설정</div>
+                <div class="check-desc">추천된 핵심 선수별 세부 지침 및 상대 취약 구역 집중 공략</div>
               </div>
               <span class="check-badge-tag">지침</span>
             </div>
@@ -1248,6 +1419,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     detailModalOverlay.style.display = 'flex';
+    refreshIcons();
   }
 
   function closeAllModals() {
@@ -1281,8 +1453,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     showToast('📸 고화질 전술 리포트 카드를 생성하고 있습니다...');
     captureSummaryBtn.disabled = true;
-    const origText = captureSummaryBtn.textContent;
-    captureSummaryBtn.textContent = '⏳ 이미지 생성 중...';
+    const origBtnHtml = captureSummaryBtn.innerHTML;
+    captureSummaryBtn.innerHTML = '<i data-lucide="loader-2" class="spin"></i> <span>이미지 생성 중...</span>';
+    refreshIcons();
 
     try {
       if (typeof html2canvas === 'undefined') {
@@ -1301,7 +1474,7 @@ document.addEventListener('DOMContentLoaded', () => {
         : COACH_DATABASE[STATE.selectedCoachKey].name;
 
       const dateStr = new Date().toISOString().slice(0, 10);
-      const fileName = `FM27_Tactical_Playbook_${coachName}_${dateStr}.png`;
+      const fileName = `FM_Tactical_Playbook_${coachName}_${dateStr}.png`;
 
       // 1. 이미지 다운로드 트리거
       const link = document.createElement('a');
@@ -1326,7 +1499,109 @@ document.addEventListener('DOMContentLoaded', () => {
       showToast('이미지 캡처 중 오류가 발생했습니다: ' + err.message);
     } finally {
       captureSummaryBtn.disabled = false;
-      captureSummaryBtn.textContent = origText;
+      captureSummaryBtn.innerHTML = origBtnHtml;
+      refreshIcons();
+    }
+  });
+
+  // ------------------------------------------------------------
+  // 17. 전술 애니메이션 움짤(GIF) 고화질 생성 & 자동 다운로드
+  // ------------------------------------------------------------
+  captureGifBtn.addEventListener('click', async () => {
+    if (!STATE.latestResultData) {
+      showToast('먼저 [전술 플레이북 생성]을 실행해 주세요!');
+      return;
+    }
+
+    const targetEl = document.getElementById('briefingContentBox');
+    if (!targetEl) return;
+
+    if (typeof html2canvas === 'undefined' || typeof gifshot === 'undefined') {
+      showToast('⚠️ 캡처 또는 GIF 라이브러리를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.');
+      return;
+    }
+
+    captureGifBtn.disabled = true;
+    const origBtnHtml = captureGifBtn.innerHTML;
+    captureGifBtn.innerHTML = '<i data-lucide="loader-2" class="spin"></i> <span>GIF 생성 중...</span>';
+    refreshIcons();
+
+    const origPhase = STATE.currentPitchPhase;
+
+    try {
+      showToast('🛡️ [1/3] 수비 대형 프레임을 캡처하고 있습니다...');
+      updatePitchPhaseUI('defense');
+      await new Promise(r => setTimeout(r, 350));
+
+      const canvasDef = await html2canvas(targetEl, {
+        backgroundColor: '#050e0a',
+        scale: 1.2,
+        useCORS: true,
+        logging: false
+      });
+      const imgDef = canvasDef.toDataURL('image/jpeg', 0.85);
+
+      showToast('⚔️ [2/3] 공격 대형 프레임을 캡처하고 있습니다...');
+      updatePitchPhaseUI('attack');
+      await new Promise(r => setTimeout(r, 350));
+
+      const canvasAtk = await html2canvas(targetEl, {
+        backgroundColor: '#050e0a',
+        scale: 1.2,
+        useCORS: true,
+        logging: false
+      });
+      const imgAtk = canvasAtk.toDataURL('image/jpeg', 0.85);
+
+      // 원래 보던 단계로 복원
+      updatePitchPhaseUI(origPhase);
+
+      showToast('🎞️ [3/3] 수비↔공격 루프 애니메이션 GIF를 인코딩 중입니다...');
+
+      // 수비 대형 2프레임(약 1.6초) ➔ 공격 대형 2프레임(약 1.6초) 무한 루프
+      const frames = [imgDef, imgDef, imgAtk, imgAtk];
+      const targetWidth = Math.min(720, canvasDef.width);
+      const targetHeight = Math.round(targetWidth * (canvasDef.height / canvasDef.width));
+
+      gifshot.createGIF({
+        images: frames,
+        interval: 0.8,
+        gifWidth: targetWidth,
+        gifHeight: targetHeight,
+        numFrames: 4,
+        sampleInterval: 10,
+        numWorkers: 2
+      }, function (obj) {
+        if (!obj.error) {
+          const animatedGifUrl = obj.image;
+          const coachName = STATE.selectedCoachKey === 'custom' 
+            ? (customCoachNameInput.value.trim() || '사령탑')
+            : COACH_DATABASE[STATE.selectedCoachKey].name;
+          const dateStr = new Date().toISOString().slice(0, 10);
+          const fileName = `FM_Tactical_Animation_${coachName}_${dateStr}.gif`;
+
+          const link = document.createElement('a');
+          link.download = fileName;
+          link.href = animatedGifUrl;
+          link.click();
+
+          showToast('🎉 전술 공수 애니메이션 GIF가 성공적으로 저장되었습니다!');
+        } else {
+          console.error("GIF error:", obj.errorMsg);
+          showToast('GIF 생성 중 오류가 발생했습니다: ' + obj.errorMsg);
+        }
+        captureGifBtn.disabled = false;
+        captureGifBtn.innerHTML = origBtnHtml;
+        refreshIcons();
+      });
+
+    } catch (err) {
+      console.error('GIF Capture error:', err);
+      showToast('GIF 캡처 중 오류가 발생했습니다: ' + err.message);
+      updatePitchPhaseUI(origPhase);
+      captureGifBtn.disabled = false;
+      captureGifBtn.innerHTML = origBtnHtml;
+      refreshIcons();
     }
   });
 
@@ -1336,17 +1611,22 @@ document.addEventListener('DOMContentLoaded', () => {
       coach: STATE.selectedCoachKey,
       customCoach: STATE.customCoachName,
       tiers: STATE.squadTiers,
-      hasSlot1: !!STATE.slot1Image,
-      hasSlot2: !!STATE.slot2Image,
+      slot1Count: STATE.slot1Images.length,
+      slot2Count: STATE.slot2Images.length,
+      mode: STATE.analysisMode,
+      advancedOptions: STATE.analysisMode === 'advanced' ? STATE.advancedOptions : null,
       lastError: STATE.lastErrorLog || "최근 기록된 에러 없음"
     };
 
-    const textToCopy = `[FM27 플레이북 오류 제보 로그]\n${JSON.stringify(reportData, null, 2)}`;
+    const textToCopy = `[FM 플레이북 오류 제보 로그]\n${JSON.stringify(reportData, null, 2)}`;
     navigator.clipboard.writeText(textToCopy).then(() => {
       showToast('📋 시스템 디버그 로그가 클립보드에 복사되었습니다! 개발자에게 전달해 주세요.');
     }).catch(() => {
       showToast('로그 복사에 실패했습니다.');
     });
   });
+
+  // 초기 아이콘 렌더링
+  refreshIcons();
 
 });
