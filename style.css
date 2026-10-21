@@ -1032,11 +1032,11 @@ body {
     );
 }
 
-/* 2) 세로형 피치 (FM 인게임 전술판 표준 비율 고정) */
+/* 2) 세로형 피치 (FM 인게임 전술판 표준 비율 고정 - 대형화) */
 .cyber-pitch.pitch-vertical {
   width: 100%;
-  max-width: 440px;
-  height: 540px;
+  max-width: 580px;
+  height: 640px;
   margin: 0 auto;
   background: 
     repeating-linear-gradient(
@@ -1086,8 +1086,8 @@ body {
 .center-circle {
   top: 50%;
   left: 50%;
-  width: 110px;
-  height: 110px;
+  width: 125px;
+  height: 125px;
   transform: translate(-50%, -50%);
   border-width: 1.5px;
   border-radius: 50%;
@@ -1103,13 +1103,13 @@ body {
   transform: translate(-50%, -50%);
 }
 
-/* 세로형 페널티 & 골 박스 (상/하) */
+/* 세로형 페널티 & 골 박스 (상/하 - 대형 피치 맞춤 비율) */
 .penalty-box-top {
   top: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 240px;
-  height: 75px;
+  width: 280px;
+  height: 85px;
   border-width: 0 1.5px 1.5px 1.5px;
 }
 
@@ -1117,8 +1117,8 @@ body {
   top: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 110px;
-  height: 30px;
+  width: 130px;
+  height: 35px;
   border-width: 0 1.5px 1.5px 1.5px;
 }
 
@@ -1126,8 +1126,8 @@ body {
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 240px;
-  height: 75px;
+  width: 280px;
+  height: 85px;
   border-width: 1.5px 1.5px 0 1.5px;
 }
 
@@ -1135,8 +1135,8 @@ body {
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 110px;
-  height: 30px;
+  width: 130px;
+  height: 35px;
   border-width: 1.5px 1.5px 0 1.5px;
 }
 
@@ -2183,11 +2183,11 @@ body {
 }
 
 /* ============================================================
-   6. 와이드 3단 전술 대시보드 레이아웃 (세로 피치 고정)
+   6. 와이드 3단 전술 대시보드 레이아웃 (세로 피치 대형화 + 슬림 사이드 독)
    ============================================================ */
 .tactical-trio-dashboard {
   display: grid;
-  grid-template-columns: minmax(280px, 1fr) 460px minmax(280px, 1fr);
+  grid-template-columns: 240px minmax(500px, 1fr) 240px;
   gap: 16px;
   align-items: stretch;
   margin-top: 14px;
@@ -2196,7 +2196,7 @@ body {
 .trio-col {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
 }
 
 .trio-col-center {
@@ -2209,7 +2209,7 @@ body {
   display: flex;
   flex-direction: column;
   margin-bottom: 0;
-  padding: 14px;
+  padding: 16px;
 }
 
 .trio-col-center .cyber-pitch-wrapper {
@@ -2227,8 +2227,8 @@ body {
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg);
-  padding: 16px;
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
   backdrop-filter: blur(10px);
 }
 
@@ -2242,72 +2242,89 @@ body {
 .tactical-summary-card .card-head {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 10px;
+  gap: 8px;
+  margin-bottom: 8px;
 }
 
 .tactical-summary-card .card-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
   background: rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
+  border-radius: 6px;
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .tactical-summary-card .card-titles {
   flex: 1;
+  min-width: 0;
 }
 
 .tactical-summary-card h5 {
-  font-size: 0.95rem;
+  font-size: 0.84rem;
   font-weight: 800;
   color: #f8fafc;
   margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .tactical-summary-card .card-sub {
-  font-size: 0.72rem;
-  color: var(--text-muted);
+  font-size: 0.68rem;
+  color: var(--text-dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .tactical-summary-card .card-chip {
-  font-size: 0.68rem;
+  font-size: 0.65rem;
   font-weight: 700;
   color: var(--pitch-neon);
   background: rgba(16, 185, 129, 0.12);
   border: 1px solid rgba(16, 185, 129, 0.25);
-  padding: 3px 8px;
+  padding: 2px 6px;
   border-radius: 4px;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
+  white-space: nowrap;
 }
 
 .tactical-summary-card .card-summary-text {
-  font-size: 0.82rem;
-  line-height: 1.5;
+  font-size: 0.77rem;
+  line-height: 1.45;
   color: #cbd5e1;
   flex: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 /* 반응형 모바일/태블릿 */
-@media (max-width: 1240px) {
+@media (max-width: 1200px) {
   .tactical-trio-dashboard {
-    grid-template-columns: 1fr 420px 1fr;
-    gap: 12px;
+    grid-template-columns: 210px 1fr 210px;
+    gap: 10px;
   }
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 980px) {
   .tactical-trio-dashboard {
     grid-template-columns: 1fr;
-    gap: 16px;
+    gap: 14px;
   }
   .trio-col-center {
-    order: -1; /* 모바일에서는 피치보드가 먼저 상단에 배치 */
+    order: -1;
+  }
+  .tactical-summary-card h5,
+  .tactical-summary-card .card-sub {
+    white-space: normal;
   }
 }
 
