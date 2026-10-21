@@ -3,27 +3,36 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>(FM) 풋볼매니저 매치데이 전술 연구소 | Tactical Playbook</title>
-  <link rel="stylesheet" href="style.css?v=8">
+  <title>FM27 Tactical Command & Messenger | 매치데이 전술 연구소 & 1:1 명장 메신저</title>
+  <link rel="stylesheet" href="style.css?v=7">
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
-  <!-- 고화질 이미지 캡처 & 애니메이션 GIF & 사이버네틱 벡터 아이콘 라이브러리 -->
-  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/gifshot@0.4.5/dist/gifshot.min.js"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
   <div class="dashboard-wrapper">
     
     <!-- 상단 글로벌 헤더 -->
     <header class="top-nav">
-      <div class="brand" id="brandHomeBtn" role="button" tabindex="0" title="새 경기 준비 (홈으로 이동)">
+      <div class="brand">
         <div class="brand-glow-dot"></div>
-        <div class="brand-logo">FM</div>
+        <div class="brand-logo">FM27</div>
         <div class="brand-title">
           <h1>MATCHDAY TACTICAL PLAYBOOK</h1>
-          <span class="sub-title">(FM) 풋볼매니저 사령탑 몰입 맞춤 공략 & 동적 전술 피치 연구소</span>
+          <span class="sub-title">사령탑 몰입 맞춤 공략 & 1:1 비밀 메신저</span>
         </div>
       </div>
+
+      <!-- 상단 글로벌 2대 메뉴 탭 바 -->
+      <nav class="global-menu-nav">
+        <button type="button" class="global-tab-btn active" id="tabPlaybookBtn" data-tab="playbook">
+          <span class="tab-icon">🎯</span>
+          <span class="tab-text">매치데이 전술 연구소</span>
+        </button>
+        <button type="button" class="global-tab-btn" id="tabMessengerBtn" data-tab="messenger">
+          <span class="tab-icon">📱</span>
+          <span class="tab-text" id="messengerTabTitle">펩에게 문자하기</span>
+          <span class="online-indicator-dot"></span>
+        </button>
+      </nav>
 
       <!-- 상단 API 키 설정 캡슐 -->
       <div class="api-capsule">
@@ -35,683 +44,497 @@
     </header>
 
     <!-- ============================================================
-         화면 1: 작전 준비실 (Setup View - 입력 및 캡처)
+         메인 영역 A: 매치데이 전술 연구소 (Playbook Section)
          ============================================================ -->
-    <section id="setupView" class="view-panel active">
-      <div class="setup-layout-grid">
-        
-        <!-- 좌측 열: 사령탑 선택 & 상대 대비 체급 -->
-        <div class="setup-col-left">
+    <div id="playbookSectionWrapper">
+      
+      <!-- 화면 1: 작전 준비실 (Setup View - 입력 및 캡처) -->
+      <section id="setupView" class="view-panel active">
+        <div class="setup-layout-grid">
           
-          <!-- 1. 감독 페르소나 카드 -->
-          <div class="glass-card coach-profile-card">
-            <div class="card-header-compact">
-              <span class="section-tag">전술 사령탑 (사령관 몰입)</span>
-              <div class="select-inline">
-                <label for="countryFilter">리그:</label>
-                <select id="countryFilter">
-                  <option value="all">전체 명장</option>
-                  <option value="epl">EPL</option>
-                  <option value="laliga">라리가</option>
-                  <option value="seriea">세리에A / 분데스</option>
-                  <option value="custom">직접 입력 (커스텀)</option>
+          <!-- 좌측 열: 사령탑 선택 & 상대 대비 체급 -->
+          <div class="setup-col-left">
+            
+            <!-- 1. 감독 페르소나 카드 -->
+            <div class="glass-card coach-profile-card">
+              <div class="card-header-compact">
+                <span class="section-tag">전술 사령탑 (사령관 몰입)</span>
+                <div class="select-inline">
+                  <label for="countryFilter">리그:</label>
+                  <select id="countryFilter">
+                    <option value="all">전체 명장</option>
+                    <option value="epl">EPL</option>
+                    <option value="laliga">라리가</option>
+                    <option value="seriea">세리에A / 분데스</option>
+                    <option value="custom">직접 입력 (커스텀)</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- 감독 쇼케이스 뷰 -->
+              <div class="coach-showcase" id="coachShowcase">
+                <div class="avatar-ring">
+                  <img id="coachAvatar" src="" alt="감독 프로필" class="coach-avatar">
+                  <div class="avatar-fallback" id="avatarFallback" style="display: none;">⚽</div>
+                </div>
+                <div class="coach-meta">
+                  <div class="coach-name-row">
+                    <h3 id="coachName">펩 과르디올라</h3>
+                    <span class="coach-club-badge" id="coachClubBadge">맨체스터 시티</span>
+                  </div>
+                  <p class="coach-motto" id="coachMotto">"공을 소유하면 상대는 절대 우리 골문에 도달할 수 없다."</p>
+                  <div class="coach-tags" id="coachTags"></div>
+                </div>
+              </div>
+
+              <!-- 감독 선택 드롭다운 -->
+              <div class="input-row" id="managerSelectGroup">
+                <select id="managerSelect">
+                  <option value="pep">펩 과르디올라 (점유율, IWB, 하프스페이스 3-2)</option>
+                  <option value="klopp">위르겐 클롭 (게겐프레싱, 록앤롤 초고속 역습)</option>
+                  <option value="mourinho">조제 무리뉴 (2줄 수비, 실리 롱카운터, 텐백 승점)</option>
+                  <option value="ancelotti">카를로 안첼로티 (선수 자율성, 밸런스, 챔스 역전극)</option>
+                  <option value="simeone">디에고 시메오네 (4-4-2 두 줄 버스, 육탄 수비, 세트피스)</option>
+                  <option value="flick">한지 플릭 (무자비한 하이라인, 8-2 질식 전방 압박)</option>
+                  <option value="arteta">미켈 아르테타 (세트피스 지배, 1인치 통제, 4-4-2 블록)</option>
+                  <option value="ange">엔제 포스테코글루 (극단적 하이라인 낭만 공격, 무타협)</option>
+                  <option value="custom">✍️ 다른 감독 직접 입력...</option>
                 </select>
               </div>
+
+              <!-- 커스텀 감독 직접 입력창 -->
+              <div class="input-row" id="customCoachRow" style="display: none;">
+                <input type="text" id="customCoachName" placeholder="예: 빈센트 콤파니, 아르네 슬롯, 루이스 엔리케" />
+              </div>
             </div>
 
-            <!-- 감독 쇼케이스 뷰 -->
-            <div class="coach-showcase" id="coachShowcase">
-              <div class="avatar-ring">
-                <img id="coachAvatar" src="" alt="감독 프로필" class="coach-avatar">
-                <div class="avatar-fallback" id="avatarFallback" style="display: none;">⚽</div>
+            <!-- 2. 상대 대비 스쿼드 체급 비교 (3구역 피드) -->
+            <div class="glass-card squad-tier-card">
+              <div class="card-header-compact">
+                <span class="section-tag">상대 대비 전력 체급 (Matchup Tier)</span>
+                <span class="helper-sub">이번 상대와 비교했을 때 우리 팀의 체급</span>
               </div>
-              <div class="coach-meta">
-                <div class="coach-name-row">
-                  <h3 id="coachName">펩 과르디올라</h3>
-                  <span class="coach-club-badge" id="coachClubBadge">맨체스터 시티</span>
+
+              <div class="pitch-tier-matrix">
+                <!-- 공격진 -->
+                <div class="tier-row" data-zone="attack">
+                  <div class="tier-zone-label">
+                    <span class="zone-icon">⚔️</span>
+                    <span class="zone-name">공격진 (결정력/속도)</span>
+                  </div>
+                  <div class="tier-btn-group">
+                    <button type="button" class="tier-btn" data-val="우세">우세</button>
+                    <button type="button" class="tier-btn active" data-val="호각">호각</button>
+                    <button type="button" class="tier-btn" data-val="열세">열세</button>
+                  </div>
                 </div>
-                <p class="coach-motto" id="coachMotto">"공을 소유하면 상대는 절대 우리 골문에 도달할 수 없다."</p>
-                <div class="coach-tags" id="coachTags"></div>
+
+                <!-- 미드필더 -->
+                <div class="tier-row" data-zone="midfield">
+                  <div class="tier-zone-label">
+                    <span class="zone-icon">⚙️</span>
+                    <span class="zone-name">미드필더 (중원 장악력)</span>
+                  </div>
+                  <div class="tier-btn-group">
+                    <button type="button" class="tier-btn" data-val="우세">우세</button>
+                    <button type="button" class="tier-btn active" data-val="호각">호각</button>
+                    <button type="button" class="tier-btn" data-val="열세">열세</button>
+                  </div>
+                </div>
+
+                <!-- 수비진 -->
+                <div class="tier-row" data-zone="defense">
+                  <div class="tier-zone-label">
+                    <span class="zone-icon">🛡️</span>
+                    <span class="zone-name">수비진 (포백/수비력)</span>
+                  </div>
+                  <div class="tier-btn-group">
+                    <button type="button" class="tier-btn" data-val="우세">우세</button>
+                    <button type="button" class="tier-btn active" data-val="호각">호각</button>
+                    <button type="button" class="tier-btn" data-val="열세">열세</button>
+                  </div>
+                </div>
               </div>
             </div>
 
-            <!-- 감독 선택 드롭다운 -->
-            <div class="input-row" id="managerSelectGroup">
-              <select id="managerSelect">
-                <option value="pep">펩 과르디올라 (점유율, IWB, 하프스페이스 3-2)</option>
-                <option value="klopp">위르겐 클롭 (게겐프레싱, 록앤롤 초고속 역습)</option>
-                <option value="mourinho">조제 무리뉴 (2줄 수비, 실리 롱카운터, 텐백 승점)</option>
-                <option value="ancelotti">카를로 안첼로티 (선수 자율성, 밸런스, 챔스 역전극)</option>
-                <option value="simeone">디에고 시메오네 (4-4-2 두 줄 버스, 육탄 수비, 세트피스)</option>
-                <option value="flick">한지 플릭 (무자비한 하이라인, 8-2 질식 전방 압박)</option>
-                <option value="arteta">미켈 아르테타 (세트피스 지배, 1인치 통제, 4-4-2 블록)</option>
-                <option value="ange">엔제 포스테코글루 (극단적 하이라인 낭만 공격, 무타협)</option>
-                <option value="custom">다른 감독 직접 입력 (커스텀)...</option>
-              </select>
+          </div>
+
+          <!-- 우측 열: 대형 화면 연결 모니터 & 2장 캡처 슬롯 -->
+          <div class="setup-col-right">
+            
+            <!-- 3. 실시간 게임화면 연결 모니터 (260px 대형) -->
+            <div class="glass-card live-stream-card">
+              <div class="card-header-compact">
+                <div class="header-left">
+                  <span class="section-tag">FM27 게임 화면 연결 모니터</span>
+                  <span class="monitor-status-pill" id="streamStatusPill">대기 중</span>
+                </div>
+                <div class="stream-actions">
+                  <button id="toggleStreamBtn" class="btn btn-sm btn-outline">🖥️ 화면 공유 시작</button>
+                </div>
+              </div>
+
+              <div class="video-monitor-box large-monitor" id="videoMonitorBox">
+                <video id="liveVideo" autoplay playsinline muted style="display: none;"></video>
+                <div class="monitor-placeholder" id="monitorPlaceholder">
+                  <span class="monitor-icon">🎮</span>
+                  <p class="monitor-main-text">FM27 창을 연결하면 고화질 실시간 캡처가 가능합니다</p>
+                  <p class="monitor-sub-text">화면 공유를 켜지 않아도 [Win+Shift+S] 후 웹 어디서든 [Ctrl+V]를 누르면 아래 슬롯에 즉시 들어갑니다</p>
+                </div>
+              </div>
             </div>
 
-            <!-- 커스텀 감독 직접 입력창 -->
-            <div class="input-row" id="customCoachRow" style="display: none;">
-              <input type="text" id="customCoachName" placeholder="예: 빈센트 콤파니, 아르네 슬롯, 루이스 엔리케" />
+            <!-- 4. 2장 캡처 슬롯 -->
+            <div class="glass-card dual-slots-card">
+              <div class="card-header-compact">
+                <span class="section-tag">매치데이 캡처 슬롯 (1장만 올려도 분석 가능)</span>
+                <span class="shortcut-pill">단축키: 1번 / 2번 슬롯 선택, Ctrl+V 붙여넣기</span>
+              </div>
+
+              <div class="dual-slots-grid">
+                <!-- 슬롯 1: 내 전술판 -->
+                <div class="capture-slot active" id="slot1" data-slot="1">
+                  <div class="slot-header">
+                    <span class="slot-badge">슬롯 1 (필수 권장)</span>
+                    <span class="slot-title">📋 내 전술판</span>
+                    <button class="slot-clear-btn" id="slot1ClearBtn" title="이미지 삭제" style="display: none;">✕</button>
+                  </div>
+                  
+                  <div class="slot-body">
+                    <div class="slot-preview" id="slot1Preview">
+                      <div class="empty-slot-msg">
+                        <span class="empty-icon">📁</span>
+                        <span class="empty-lead">내 전술 화면</span>
+                        <span class="empty-hint">Ctrl+V 또는 드래그</span>
+                      </div>
+                      <img id="slot1Img" src="" alt="내 전술판" style="display: none;">
+                    </div>
+
+                    <div class="slot-toolbar">
+                      <button type="button" class="slot-btn" id="slot1SnapBtn" title="화면 공유 중인 영상에서 캡처">📸 즉시 캡처</button>
+                      <button type="button" class="slot-btn" id="slot1PasteBtn" title="클립보드 이미지 붙여넣기">📋 붙여넣기</button>
+                      <label class="slot-btn btn-file-label" for="slot1FileInput" title="파일 직접 선택">
+                        📂 파일
+                        <input type="file" id="slot1FileInput" accept="image/*" style="display: none;">
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 슬롯 2: 상대 분석 / 라인업 -->
+                <div class="capture-slot" id="slot2" data-slot="2">
+                  <div class="slot-header">
+                    <span class="slot-badge">슬롯 2 (선택 권장)</span>
+                    <span class="slot-title">🎯 상대 스카우팅 / 라인업</span>
+                    <button class="slot-clear-btn" id="slot2ClearBtn" title="이미지 삭제" style="display: none;">✕</button>
+                  </div>
+
+                  <div class="slot-body">
+                    <div class="slot-preview" id="slot2Preview">
+                      <div class="empty-slot-msg">
+                        <span class="empty-icon">📁</span>
+                        <span class="empty-lead">상대 분석/라인업</span>
+                        <span class="empty-hint">Ctrl+V 또는 드래그</span>
+                      </div>
+                      <img id="slot2Img" src="" alt="상대 분석" style="display: none;">
+                    </div>
+
+                    <div class="slot-toolbar">
+                      <button type="button" class="slot-btn" id="slot2SnapBtn" title="화면 공유 중인 영상에서 캡처">📸 즉시 캡처</button>
+                      <button type="button" class="slot-btn" id="slot2PasteBtn" title="클립보드 이미지 붙여넣기">📋 붙여넣기</button>
+                      <label class="slot-btn btn-file-label" for="slot2FileInput" title="파일 직접 선택">
+                        📂 파일
+                        <input type="file" id="slot2FileInput" accept="image/*" style="display: none;">
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 5. 분석 요청 버튼 -->
+            <div class="action-bar">
+              <button id="analyzeBtn" class="btn-mega-action" disabled>
+                <div class="action-inner">
+                  <div class="action-text-box">
+                    <span class="action-title" id="analyzeBtnTitle">⚡ 사령탑 몰입 맞춤 플레이북 생성하기</span>
+                    <span class="action-desc">원본 대형 존중 & 인터랙티브 동적 전술판 수립</span>
+                  </div>
+                  <div class="action-shortcut">
+                    <kbd>Ctrl</kbd> + <kbd>Enter</kbd>
+                  </div>
+                </div>
+              </button>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      <!-- 화면 2: 라커룸 전술 브리핑실 (Briefing Room View - 결과 화면) -->
+      <section id="briefingView" class="view-panel" style="display: none;">
+        
+        <!-- 상단 액션 바 -->
+        <div class="briefing-top-bar">
+          <button id="backToSetupBtn" class="btn btn-outline btn-back">
+            ← 작전 준비실로 돌아가기 (다시 설정/캡처)
+          </button>
+          <div class="briefing-meta-tags">
+            <span class="meta-badge" id="briefingCoachTag">사령탑: 펩 과르디올라</span>
+            <span class="meta-badge" id="briefingTiersTag">체급: 공격 호각 / 미드 호각 / 수비 호각</span>
+            <button id="copySummaryBtn" class="btn btn-sm btn-ghost">📋 전술 텍스트 복사</button>
+          </div>
+        </div>
+
+        <!-- 로딩 스캐너 -->
+        <div id="briefingLoadingBox" class="loading-scanner" style="display: none;">
+          <div class="scanner-spinner"></div>
+          <p class="scanner-title" id="loadingCoachTitle">사령탑이 전술판과 상대 데이터를 정밀 분석하고 있습니다...</p>
+          <p class="scanner-sub">원본 포메이션 존중, 상대 취약점 판별, 공/수 동적 움직임 좌표를 계산 중입니다.</p>
+        </div>
+
+        <!-- 실제 브리핑 본문 컨테이너 -->
+        <div id="briefingContentBox" class="briefing-content-container">
+          
+          <!-- 1. 사령탑 라커룸 스피치 -->
+          <div class="glass-card locker-room-speech-card">
+            <div class="speech-avatar" id="speechAvatar">👔</div>
+            <div class="speech-body">
+              <span class="speech-author" id="speechAuthor">펩 과르디올라의 경기 전 라커룸 연설:</span>
+              <p class="speech-quote" id="speechQuote">"우리의 경기다. 원본의 뼈대를 살리되, 상대의 빈 공간을 찌르는 핀포인트 롤로 승리를 가져오자."</p>
             </div>
           </div>
 
-          <!-- 2. 상대 대비 스쿼드 체급 비교 (3구역 피드) -->
-          <div class="glass-card squad-tier-card">
-            <div class="card-header-compact">
-              <span class="section-tag"><i data-lucide="scale" class="icon-inline icon-neon"></i> 상대 대비 전력 체급 (Matchup Tier)</span>
-              <span class="helper-sub">이번 상대와 비교했을 때 우리 팀의 체급</span>
-            </div>
-
-            <div class="pitch-tier-matrix">
-              <!-- 공격진 -->
-              <div class="tier-row" data-zone="attack">
-                <div class="tier-zone-label">
-                  <i data-lucide="swords" class="zone-icon icon-rose"></i>
-                  <span class="zone-name">공격진 (결정력/속도)</span>
-                </div>
-                <div class="tier-btn-group">
-                  <button type="button" class="tier-btn" data-val="우세">우세</button>
-                  <button type="button" class="tier-btn active" data-val="호각">호각</button>
-                  <button type="button" class="tier-btn" data-val="열세">열세</button>
-                </div>
+          <!-- 2. 인터랙티브 동적 전술 피치 보드 -->
+          <div class="glass-card tactical-pitch-card">
+            <div class="pitch-card-header">
+              <div class="pitch-title-box">
+                <span class="pitch-badge-tag">TACTICAL PITCH BOARD</span>
+                <h3 id="pitchFormationTitle">포메이션: 4-3-2-1 비대칭 유지 (공격 시 3-2-4-1 변형)</h3>
+                <p class="pitch-reason-desc" id="pitchFormationReason">
+                  "상대 4-3-3의 양 풀백 전진 뒷공간을 공략하고 중앙 3-2 빌드업으로 수적 우위를 점하기 위한 합리적 변형입니다."
+                </p>
               </div>
-
-              <!-- 미드필더 -->
-              <div class="tier-row" data-zone="midfield">
-                <div class="tier-zone-label">
-                  <i data-lucide="cog" class="zone-icon icon-amber"></i>
-                  <span class="zone-name">미드필더 (중원 장악력)</span>
-                </div>
-                <div class="tier-btn-group">
-                  <button type="button" class="tier-btn" data-val="우세">우세</button>
-                  <button type="button" class="tier-btn active" data-val="호각">호각</button>
-                  <button type="button" class="tier-btn" data-val="열세">열세</button>
-                </div>
-              </div>
-
-              <!-- 수비진 -->
-              <div class="tier-row" data-zone="defense">
-                <div class="tier-zone-label">
-                  <i data-lucide="shield" class="zone-icon icon-cyan"></i>
-                  <span class="zone-name">수비진 (포백/수비력)</span>
-                </div>
-                <div class="tier-btn-group">
-                  <button type="button" class="tier-btn" data-val="우세">우세</button>
-                  <button type="button" class="tier-btn active" data-val="호각">호각</button>
-                  <button type="button" class="tier-btn" data-val="열세">열세</button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- 2-1. 우리 팀 고유 체질 (Team DNA: 강점 & 약점 설정) -->
-          <div class="glass-card team-dna-card" id="teamDnaCard">
-            <div class="card-header-compact">
-              <div class="header-left">
-                <span class="section-tag"><i data-lucide="dna" class="icon-inline icon-cyan"></i> 우리 팀 고유 체질 (Team DNA)</span>
-                <span class="helper-sub">설정 시 자동 저장되어 다음 경기에도 유지됩니다</span>
-              </div>
-              <div class="header-right">
-                <label class="toggle-switch-wrap" title="Team DNA 켜기/끄기">
-                  <input type="checkbox" id="teamDnaToggle">
-                  <span class="toggle-slider"></span>
-                </label>
-              </div>
-            </div>
-
-            <!-- 체질 설정 본문 (토글 OFF 시 접힘) -->
-            <div class="team-dna-body" id="teamDnaBody">
               
-              <!-- 1. 핵심 강점 행 -->
-              <div class="dna-row">
-                <div class="dna-label-group">
-                  <span class="dna-badge badge-strength"><i data-lucide="zap" class="icon-inline"></i> 우리 팀 장점</span>
-                </div>
-                <div class="dna-controls">
-                  <div class="dna-select-wrap">
-                    <select id="teamStrengthSelect" class="dna-select">
-                      <option value="pace">⚡ 폭발적 주력/치달 (치고 달리기 &amp; 속공 전개)</option>
-                      <option value="crossing">🎯 택배 크로스/뚝배기 헤더 (측면 고공 폭격)</option>
-                      <option value="playmaker">🧠 탈압박 &amp; 중원 킬패스 (플레이메이커 지휘)</option>
-                      <option value="defense">🧱 철벽 포백 대인방어 (피지컬 &amp; 1:1 차단 우위)</option>
-                      <option value="dribble">🌪️ 원톱/윙어 크랙 드리블 (수비진 균열 &amp; 돌파)</option>
-                      <option value="workrate">🔥 강철 체력 &amp; 왕성한 활동량 (게겐프레싱 압박)</option>
-                    </select>
-                  </div>
-                  <div class="level-btn-group" id="strengthLevelGroup" data-target="strength">
-                    <button type="button" class="level-btn active" data-val="high" title="장점 강도: 상 (월드클래스급)">상</button>
-                    <button type="button" class="level-btn" data-val="mid" title="장점 강도: 중 (준수한 수준)">중</button>
-                    <button type="button" class="level-btn" data-val="low" title="장점 강도: 하 (평범한 수준)">하</button>
-                  </div>
-                </div>
+              <!-- 공/수 동적 전환 토글 스위치 -->
+              <div class="pitch-phase-toggle">
+                <button type="button" class="phase-btn active" id="phaseAttackBtn" data-phase="attack">
+                  ⚔️ 공격 시 전개 (In Possession)
+                </button>
+                <button type="button" class="phase-btn" id="phaseDefenseBtn" data-phase="defense">
+                  🛡️ 수비 시 블록 (Out of Possession)
+                </button>
+              </div>
+            </div>
+
+            <!-- 축구 피치 인터페이스 -->
+            <div class="cyber-pitch-wrapper">
+              <div class="cyber-pitch" id="cyberPitch">
+                <div class="pitch-line half-way-line"></div>
+                <div class="pitch-line center-circle"></div>
+                <div class="pitch-line center-spot"></div>
+                <div class="pitch-line penalty-box-top"></div>
+                <div class="pitch-line goal-box-top"></div>
+                <div class="pitch-line penalty-box-bottom"></div>
+                <div class="pitch-line goal-box-bottom"></div>
+                
+                <div class="half-space-lane left-lane"></div>
+                <div class="half-space-lane right-lane"></div>
+
+                <div class="pitch-players-container" id="pitchPlayersContainer"></div>
               </div>
 
-              <!-- 2. 핵심 약점 행 -->
-              <div class="dna-row">
-                <div class="dna-label-group">
-                  <span class="dna-badge badge-weakness"><i data-lucide="alert-triangle" class="icon-inline"></i> 우리 팀 약점</span>
-                </div>
-                <div class="dna-controls">
-                  <div class="dna-select-wrap">
-                    <select id="teamWeaknessSelect" class="dna-select">
-                      <option value="slow_backline">🐢 느림보 수비라인 (발이 느려 뒷공간 털림 주의)</option>
-                      <option value="stamina_drop">🪫 조루 체력/60분 방전 (후반 실점 위기 &amp; 붕괴)</option>
-                      <option value="injury_prone">🩹 유리몸/선수층 얇음 (부상·카드 누적 시 파멸)</option>
-                      <option value="poor_finishing">💨 소녀슛/결정력 부족 (빅찬스 미스 &amp; 홈런 남발)</option>
-                      <option value="flank_leak">🕳️ 풀백 자동문 (측면 수비 붕괴 &amp; 복귀 지연)</option>
-                      <option value="air_weak">☁️ 제공권 열세 (세트피스/헤더 실점 빈발)</option>
-                    </select>
-                  </div>
-                  <div class="level-btn-group" id="weaknessLevelGroup" data-target="weakness">
-                    <button type="button" class="level-btn active" data-val="high" title="약점 심각도: 심각(상) - 최우선 보정 필요">심각</button>
-                    <button type="button" class="level-btn" data-val="mid" title="약점 심각도: 보통(중) - 전술적 주의">보통</button>
-                    <button type="button" class="level-btn" data-val="low" title="약점 심각도: 경미(하) - 약간의 보완">경미</button>
-                  </div>
-                </div>
+              <div class="pitch-legend-bar">
+                <span class="legend-tip">💡 버튼을 누르면 공격 시 전진 침투와 수비 시 콤팩트 블록으로 선수들이 스르륵 움직입니다.</span>
+                <span class="legend-current-mode" id="currentPhaseLabel">현재: ⚔️ 공격 시 공격 전개 대형</span>
               </div>
+            </div>
+          </div>
 
-              <!-- 안내 툴팁 -->
-              <div class="dna-hint-box">
-                <i data-lucide="info" class="icon-inline icon-cyan"></i>
-                <span>사령탑 AI가 위 체질을 감안하여 약점은 전술로 커버하고 장점은 극대화하는 조작값을 계산합니다.</span>
-              </div>
+          <!-- 3. 4대 핵심 요약 배지 카드 그리드 -->
+          <div class="summary-cards-section">
+            <div class="section-title-bar">
+              <h4>매치데이 4대 핵심 작전 브리핑</h4>
+              <span class="badge-hint">카드를 클릭하면 인게임에서 마우스로 직접 변경해야 할 세부 조작법이 팝업으로 뜹니다 🔍</span>
+            </div>
+
+            <div class="summary-badges-grid">
+              
+              <article class="tactical-summary-card" data-modal="matchup">
+                <div class="card-head">
+                  <span class="card-icon">⚔️</span>
+                  <div class="card-titles">
+                    <h5>상성 진단 & 공략 지점</h5>
+                    <span class="card-sub">상대 취약 공간 및 매치업 유불리</span>
+                  </div>
+                  <span class="card-chip">자세히 보기 🔍</span>
+                </div>
+                <div class="card-summary-text" id="summaryMatchup">
+                  상대 전술의 주요 공격 루트와 수비 취약 공간을 짚어냅니다.
+                </div>
+              </article>
+
+              <article class="tactical-summary-card" data-modal="plana">
+                <div class="card-head">
+                  <span class="card-icon">📋</span>
+                  <div class="card-titles">
+                    <h5>플랜 A (스타팅 조작법)</h5>
+                    <span class="card-sub">원본 대형 존중 & 선수 롤 Before ➜ After</span>
+                  </div>
+                  <span class="card-chip">자세히 보기 🔍</span>
+                </div>
+                <div class="card-summary-text" id="summaryPlanA">
+                  원본 포메이션을 유지하며 손봐야 할 롤과 슬라이더 조작값입니다.
+                </div>
+              </article>
+
+              <article class="tactical-summary-card" data-modal="scenarios">
+                <div class="card-head">
+                  <span class="card-icon">🔄</span>
+                  <div class="card-titles">
+                    <h5>시나리오별 대처 (플랜 B/C)</h5>
+                    <span class="card-sub">2점 리드 잠그기 / 1점 접전 / 열세 역전</span>
+                  </div>
+                  <span class="card-chip">자세히 보기 🔍</span>
+                </div>
+                <div class="card-summary-text" id="summaryScenarios">
+                  점수 차와 시간대에 따른 인게임 대형 전환 및 지침 조절법입니다.
+                </div>
+              </article>
+
+              <article class="tactical-summary-card" data-modal="onepoint">
+                <div class="card-head">
+                  <span class="card-icon">💡</span>
+                  <div class="card-titles">
+                    <h5>에이스 봉쇄 & 원포인트</h5>
+                    <span class="card-sub">상대 에이스 전담 마킹 & 세트피스 비기</span>
+                  </div>
+                  <span class="card-chip">자세히 보기 🔍</span>
+                </div>
+                <div class="card-summary-text" id="summaryOnePoint">
+                  반드시 틀어막아야 할 상대 키맨과 승부를 가를 세트피스 지침입니다.
+                </div>
+              </article>
 
             </div>
           </div>
 
         </div>
 
-        <!-- 우측 열: 대형 화면 연결 모니터 & 2장 캡처 슬롯 -->
-        <div class="setup-col-right">
-          
-          <!-- 3. 실시간 게임화면 연결 모니터 (260px 대형) -->
-          <div class="glass-card live-stream-card">
-            <div class="card-header-compact">
-              <div class="header-left">
-                <span class="section-tag"><i data-lucide="tv" class="icon-inline"></i> (FM) 풋볼매니저 게임 화면 연결 모니터</span>
-                <span class="monitor-status-pill" id="streamStatusPill">대기 중</span>
-              </div>
-              <div class="stream-actions">
-                <button id="toggleStreamBtn" class="btn btn-sm btn-outline"><i data-lucide="screen-share" class="icon-inline"></i> 화면 공유 시작</button>
-              </div>
+        <!-- 브리핑 하단 바 -->
+        <div class="briefing-footer-bar">
+          <button id="bottomBackBtn" class="btn btn-outline">← 작전 준비실로 돌아가기</button>
+          <button id="errorReportBtn" class="btn btn-ghost btn-sm">🚨 오류 제보 / 로그 복사</button>
+        </div>
+
+      </section>
+
+    </div>
+
+    <!-- ============================================================
+         메인 영역 B: 1:1 명장 비밀 문자 메신저 (iMessage Style)
+         ============================================================ -->
+    <section id="messengerSectionWrapper" class="view-panel" style="display: none;">
+      <div class="imessage-container">
+        
+        <!-- iMessage 상단 헤더 -->
+        <div class="imessage-header">
+          <div class="imessage-contact-info">
+            <div class="imessage-avatar-wrap">
+              <img id="imessageCoachAvatar" src="" alt="감독 프로필" class="imessage-avatar-img">
+              <div class="avatar-fallback" id="imessageAvatarFallback" style="display: none;">👔</div>
             </div>
-
-            <div class="video-monitor-box large-monitor" id="videoMonitorBox">
-              <video id="liveVideo" autoplay playsinline muted style="display: none;"></video>
-              <div class="monitor-placeholder" id="monitorPlaceholder">
-                <span class="monitor-icon"><i data-lucide="gamepad-2" style="width: 48px; height: 48px; stroke: var(--pitch-neon);"></i></span>
-                <p class="monitor-main-text">(FM) 풋볼매니저 창을 연결하면 고화질 실시간 캡처가 가능합니다</p>
-                <p class="monitor-sub-text">화면 공유를 켜지 않아도 [Win+Shift+S] 후 웹 어디서든 [Ctrl+V]를 누르면 아래 슬롯에 즉시 들어갑니다</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- 4. 매치데이 다중 캡처 슬롯 (슬롯당 최대 4장) -->
-          <div class="glass-card dual-slots-card">
-            <div class="card-header-compact">
-              <span class="section-tag"><i data-lucide="layers" class="icon-inline"></i> 매치데이 다중 정보 슬롯 (슬롯당 최대 4장 업로드)</span>
-              <span class="shortcut-pill">단축키: 1번/2번 슬롯 선택, Ctrl+V 연속 붙여넣기</span>
-            </div>
-
-            <div class="dual-slots-grid">
-              <!-- 슬롯 1: 내 전술판 및 세부 지침 -->
-              <div class="capture-slot active" id="slot1" data-slot="1">
-                <div class="slot-header">
-                  <div class="slot-title-wrap">
-                    <span class="slot-badge">슬롯 1 (필수)</span>
-                    <span class="slot-title"><i data-lucide="shield-alert" class="icon-inline icon-defense"></i> 아군 전술 정보</span>
-                  </div>
-                  <div class="slot-header-actions">
-                    <span class="slot-count-badge" id="slot1CountBadge">0 / 4장</span>
-                    <button class="slot-clear-btn" id="slot1ClearBtn" title="슬롯 전체 비우기" style="display: none;">전체 삭제</button>
-                  </div>
-                </div>
-                
-                <div class="slot-body">
-                  <div class="slot-gallery" id="slot1Gallery">
-                    <div class="empty-gallery-msg" id="slot1EmptyMsg">
-                      <i data-lucide="image-plus" class="empty-gallery-icon"></i>
-                      <span class="empty-lead">전술판, 세부 지침, 선수단 스크린샷</span>
-                      <span class="empty-hint">Ctrl+V 붙여넣기 또는 드래그 (최대 4장)</span>
-                    </div>
-                  </div>
-
-                  <div class="slot-toolbar">
-                    <button type="button" class="slot-btn" id="slot1SnapBtn" title="화면 공유 중인 영상에서 캡처"><i data-lucide="camera" class="icon-inline"></i> 캡처 추가</button>
-                    <button type="button" class="slot-btn" id="slot1PasteBtn" title="클립보드 이미지 붙여넣기"><i data-lucide="clipboard" class="icon-inline"></i> 붙여넣기</button>
-                    <label class="slot-btn btn-file-label" for="slot1FileInput" title="파일 직접 선택">
-                      <i data-lucide="folder-open" class="icon-inline"></i> 파일 추가
-                      <input type="file" id="slot1FileInput" accept="image/*" multiple style="display: none;">
-                    </label>
-                  </div>
-                </div>
-              </div>
-
-              <!-- 슬롯 2: 상대 분석 / 라인업 -->
-              <div class="capture-slot" id="slot2" data-slot="2">
-                <div class="slot-header">
-                  <div class="slot-title-wrap">
-                    <span class="slot-badge">슬롯 2 (선택)</span>
-                    <span class="slot-title"><i data-lucide="crosshair" class="icon-inline icon-attack"></i> 상대 스카우팅 / 라인업</span>
-                  </div>
-                  <div class="slot-header-actions">
-                    <span class="slot-count-badge" id="slot2CountBadge">0 / 4장</span>
-                    <button class="slot-clear-btn" id="slot2ClearBtn" title="슬롯 전체 비우기" style="display: none;">전체 삭제</button>
-                  </div>
-                </div>
-
-                <div class="slot-body">
-                  <div class="slot-gallery" id="slot2Gallery">
-                    <div class="empty-gallery-msg" id="slot2EmptyMsg">
-                      <i data-lucide="image-plus" class="empty-gallery-icon"></i>
-                      <span class="empty-lead">상대 라인업, 분석표, 핵심선수 스크린샷</span>
-                      <span class="empty-hint">Ctrl+V 붙여넣기 또는 드래그 (최대 4장)</span>
-                    </div>
-                  </div>
-
-                  <div class="slot-toolbar">
-                    <button type="button" class="slot-btn" id="slot2SnapBtn" title="화면 공유 중인 영상에서 캡처"><i data-lucide="camera" class="icon-inline"></i> 캡처 추가</button>
-                    <button type="button" class="slot-btn" id="slot2PasteBtn" title="클립보드 이미지 붙여넣기"><i data-lucide="clipboard" class="icon-inline"></i> 붙여넣기</button>
-                    <label class="slot-btn btn-file-label" for="slot2FileInput" title="파일 직접 선택">
-                      <i data-lucide="folder-open" class="icon-inline"></i> 파일 추가
-                      <input type="file" id="slot2FileInput" accept="image/*" multiple style="display: none;">
-                    </label>
-                  </div>
-                </div>
-              </div>
+            <div class="imessage-contact-meta">
+              <h3 id="imessageCoachName">펩 과르디올라</h3>
+              <span class="imessage-status-badge">
+                <span class="green-dot"></span> iMessage · 대화 가능
+              </span>
             </div>
           </div>
 
-          <!-- 5. 분석 모드 선택 (기본 모드 vs 고급 설정 모드) -->
-          <div class="glass-card analysis-mode-card">
-            <div class="mode-selector-header">
-              <span class="section-tag"><i data-lucide="sliders" class="icon-inline"></i> 작전 수립 모드 선택</span>
-              <div class="mode-toggle-group">
-                <button type="button" class="mode-btn active" id="modeBasicBtn" data-mode="basic">
-                  <i data-lucide="zap" class="icon-inline"></i> 기본 모드 (빠른 생성)
-                </button>
-                <button type="button" class="mode-btn" id="modeAdvancedBtn" data-mode="advanced">
-                  <i data-lucide="settings-2" class="icon-inline"></i> 고급 설정 모드 (실전 변수)
-                </button>
-              </div>
-            </div>
-
-            <!-- 고급 설정 모드 패널 (토글 시 오픈) -->
-            <div class="advanced-settings-panel" id="advancedSettingsPanel" style="display: none;">
-              <div class="adv-section-lead">
-                <i data-lucide="info" class="icon-inline icon-cyan"></i>
-                <span>오늘 경기에 해당하는 특별한 상황을 1~2개 콕콕 집어주세요. AI가 전술 지침에 최우선 반영합니다.</span>
-              </div>
-
-              <div class="adv-grid">
-                <!-- 1. 경기 장소 -->
-                <div class="adv-group" data-adv="location">
-                  <label class="adv-label"><i data-lucide="home" class="icon-inline"></i> 1. 경기 장소</label>
-                  <div class="adv-chips">
-                    <button type="button" class="adv-chip active" data-val="home">
-                      <span class="chip-main">안방 홈 경기</span>
-                      <span class="chip-sub">주도권 & 공격적 라인</span>
-                    </button>
-                    <button type="button" class="adv-chip" data-val="away">
-                      <span class="chip-main">까다로운 원정</span>
-                      <span class="chip-sub">수비 안정 & 실리 템포</span>
-                    </button>
-                    <button type="button" class="adv-chip" data-val="neutral">
-                      <span class="chip-main">중립 결승전</span>
-                      <span class="chip-sub">실수 최소화 밸런스</span>
-                    </button>
-                  </div>
-                </div>
-
-                <!-- 2. 경기 목표 -->
-                <div class="adv-group" data-adv="goal">
-                  <label class="adv-label"><i data-lucide="trophy" class="icon-inline"></i> 2. 경기 목표</label>
-                  <div class="adv-chips">
-                    <button type="button" class="adv-chip active" data-val="regular">
-                      <span class="chip-main">리그 일반전</span>
-                      <span class="chip-sub">균형 잡힌 승점 3점</span>
-                    </button>
-                    <button type="button" class="adv-chip" data-val="draw_ok">
-                      <span class="chip-main">무승부 사수</span>
-                      <span class="chip-sub">승점 1점 텐백 실리</span>
-                    </button>
-                    <button type="button" class="adv-chip" data-val="high_score">
-                      <span class="chip-main">다득점 대승</span>
-                      <span class="chip-sub">골득실 극대화 총공세</span>
-                    </button>
-                  </div>
-                </div>
-
-                <!-- 3. 체력 & 일정 -->
-                <div class="adv-group" data-adv="stamina">
-                  <label class="adv-label"><i data-lucide="battery-charging" class="icon-inline"></i> 3. 체력 및 일정 관리</label>
-                  <div class="adv-chips">
-                    <button type="button" class="adv-chip active" data-val="all_in">
-                      <span class="chip-main">주전 총력전</span>
-                      <span class="chip-sub">체력 100% 소진 각오</span>
-                    </button>
-                    <button type="button" class="adv-chip" data-val="manage">
-                      <span class="chip-main">주중 체력 안배</span>
-                      <span class="chip-sub">후반 조기 템포 다운</span>
-                    </button>
-                    <button type="button" class="adv-chip" data-val="rotation">
-                      <span class="chip-main">후보 로테이션</span>
-                      <span class="chip-sub">단순 지침 저강도</span>
-                    </button>
-                  </div>
-                </div>
-
-                <!-- 4. 상대 성향 -->
-                <div class="adv-group" data-adv="opp_style">
-                  <label class="adv-label"><i data-lucide="shield" class="icon-inline"></i> 4. 상대의 예상 전술 기조</label>
-                  <div class="adv-chips">
-                    <button type="button" class="adv-chip active" data-val="auto">
-                      <span class="chip-main">AI 자동 판독</span>
-                      <span class="chip-sub">스크린샷 기반 진단</span>
-                    </button>
-                    <button type="button" class="adv-chip" data-val="low_block">
-                      <span class="chip-main">상대 텐백 버스</span>
-                      <span class="chip-sub">밀집 수비 파쇄 컷백</span>
-                    </button>
-                    <button type="button" class="adv-chip" data-val="high_press">
-                      <span class="chip-main">상대 하이라인 압박</span>
-                      <span class="chip-sub">뒷공간 롱볼 카운터</span>
-                    </button>
-                    <button type="button" class="adv-chip" data-val="cross_spam">
-                      <span class="chip-main">상대 측면 크로스</span>
-                      <span class="chip-sub">박스 공중볼 경합 방어</span>
-                    </button>
-                  </div>
-                </div>
-
-                <!-- 5. 부상 & 약점 -->
-                <div class="adv-group" data-adv="injury">
-                  <label class="adv-label"><i data-lucide="activity" class="icon-inline"></i> 5. 우리 팀 전력 누수 & 약점</label>
-                  <div class="adv-chips">
-                    <button type="button" class="adv-chip active" data-val="none">
-                      <span class="chip-main">전력 누수 없음</span>
-                      <span class="chip-sub">베스트 11 풀가동</span>
-                    </button>
-                    <button type="button" class="adv-chip" data-val="no_striker">
-                      <span class="chip-main">주전 공격수 결장</span>
-                      <span class="chip-sub">가짜 9번/2선 침투 활용</span>
-                    </button>
-                    <button type="button" class="adv-chip" data-val="slow_defense">
-                      <span class="chip-main">수비진 발 느림</span>
-                      <span class="chip-sub">라인 내림 & 뒷공간 커버</span>
-                    </button>
-                    <button type="button" class="adv-chip" data-val="no_midfield">
-                      <span class="chip-main">핵심 미드필더 결장</span>
-                      <span class="chip-sub">중원 생략 다이렉트 전개</span>
-                    </button>
-                  </div>
-                </div>
-
-                <!-- 6. 날씨 & 구장 환경 -->
-                <div class="adv-group" data-adv="weather">
-                  <label class="adv-label"><i data-lucide="cloud-rain" class="icon-inline"></i> 6. 날씨 및 구장 환경</label>
-                  <div class="adv-chips">
-                    <button type="button" class="adv-chip active" data-val="good">
-                      <span class="chip-main">기본 / 양호</span>
-                      <span class="chip-sub">표준 잔디 컨디션</span>
-                    </button>
-                    <button type="button" class="adv-chip" data-val="rain">
-                      <span class="chip-main">수중전 / 폭우</span>
-                      <span class="chip-sub">숏패스 감속 ➔ 롱볼 유리</span>
-                    </button>
-                    <button type="button" class="adv-chip" data-val="narrow">
-                      <span class="chip-main">좁은 경기장</span>
-                      <span class="chip-sub">중앙 밀집 & 세트피스 중요</span>
-                    </button>
-                    <button type="button" class="adv-chip" data-val="wide">
-                      <span class="chip-main">넓은 경기장</span>
-                      <span class="chip-sub">측면 전환 & 넓게 배치</span>
-                    </button>
-                  </div>
-                </div>
-
-                <!-- 7. 카드 & 파울 관리 -->
-                <div class="adv-group" data-adv="cards">
-                  <label class="adv-label"><i data-lucide="alert-triangle" class="icon-inline"></i> 7. 카드 및 파울 리스크</label>
-                  <div class="adv-chips">
-                    <button type="button" class="adv-chip active" data-val="normal">
-                      <span class="chip-main">보통 파울</span>
-                      <span class="chip-sub">상황별 일반 태클</span>
-                    </button>
-                    <button type="button" class="adv-chip" data-val="careful">
-                      <span class="chip-main">경고 누적 주의</span>
-                      <span class="chip-sub">발 빼기 & 태클 자제</span>
-                    </button>
-                    <button type="button" class="adv-chip" data-val="aggressive">
-                      <span class="chip-main">거친 파울 불사</span>
-                      <span class="chip-sub">상대 템포 육탄 분쇄</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- 6. 분석 요청 버튼 -->
-          <div class="action-bar">
-            <button id="analyzeBtn" class="btn-mega-action" disabled>
-              <div class="action-inner">
-                <div class="action-text-box">
-                  <span class="action-title" id="analyzeBtnTitle"><i data-lucide="sparkles" class="icon-inline"></i> 사령탑 몰입 맞춤 플레이북 생성하기</span>
-                  <span class="action-desc">원본 대형 존중 & 인터랙티브 동적 전술판 수립</span>
-                </div>
-                <div class="action-shortcut">
-                  <kbd>Ctrl</kbd> + <kbd>Enter</kbd>
-                </div>
-              </div>
+          <div class="imessage-header-actions">
+            <button type="button" class="btn btn-sm btn-ghost" id="clearChatBtn" title="대화 내용 초기화">
+              🗑️ 대화 비우기
             </button>
           </div>
-
         </div>
 
-      </div>
-    </section>
-
-    <!-- ============================================================
-         화면 2: 라커룸 전술 브리핑실 (Briefing Room View - 결과 화면)
-         ============================================================ -->
-    <section id="briefingView" class="view-panel" style="display: none;">
-      
-      <!-- 상단 액션 바 -->
-      <div class="briefing-top-bar">
-        <button id="backToSetupBtn" class="btn btn-outline btn-back">
-          <i data-lucide="arrow-left" class="icon-inline"></i> 작전 준비실로 돌아가기 (다시 설정/캡처)
-        </button>
-        <div class="briefing-meta-tags">
-          <span class="meta-badge" id="briefingCoachTag"><i data-lucide="user" class="icon-inline icon-cyan"></i> 사령탑: 펩 과르디올라</span>
-          <span class="meta-badge" id="briefingTiersTag"><i data-lucide="scale" class="icon-inline icon-neon"></i> 체급: 공격 호각 / 미드 호각 / 수비 호각</span>
-          <span class="meta-badge" id="briefingDnaTag" style="display: none;"><i data-lucide="dna" class="icon-inline icon-purple"></i> 체질: ⚡치달(상) / 🐢수비느림(심각)</span>
-          <button id="captureSummaryBtn" class="btn btn-sm btn-primary"><i data-lucide="camera" class="icon-inline"></i> 전술 카드 (PNG 저장)</button>
-          <button id="captureGifBtn" class="btn btn-sm btn-secondary"><i data-lucide="film" class="icon-inline"></i> 전술 움짤 (GIF 저장)</button>
-        </div>
-      </div>
-
-      <!-- 로딩 스캐너 -->
-      <div id="briefingLoadingBox" class="loading-scanner" style="display: none;">
-        <div class="scanner-spinner"></div>
-        <p class="scanner-title" id="loadingCoachTitle">사령탑이 전술판과 상대 데이터를 정밀 분석하고 있습니다...</p>
-        <p class="scanner-sub">원본 포메이션 존중, 상대 취약점 판별, 공/수 동적 움직임 좌표를 계산 중입니다.</p>
-      </div>
-
-      <!-- 실제 브리핑 본문 컨테이너 (와이드 3단 원페이지 대시보드) -->
-      <div id="briefingContentBox" class="briefing-content-container">
-        
-        <!-- 1. 사령탑 경기 전 핵심 게임 키포인트 (상단 와이드 배너) -->
-        <div class="glass-card locker-room-speech-card">
-          <div class="speech-avatar" id="speechAvatar"><i data-lucide="user-check" style="width: 24px; height: 24px;"></i></div>
-          <div class="speech-body">
-            <span class="speech-author" id="speechAuthor">감독 경기 전 핵심 게임 키포인트:</span>
-            <div class="speech-quote" id="speechQuote">"우리의 경기다. 원본의 뼈대를 살리되, 상대의 빈 공간을 찌르는 핀포인트 롤로 승리를 가져오자."</div>
-          </div>
-        </div>
-
-        <!-- 2. 와이드 3단 전술 대시보드 [좌: 카드 2개 | 중: 세로 피치 | 우: 카드 2개] -->
-        <div class="tactical-trio-dashboard">
+        <!-- iMessage 메시지 피드 -->
+        <div class="imessage-feed" id="imessageFeed">
+          <div class="imessage-date-stamp" id="imessageDateStamp">오늘</div>
           
-          <!-- 좌측 열: 1. 상성 진단 & 2. 플랜 A -->
-          <div class="trio-col trio-col-left">
-            <!-- 카드 1: 상성 진단 -->
-            <article class="tactical-summary-card" data-modal="matchup">
-              <div class="card-head">
-                <span class="card-icon"><i data-lucide="swords" class="icon-attack"></i></span>
-                <div class="card-titles">
-                  <h5>상성 진단 & 공략 지점</h5>
-                  <span class="card-sub">상대 취약 공간 및 매치업 유불리</span>
-                </div>
-                <span class="card-chip"><i data-lucide="maximize-2" class="icon-inline"></i> 상세</span>
-              </div>
-              <div class="card-summary-text" id="summaryMatchup">
-                상대 전술의 주요 공격 루트와 수비 취약 공간을 짚어냅니다.
-              </div>
-            </article>
-
-            <!-- 카드 2: 플랜 A 인게임 조작법 -->
-            <article class="tactical-summary-card" data-modal="plana">
-              <div class="card-head">
-                <span class="card-icon"><i data-lucide="clipboard-list" class="icon-neon"></i></span>
-                <div class="card-titles">
-                  <h5>플랜 A (스타팅 조작법)</h5>
-                  <span class="card-sub">원본 대형 존중 & 슬라이더 및 세부 롤</span>
-                </div>
-                <span class="card-chip"><i data-lucide="maximize-2" class="icon-inline"></i> 상세</span>
-              </div>
-              <div class="card-summary-text" id="summaryPlanA">
-                원본 포메이션을 유지하며 손봐야 할 롤과 슬라이더 조작값입니다.
-              </div>
-            </article>
-          </div>
-
-          <!-- 중앙 열: 고정 세로 피치 보드 -->
-          <div class="trio-col trio-col-center">
-            <div class="glass-card tactical-pitch-card">
-              <div class="pitch-card-header">
-                <div class="pitch-title-box">
-                  <span class="pitch-badge-tag"><i data-lucide="layout-grid" class="icon-inline"></i> TACTICAL PITCH BOARD</span>
-                  <h3 id="pitchFormationTitle">포메이션: 4-3-2-1 비대칭 유지 (공격 시 3-2-4-1 변형)</h3>
-                  <p class="pitch-reason-desc" id="pitchFormationReason">
-                    "상대 4-3-3의 양 풀백 전진 뒷공간을 공략하고 중앙 3-2 빌드업으로 수적 우위를 점하기 위한 합리적 변형입니다."
-                  </p>
-                </div>
-                
-                <div class="pitch-controls-cluster">
-                  <!-- 공/수 동적 전환 토글 스위치 (가로/세로 버튼 완전 제거) -->
-                  <div class="pitch-phase-toggle">
-                    <button type="button" class="phase-btn active" id="phaseAttackBtn" data-phase="attack">
-                      <i data-lucide="swords" class="icon-inline"></i> 공격 시 전개
-                    </button>
-                    <button type="button" class="phase-btn" id="phaseDefenseBtn" data-phase="defense">
-                      <i data-lucide="shield" class="icon-inline"></i> 수비 시 블록
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <!-- 실제 축구 피치 인터페이스 (항상 세로 피치 고정) -->
-              <div class="cyber-pitch-wrapper">
-                <!-- 피치 진영 안내 인디케이터 배너 -->
-                <div class="pitch-direction-banner" id="pitchDirectionBanner">
-                  <span class="dir-opp"><i data-lucide="target" class="icon-inline icon-attack"></i> 상대팀 골대 (공격 방향 ⬆)</span>
-                  <span class="dir-mid"><i data-lucide="swords" class="icon-inline"></i> 하프라인</span>
-                  <span class="dir-own">아군 골대 (수비 진영 ⬇) <i data-lucide="shield" class="icon-inline icon-defense"></i></span>
-                </div>
-
-                <div class="cyber-pitch pitch-vertical" id="cyberPitch">
-                  <!-- 피치 공통 센터 라인 마킹 -->
-                  <div class="pitch-line half-way-line"></div>
-                  <div class="pitch-line center-circle"></div>
-                  <div class="pitch-line center-spot"></div>
-                  
-                  <!-- 세로형 마킹 라인 (상/하 골대 및 하프스페이스 레인) -->
-                  <div class="pitch-line penalty-box-top vert-only"></div>
-                  <div class="pitch-line goal-box-top vert-only"></div>
-                  <div class="pitch-line penalty-box-bottom vert-only"></div>
-                  <div class="pitch-line goal-box-bottom vert-only"></div>
-                  <div class="half-space-lane left-lane vert-only"></div>
-                  <div class="half-space-lane right-lane vert-only"></div>
-
-                  <!-- 11명의 선수 노드 (동적 생성 및 애니메이션 글라이딩) -->
-                  <div class="pitch-players-container" id="pitchPlayersContainer">
-                    <!-- 동적 11명 노드 생성 -->
-                  </div>
-                </div>
-
-                <!-- 피치 하단 범례 및 안내 -->
-                <div class="pitch-legend-bar">
-                  <span class="legend-tip"><i data-lucide="sparkles" class="icon-inline icon-neon"></i> 공격 전개 ↔ 수비 블록 클릭 시 선수들이 스르륵 글라이딩합니다.</span>
-                  <span class="legend-current-mode" id="currentPhaseLabel">현재: 공격 전개 대형 (In Possession)</span>
-                </div>
-              </div>
+          <!-- 기본 첫 웰컴 메시지 -->
+          <div class="imessage-row coach-row">
+            <div class="imessage-avatar-mini">
+              <img id="imessageCoachMiniAvatar" src="" alt="감독">
+            </div>
+            <div class="imessage-bubble coach-bubble">
+              <p id="imessageWelcomeText">이봐, 무슨 일인가? 현재 스쿼드 상태나 이적 예산 캡처가 있다면 보여주게. 어떤 고민이든 솔직하게 털어놓아 봐.</p>
+              <span class="bubble-time">방금 전</span>
             </div>
           </div>
+        </div>
 
-          <!-- 우측 열: 3. 시나리오별 대처 & 4. 에이스 봉쇄 -->
-          <div class="trio-col trio-col-right">
-            <!-- 카드 3: 시나리오별 대처 -->
-            <article class="tactical-summary-card" data-modal="scenarios">
-              <div class="card-head">
-                <span class="card-icon"><i data-lucide="repeat" class="icon-cyan"></i></span>
-                <div class="card-titles">
-                  <h5>시나리오별 대처 (플랜 B/C)</h5>
-                  <span class="card-sub">2점 리드 잠그기 / 1점 접전 / 열세 역전</span>
-                </div>
-                <span class="card-chip"><i data-lucide="maximize-2" class="icon-inline"></i> 상세</span>
-              </div>
-              <div class="card-summary-text" id="summaryScenarios">
-                점수 차와 시간대에 따른 인게임 대형 전환 및 지침 조절법입니다.
-              </div>
-            </article>
+        <!-- 빠른 원클릭 추천 질문 칩 -->
+        <div class="imessage-quick-chips">
+          <button type="button" class="chip-btn" data-query="💰 현재 남은 이적 예산과 급료로 어디를 최우선 보강해야 할까요?">
+            💰 잔여 예산 보강 조언
+          </button>
+          <button type="button" class="chip-btn" data-query="🔄 우리 스쿼드에서 방출 1순위로 정리해야 할 잉여 자원은 누구인가요?">
+            🔄 방출 잉여 자원 정리
+          </button>
+          <button type="button" class="chip-btn" data-query="👶 1군으로 콜업할 만한 유망주 육성 및 포지션 리빌딩 전략을 알려주세요.">
+            👶 유망주 콜업 & 리빌딩
+          </button>
+          <button type="button" class="chip-btn" data-query="⚠️ 라커룸 분위기가 처지고 주전 선수 불만이 떴을 때 어떻게 달래야 합니까?">
+            ⚠️ 선수 불만 & 멘탈 케어
+          </button>
+        </div>
 
-            <!-- 카드 4: 원포인트 조언 & 에이스 봉쇄 -->
-            <article class="tactical-summary-card" data-modal="onepoint">
-              <div class="card-head">
-                <span class="card-icon"><i data-lucide="sparkles" class="icon-amber"></i></span>
-                <div class="card-titles">
-                  <h5>에이스 봉쇄 & 원포인트</h5>
-                  <span class="card-sub">상대 에이스 전담 마킹 & 세트피스 비기</span>
-                </div>
-                <span class="card-chip"><i data-lucide="maximize-2" class="icon-inline"></i> 상세</span>
-              </div>
-              <div class="card-summary-text" id="summaryOnePoint">
-                반드시 틀어막아야 할 상대 키맨과 승부를 가를 세트피스 지침입니다.
-              </div>
-            </article>
+        <!-- iMessage 하단 입력 바 -->
+        <div class="imessage-input-bar">
+          
+          <!-- 이미지 첨부 버튼 & 숨김 파일 인풋 -->
+          <label class="imessage-attach-btn" for="imessageFileInput" title="스크린샷 첨부">
+            <span class="attach-icon">📎</span>
+            <input type="file" id="imessageFileInput" accept="image/*" style="display: none;">
+          </label>
+
+          <!-- 첨부된 이미지 썸네일 미리보기 (있을 때만 표시) -->
+          <div class="imessage-preview-capsule" id="imessagePreviewCapsule" style="display: none;">
+            <img id="imessagePreviewImg" src="" alt="첨부 미리보기">
+            <button type="button" class="preview-remove-btn" id="imessagePreviewRemoveBtn">✕</button>
           </div>
 
+          <!-- 텍스트 입력창 -->
+          <textarea id="imessageInput" rows="1" placeholder="감독에게 보낼 메시지 입력... (Ctrl+V로 캡처 바로 붙여넣기)" spellcheck="false"></textarea>
+
+          <!-- 전송 버튼 -->
+          <button type="button" class="imessage-send-btn" id="imessageSendBtn" title="전송 (Enter)">
+            <span class="send-arrow">↑</span>
+          </button>
         </div>
 
       </div>
-
-      <!-- 브리핑 하단 바 -->
-      <div class="briefing-footer-bar">
-        <button id="bottomBackBtn" class="btn btn-outline"><i data-lucide="arrow-left" class="icon-inline"></i> 작전 준비실로 돌아가기</button>
-        <button id="errorReportBtn" class="btn btn-ghost btn-sm"><i data-lucide="bug" class="icon-inline"></i> 오류 제보 / 로그 복사</button>
-      </div>
-
     </section>
 
     <!-- ============================================================
-         고정형 상세 모달 팝업 (게임 창 옆에 두고 따라 바꿀 수 있음)
+         공통 모달 팝업들
          ============================================================ -->
+    <!-- 고정형 상세 모달 -->
     <div id="detailModalOverlay" class="modal-overlay" style="display: none;">
       <div class="modal-window">
         <header class="modal-header">
           <div class="modal-header-title">
-            <span class="modal-icon" id="modalIcon"><i data-lucide="clipboard-list"></i></span>
+            <span class="modal-icon" id="modalIcon">📋</span>
             <h3 id="modalTitle">플랜 A 인게임 세부 조작 가이드</h3>
           </div>
           <button id="modalCloseBtn" class="modal-close-btn" title="닫기 (ESC)">✕</button>
         </header>
-        <div class="modal-body" id="modalBody">
-          <!-- 상세 HTML 동적 주입 -->
-        </div>
+        <div class="modal-body" id="modalBody"></div>
         <footer class="modal-footer">
-          <span class="modal-hint">(FM) 풋볼매니저 게임 창을 보면서 마우스로 동일하게 클릭하여 설정해 주세요.</span>
+          <span class="modal-hint">FM27 게임 창을 보면서 마우스로 동일하게 클릭하여 설정해 주세요.</span>
           <button id="modalConfirmBtn" class="btn btn-primary btn-sm">확인 완료</button>
         </footer>
       </div>
@@ -722,7 +545,7 @@
       <div class="modal-window modal-warning">
         <header class="modal-header">
           <div class="modal-header-title">
-            <span class="modal-icon"><i data-lucide="alert-triangle" class="icon-amber"></i></span>
+            <span class="modal-icon">⚠️</span>
             <h3>화면 판독 불가 (UNREADABLE_SCREEN)</h3>
           </div>
           <button id="unreadableCloseBtn" class="modal-close-btn">✕</button>
@@ -730,7 +553,7 @@
         <div class="modal-body">
           <p class="warn-lead">캡처된 이미지가 너무 흐리거나 축구 게임(FM) 화면이 아닙니다.</p>
           <ul class="warn-list">
-            <li>📌 (FM) 풋볼매니저의 <strong>[전술 화면]</strong>이나 <strong>[상대 분석 / 선발 명단]</strong> 화면이 맞는지 확인해 주세요.</li>
+            <li>📌 FM27의 <strong>[전술 화면]</strong>이나 <strong>[상대 분석 / 선발 명단]</strong> 화면이 맞는지 확인해 주세요.</li>
             <li>📌 화면 전체 또는 전술판 글자가 또렷하게 보이도록 다시 캡처해 주세요. (가로 600px 이상 권장)</li>
             <li>📌 <code>Win + Shift + S</code>로 잘라낸 뒤 웹 화면에서 <code>Ctrl + V</code>를 누르면 즉시 들어갑니다.</li>
           </ul>
@@ -748,6 +571,6 @@
     <canvas id="snapshotCanvas" style="display: none;"></canvas>
   </div>
 
-  <script src="app.js?v=8"></script>
+  <script src="app.js?v=7"></script>
 </body>
 </html>
