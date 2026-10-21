@@ -101,6 +101,13 @@ document.addEventListener('DOMContentLoaded', () => {
       midfield: '호각',
       defense: '호각'
     },
+    teamDna: {
+      enabled: false,
+      strength: 'pace',
+      strengthLevel: 'high',
+      weakness: 'slow_backline',
+      weaknessLevel: 'high'
+    },
     slot1Images: [], // 다중 이미지 배열 { id, dataUrl } (최대 4장)
     slot2Images: [], // 다중 이미지 배열 { id, dataUrl } (최대 4장)
     activeSlot: 1,
@@ -189,6 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const bottomBackBtn = document.getElementById('bottomBackBtn');
   const briefingCoachTag = document.getElementById('briefingCoachTag');
   const briefingTiersTag = document.getElementById('briefingTiersTag');
+  const briefingDnaTag = document.getElementById('briefingDnaTag');
   const captureSummaryBtn = document.getElementById('captureSummaryBtn');
   const captureGifBtn = document.getElementById('captureGifBtn');
 
@@ -403,6 +411,143 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
   });
+
+  // ------------------------------------------------------------
+  // 8-1. 우리 팀 고유 체질 (Team DNA: 강점 & 약점 자동 저장)
+  // ------------------------------------------------------------
+  const TEAM_DNA_STORAGE_KEY = 'fm_team_dna_config';
+  const TEAM_DNA_OPTIONS = {
+    strengths: {
+      pace: { label: '⚡ 폭발적 주력/치달 (치고 달리기 & 속공 전개)', shortLabel: '⚡치달', desc: '선수단의 스피드와 가속도가 뛰어나 역습 및 치고 달리기(치달)에 능함' },
+      crossing: { label: '🎯 택배 크로스/뚝배기 헤더 (측면 고공 폭격)', shortLabel: '🎯크로스/헤더', desc: '측면 크로스 궤적과 타겟터의 제공권 및 헤더 결정력이 강력함' },
+      playmaker: { label: '🧠 탈압박 & 중원 킬패스 (플레이메이커 지휘)', shortLabel: '🧠플레이메이커', desc: '미드필더의 시야, 패스 능력치, 탈압박 운영 능력이 압도적임' },
+      defense: { label: '🧱 철벽 포백 대인방어 (피지컬 & 1:1 차단 우위)', shortLabel: '🧱철벽수비', desc: '포백 수비진의 일대일 대인마크, 태클, 피지컬 몸싸움 우위' },
+      dribble: { label: '🌪️ 원톱/윙어 크랙 드리블 (수비진 균열 & 돌파)', shortLabel: '🌪️크랙드리블', desc: '전방 공격수의 개인 돌파 능력과 수비 균열 파괴력이 뛰어남' },
+      workrate: { label: '🔥 강철 체력 & 왕성한 활동량 (게겐프레싱 압박)', shortLabel: '🔥강철체력', desc: '활동량, 적극성, 지구력이 뛰어나 전방 압박과 공수 전환에 유리함' }
+    },
+    weaknesses: {
+      slow_backline: { label: '🐢 느림보 수비라인 (발이 느려 뒷공간 털림 주의)', shortLabel: '🐢수비느림', desc: '센터백/풀백의 주력이 느려 뒷공간 침투 패스에 치명적임' },
+      stamina_drop: { label: '🪫 조루 체력/60분 방전 (후반 실점 위기 & 붕괴)', shortLabel: '🪫60분방전', desc: '선수단 전반의 지구력이 낮아 60분 이후 급격한 체력 저하 및 실점 위험' },
+      injury_prone: { label: '🩹 유리몸/선수층 얇음 (부상·카드 누적 시 파멸)', shortLabel: '🩹유리몸', desc: '주전들의 부상 빈도가 높고 후보진 뎁스가 얇아 무리한 압박/카드 시 파멸' },
+      poor_finishing: { label: '💨 소녀슛/결정력 부족 (빅찬스 미스 & 홈런 남발)', shortLabel: '💨소녀슛', desc: '기회 창출 대비 골 결정력이 떨어져 슈팅 난사나 홈런이 잦음' },
+      flank_leak: { label: '🕳️ 풀백 자동문 (측면 수비 붕괴 & 복귀 지연)', shortLabel: '🕳️풀백자동문', desc: '풀백의 오버래핑 후 수비 복귀가 늦고 측면 공간을 쉽게 허용함' },
+      air_weak: { label: '☁️ 제공권 열세 (세트피스/헤더 실점 빈발)', shortLabel: '☁️제공권열세', desc: '수비진 신장 및 점프력 열세로 세트피스와 공중볼 경합 실점이 잦음' }
+    },
+    levels: {
+      high: { strength: '상 (월드클래스급 극대화)', weakness: '심각(상) - 최우선 보정 필수' },
+      mid: { strength: '중 (준수한 수준/우위)', weakness: '보통(중) - 전술적 보완 권장' },
+      low: { strength: '하 (평범한 수준)', weakness: '경미(하) - 일반적인 주의' }
+    }
+  };
+
+  const teamDnaToggle = document.getElementById('teamDnaToggle');
+  const teamDnaBody = document.getElementById('teamDnaBody');
+  const teamStrengthSelect = document.getElementById('teamStrengthSelect');
+  const strengthLevelGroup = document.getElementById('strengthLevelGroup');
+  const teamWeaknessSelect = document.getElementById('teamWeaknessSelect');
+  const weaknessLevelGroup = document.getElementById('weaknessLevelGroup');
+
+  function loadTeamDna() {
+    try {
+      const saved = localStorage.getItem(TEAM_DNA_STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === 'object') {
+          STATE.teamDna = { ...STATE.teamDna, ...parsed };
+        }
+      }
+    } catch (e) {
+      console.warn("Team DNA load error:", e);
+    }
+
+    if (teamDnaToggle) {
+      teamDnaToggle.checked = !!STATE.teamDna.enabled;
+    }
+    if (teamDnaBody) {
+      teamDnaBody.classList.toggle('active', !!STATE.teamDna.enabled);
+    }
+    if (teamStrengthSelect && STATE.teamDna.strength) {
+      teamStrengthSelect.value = STATE.teamDna.strength;
+    }
+    if (teamWeaknessSelect && STATE.teamDna.weakness) {
+      teamWeaknessSelect.value = STATE.teamDna.weakness;
+    }
+    if (strengthLevelGroup) {
+      const btns = strengthLevelGroup.querySelectorAll('.level-btn');
+      btns.forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.val === STATE.teamDna.strengthLevel);
+      });
+    }
+    if (weaknessLevelGroup) {
+      const btns = weaknessLevelGroup.querySelectorAll('.level-btn');
+      btns.forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.val === STATE.teamDna.weaknessLevel);
+      });
+    }
+  }
+
+  function saveTeamDna() {
+    if (teamDnaToggle) STATE.teamDna.enabled = teamDnaToggle.checked;
+    if (teamStrengthSelect) STATE.teamDna.strength = teamStrengthSelect.value;
+    if (teamWeaknessSelect) STATE.teamDna.weakness = teamWeaknessSelect.value;
+
+    try {
+      localStorage.setItem(TEAM_DNA_STORAGE_KEY, JSON.stringify(STATE.teamDna));
+    } catch (e) {
+      console.warn("Team DNA save error:", e);
+    }
+  }
+
+  if (teamDnaToggle) {
+    teamDnaToggle.addEventListener('change', () => {
+      if (teamDnaBody) {
+        teamDnaBody.classList.toggle('active', teamDnaToggle.checked);
+      }
+      saveTeamDna();
+      if (teamDnaToggle.checked) {
+        showToast('🧬 우리 팀 고유 체질이 활성화되었습니다 (자동 저장됨)');
+      }
+    });
+  }
+
+  if (teamStrengthSelect) {
+    teamStrengthSelect.addEventListener('change', () => {
+      saveTeamDna();
+    });
+  }
+
+  if (teamWeaknessSelect) {
+    teamWeaknessSelect.addEventListener('change', () => {
+      saveTeamDna();
+    });
+  }
+
+  if (strengthLevelGroup) {
+    const btns = strengthLevelGroup.querySelectorAll('.level-btn');
+    btns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        btns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        STATE.teamDna.strengthLevel = btn.dataset.val;
+        saveTeamDna();
+      });
+    });
+  }
+
+  if (weaknessLevelGroup) {
+    const btns = weaknessLevelGroup.querySelectorAll('.level-btn');
+    btns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        btns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        STATE.teamDna.weaknessLevel = btn.dataset.val;
+        saveTeamDna();
+      });
+    });
+  }
+
+  // 앱 로드 시 저장된 Team DNA 복원
+  loadTeamDna();
 
   // ------------------------------------------------------------
   // 9. 대형 화면공유 모니터
@@ -788,6 +933,24 @@ document.addEventListener('DOMContentLoaded', () => {
 `;
     }
 
+    let teamDnaContext = "";
+    if (STATE.teamDna && STATE.teamDna.enabled) {
+      const sObj = TEAM_DNA_OPTIONS.strengths[STATE.teamDna.strength] || {};
+      const wObj = TEAM_DNA_OPTIONS.weaknesses[STATE.teamDna.weakness] || {};
+      const sLvl = TEAM_DNA_OPTIONS.levels[STATE.teamDna.strengthLevel]?.strength || STATE.teamDna.strengthLevel;
+      const wLvl = TEAM_DNA_OPTIONS.levels[STATE.teamDna.weaknessLevel]?.weakness || STATE.teamDna.weaknessLevel;
+
+      teamDnaContext = `
+[★ 우리 팀 고유 체질 (Team DNA: 맞춤형 전술 설계 필수 지침) ★]:
+1. 우리 팀 핵심 장점: ${sObj.label || STATE.teamDna.strength} [강도: ${sLvl}]
+   - 특징: ${sObj.desc || ''}
+   - 전술 설계 지침: 이 강점을 인게임에서 120% 폭발시킬 수 있도록 전개 템포, 패스 방식, 특정 포지션의 역할(Role) 및 개인 지침을 집중 설계하십시오.
+2. 우리 팀 핵심 약점: ${wObj.label || STATE.teamDna.weakness} [심각도: ${wLvl}]
+   - 취약점: ${wObj.desc || ''}
+   - 전술 설계 지침: 이 약점이 실점으로 이어지지 않도록 수비 라인 높이, 압박 강도, 또는 특정 커버 역할 부여를 통해 반드시 상쇄하는 대처법을 조작법(슬라이더 & 지침)에 명시하십시오.
+`;
+    }
+
     return `당신은 세계 최고의 축구 전술 사령탑인 [${coachName}] 감독 본인입니다.
 당신은 FM(Football Manager) 게임의 전술판 및 상대 스카우팅 스크린샷을 분석하여 경기 시작 전 완벽한 승리 공식을 제공하는 '매치데이 전술 연구소'의 최고 사령관입니다.
 
@@ -817,6 +980,7 @@ document.addEventListener('DOMContentLoaded', () => {
 - 상대 대비 공격진: [${STATE.squadTiers.attack}]
 - 상대 대비 미드필더: [${STATE.squadTiers.midfield}]
 - 상대 대비 수비진: [${STATE.squadTiers.defense}]
+${teamDnaContext}
 ${advancedContext}
 
 [안전장치 - 판독 불가 규칙]:
@@ -918,8 +1082,22 @@ ${advancedContext}
       : COACH_DATABASE[STATE.selectedCoachKey].name;
 
     loadingCoachTitle.textContent = `${coachName} 감독이 전술판(${totalImages}장)과 상대 데이터를 정밀 분석하고 있습니다...`;
-    briefingCoachTag.textContent = `사령탑: ${coachName}`;
-    briefingTiersTag.textContent = `체급: 공격 ${STATE.squadTiers.attack} / 미드 ${STATE.squadTiers.midfield} / 수비 ${STATE.squadTiers.defense}`;
+    briefingCoachTag.innerHTML = `<i data-lucide="user" class="icon-inline icon-cyan"></i> 사령탑: ${coachName}`;
+    briefingTiersTag.innerHTML = `<i data-lucide="scale" class="icon-inline icon-neon"></i> 체급: 공격 ${STATE.squadTiers.attack} / 미드 ${STATE.squadTiers.midfield} / 수비 ${STATE.squadTiers.defense}`;
+
+    if (briefingDnaTag) {
+      if (STATE.teamDna && STATE.teamDna.enabled) {
+        const sObj = TEAM_DNA_OPTIONS.strengths[STATE.teamDna.strength];
+        const wObj = TEAM_DNA_OPTIONS.weaknesses[STATE.teamDna.weakness];
+        const sLvl = STATE.teamDna.strengthLevel === 'high' ? '상' : STATE.teamDna.strengthLevel === 'mid' ? '중' : '하';
+        const wLvl = STATE.teamDna.weaknessLevel === 'high' ? '심각' : STATE.teamDna.weaknessLevel === 'mid' ? '보통' : '경미';
+        briefingDnaTag.innerHTML = `<i data-lucide="dna" class="icon-inline icon-cyan"></i> 체질: ${sObj?.shortLabel || '장점'}(${sLvl}) / ${wObj?.shortLabel || '약점'}(${wLvl})`;
+        briefingDnaTag.style.display = 'inline-flex';
+      } else {
+        briefingDnaTag.style.display = 'none';
+      }
+    }
+    refreshIcons();
 
     try {
       const systemInstruction = buildSystemPrompt();
@@ -1343,6 +1521,16 @@ ${advancedContext}
             </div>
           </div>
         </div>
+
+        ${STATE.teamDna && STATE.teamDna.enabled ? `
+          <div class="modal-check-section" style="margin-top: 14px;">
+            <div class="modal-check-title"><i data-lucide="dna" class="icon-inline icon-cyan"></i> 우리 팀 고유 체질 (Team DNA 맞춤 반영)</div>
+            <div class="tactical-highlight-box" style="display: flex; flex-direction: column; gap: 8px; font-size: 0.84rem;">
+              <div><strong style="color: #34d399;">⚡ 핵심 장점:</strong> ${TEAM_DNA_OPTIONS.strengths[STATE.teamDna.strength]?.label || STATE.teamDna.strength} <span class="badge-strength" style="font-size:0.7rem; padding: 1px 6px;">${STATE.teamDna.strengthLevel === 'high' ? '상' : STATE.teamDna.strengthLevel === 'mid' ? '중' : '하'}</span></div>
+              <div><strong style="color: #fb7185;">⚠️ 핵심 약점:</strong> ${TEAM_DNA_OPTIONS.weaknesses[STATE.teamDna.weakness]?.label || STATE.teamDna.weakness} <span class="badge-weakness" style="font-size:0.7rem; padding: 1px 6px;">${STATE.teamDna.weaknessLevel === 'high' ? '심각' : STATE.teamDna.weaknessLevel === 'mid' ? '보통' : '경미'}</span></div>
+            </div>
+          </div>
+        ` : ''}
       `;
     } else if (type === 'plana') {
       modalIcon.innerHTML = '<i data-lucide="clipboard-list" class="icon-neon"></i>';
