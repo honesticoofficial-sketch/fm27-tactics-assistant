@@ -486,6 +486,224 @@ body {
   box-shadow: 0 0 8px rgba(6, 182, 212, 0.4);
 }
 
+/* ============================================================
+   우리 팀 고유 체질 (Team DNA: 강점 & 약점)
+   ============================================================ */
+.team-dna-card {
+  margin-top: 14px;
+}
+
+.team-dna-card .card-header-compact {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.team-dna-card .header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* 토글 스위치 (iOS 네온 스타일) */
+.toggle-switch-wrap {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.toggle-switch-wrap input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.15);
+  border-radius: 24px;
+  transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 3px;
+  bottom: 3px;
+  background-color: #f1f5f9;
+  border-radius: 50%;
+  transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.toggle-switch-wrap input:checked + .toggle-slider {
+  background-color: var(--accent-cyan);
+  box-shadow: 0 0 10px rgba(6, 182, 212, 0.45);
+  border-color: var(--accent-cyan);
+}
+
+.toggle-switch-wrap input:checked + .toggle-slider:before {
+  transform: translateX(20px);
+  background-color: #050e0a;
+}
+
+/* 체질 설정 본문 컨테이너 (부드러운 접힘/펼침) */
+.team-dna-body {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+  transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease, margin 0.25s ease;
+}
+
+.team-dna-body.active {
+  max-height: 400px;
+  opacity: 1;
+  pointer-events: auto;
+  margin-top: 10px;
+}
+
+.dna-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 0;
+}
+
+.dna-row:not(:last-of-type) {
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.06);
+}
+
+.dna-label-group {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dna-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.02em;
+}
+
+.badge-strength {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.badge-weakness {
+  background: rgba(244, 63, 94, 0.15);
+  color: #fb7185;
+  border: 1px solid rgba(244, 63, 94, 0.3);
+}
+
+.dna-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.dna-select-wrap {
+  flex: 1;
+  min-width: 0;
+}
+
+.dna-select {
+  width: 100%;
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #f1f5f9;
+  font-size: 0.78rem;
+  padding: 6px 10px;
+  border-radius: 6px;
+  outline: none;
+  transition: var(--transition-fast);
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+
+.dna-select:focus {
+  border-color: var(--accent-cyan);
+  box-shadow: 0 0 8px rgba(6, 182, 212, 0.25);
+}
+
+.dna-select option {
+  background: #0f172a;
+  color: #f1f5f9;
+}
+
+/* 3단 세그먼트 레벨 버튼 (상/중/하) */
+.level-btn-group {
+  display: flex;
+  gap: 2px;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 2px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+}
+
+.level-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.level-btn:hover {
+  color: #fff;
+}
+
+#strengthLevelGroup .level-btn.active {
+  background: var(--pitch-neon);
+  color: #050e0a;
+  font-weight: 800;
+  box-shadow: 0 0 8px rgba(52, 211, 153, 0.35);
+}
+
+#weaknessLevelGroup .level-btn.active {
+  background: var(--accent-rose);
+  color: #fff;
+  font-weight: 800;
+  box-shadow: 0 0 8px rgba(244, 63, 94, 0.35);
+}
+
+.dna-hint-box {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.71rem;
+  color: #94a3b8;
+  background: rgba(15, 23, 42, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 6px 8px;
+  border-radius: 6px;
+  margin-top: 6px;
+  line-height: 1.4;
+}
+
 /* 대형 게임 화면 모니터 */
 .large-monitor {
   width: 100%;
