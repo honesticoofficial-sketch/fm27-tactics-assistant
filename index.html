@@ -16,7 +16,7 @@
     
     <!-- 상단 글로벌 헤더 -->
     <header class="top-nav">
-      <div class="brand">
+      <div class="brand" id="brandHomeBtn" role="button" tabindex="0" title="새 경기 준비 (홈으로 이동)">
         <div class="brand-glow-dot"></div>
         <div class="brand-logo">FM</div>
         <div class="brand-title">
@@ -86,7 +86,7 @@
                 <option value="flick">한지 플릭 (무자비한 하이라인, 8-2 질식 전방 압박)</option>
                 <option value="arteta">미켈 아르테타 (세트피스 지배, 1인치 통제, 4-4-2 블록)</option>
                 <option value="ange">엔제 포스테코글루 (극단적 하이라인 낭만 공격, 무타협)</option>
-                <option value="custom">✍️ 다른 감독 직접 입력...</option>
+                <option value="custom">다른 감독 직접 입력 (커스텀)...</option>
               </select>
             </div>
 
@@ -463,106 +463,23 @@
         <p class="scanner-sub">원본 포메이션 존중, 상대 취약점 판별, 공/수 동적 움직임 좌표를 계산 중입니다.</p>
       </div>
 
-      <!-- 실제 브리핑 본문 컨테이너 -->
+      <!-- 실제 브리핑 본문 컨테이너 (와이드 3단 원페이지 대시보드) -->
       <div id="briefingContentBox" class="briefing-content-container">
         
-        <!-- 1. 사령탑 경기 전 핵심 게임 키포인트 -->
+        <!-- 1. 사령탑 경기 전 핵심 게임 키포인트 (상단 와이드 배너) -->
         <div class="glass-card locker-room-speech-card">
           <div class="speech-avatar" id="speechAvatar"><i data-lucide="user-check" style="width: 24px; height: 24px;"></i></div>
           <div class="speech-body">
-            <span class="speech-author" id="speechAuthor">펩 과르디올라 감독의 경기 전 핵심 게임 키포인트:</span>
+            <span class="speech-author" id="speechAuthor">감독 경기 전 핵심 게임 키포인트:</span>
             <div class="speech-quote" id="speechQuote">"우리의 경기다. 원본의 뼈대를 살리되, 상대의 빈 공간을 찌르는 핀포인트 롤로 승리를 가져오자."</div>
           </div>
         </div>
 
-        <!-- 2. 인터랙티브 동적 전술 피치 보드 (New!) -->
-        <div class="glass-card tactical-pitch-card">
-          <div class="pitch-card-header">
-            <div class="pitch-title-box">
-              <span class="pitch-badge-tag"><i data-lucide="layout-grid" class="icon-inline"></i> TACTICAL PITCH BOARD</span>
-              <h3 id="pitchFormationTitle">포메이션: 4-3-2-1 비대칭 유지 (공격 시 3-2-4-1 변형)</h3>
-              <p class="pitch-reason-desc" id="pitchFormationReason">
-                "상대 4-3-3의 양 풀백 전진 뒷공간을 공략하고 중앙 3-2 빌드업으로 수적 우위를 점하기 위한 합리적 변형입니다."
-              </p>
-            </div>
-            
-            <div class="pitch-controls-cluster">
-              <!-- 피치 방향 회전 토글 스위치 -->
-              <div class="pitch-orientation-toggle">
-                <button type="button" class="orient-btn active" id="orientLandscapeBtn" data-orient="horizontal">
-                  <i data-lucide="monitor" class="icon-inline"></i> 가로 피치 (PC추천)
-                </button>
-                <button type="button" class="orient-btn" id="orientPortraitBtn" data-orient="vertical">
-                  <i data-lucide="smartphone" class="icon-inline"></i> 세로 피치
-                </button>
-              </div>
-
-              <!-- 공/수 동적 전환 토글 스위치 -->
-              <div class="pitch-phase-toggle">
-                <button type="button" class="phase-btn active" id="phaseAttackBtn" data-phase="attack">
-                  <i data-lucide="swords" class="icon-inline icon-attack"></i> 공격 시 전개
-                </button>
-                <button type="button" class="phase-btn" id="phaseDefenseBtn" data-phase="defense">
-                  <i data-lucide="shield" class="icon-inline icon-defense"></i> 수비 시 블록
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- 실제 축구 피치 인터페이스 -->
-          <div class="cyber-pitch-wrapper">
-            <!-- 피치 진영 안내 인디케이터 배너 -->
-            <div class="pitch-direction-banner" id="pitchDirectionBanner">
-              <span class="dir-opp"><i data-lucide="target" class="icon-inline icon-attack"></i> 상대팀 진영 (공격 목표)</span>
-              <span class="dir-mid"><i data-lucide="swords" class="icon-inline"></i> 중앙 하프라인</span>
-              <span class="dir-own">아군 수비 진영 (우리 골대) <i data-lucide="shield" class="icon-inline icon-defense"></i></span>
-            </div>
-
-            <div class="cyber-pitch pitch-horizontal" id="cyberPitch">
-              <!-- 피치 공통 센터 라인 마킹 -->
-              <div class="pitch-line half-way-line"></div>
-              <div class="pitch-line center-circle"></div>
-              <div class="pitch-line center-spot"></div>
-              
-              <!-- 세로형 전용 마킹 라인 (상/하 골대) -->
-              <div class="pitch-line penalty-box-top vert-only"></div>
-              <div class="pitch-line goal-box-top vert-only"></div>
-              <div class="pitch-line penalty-box-bottom vert-only"></div>
-              <div class="pitch-line goal-box-bottom vert-only"></div>
-              <div class="half-space-lane left-lane vert-only"></div>
-              <div class="half-space-lane right-lane vert-only"></div>
-
-              <!-- 가로형 전용 마킹 라인 (좌/우 골대) -->
-              <div class="pitch-line penalty-box-left horiz-only"></div>
-              <div class="pitch-line goal-box-left horiz-only"></div>
-              <div class="pitch-line penalty-box-right horiz-only"></div>
-              <div class="pitch-line goal-box-right horiz-only"></div>
-              <div class="half-space-lane top-lane horiz-only"></div>
-              <div class="half-space-lane bottom-lane horiz-only"></div>
-
-              <!-- 11명의 선수 노드 (동적 생성 및 애니메이션 글라이딩) -->
-              <div class="pitch-players-container" id="pitchPlayersContainer">
-                <!-- 동적 11명 노드 생성 -->
-              </div>
-            </div>
-
-            <!-- 피치 하단 범례 및 안내 -->
-            <div class="pitch-legend-bar">
-              <span class="legend-tip"><i data-lucide="sparkles" class="icon-inline icon-neon"></i> 버튼을 누르면 공격 시 전진 침투와 수비 시 콤팩트 블록으로 선수들이 스르륵 움직입니다.</span>
-              <span class="legend-current-mode" id="currentPhaseLabel">현재: ⚔️ 공격 시 공격 전개 대형</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- 3. 4대 핵심 요약 배지 카드 그리드 (1초 컷 요약 ➜ 클릭 시 고정 모달) -->
-        <div class="summary-cards-section">
-          <div class="section-title-bar">
-            <h4><i data-lucide="briefcase" class="icon-inline"></i> 매치데이 4대 핵심 작전 브리핑</h4>
-            <span class="badge-hint">카드를 클릭하면 인게임에서 직접 변경할 세부 조작법이 팝업으로 뜹니다 <i data-lucide="external-link" class="icon-inline"></i></span>
-          </div>
-
-          <div class="summary-badges-grid">
-            
+        <!-- 2. 와이드 3단 전술 대시보드 [좌: 카드 2개 | 중: 세로 피치 | 우: 카드 2개] -->
+        <div class="tactical-trio-dashboard">
+          
+          <!-- 좌측 열: 1. 상성 진단 & 2. 플랜 A -->
+          <div class="trio-col trio-col-left">
             <!-- 카드 1: 상성 진단 -->
             <article class="tactical-summary-card" data-modal="matchup">
               <div class="card-head">
@@ -571,7 +488,7 @@
                   <h5>상성 진단 & 공략 지점</h5>
                   <span class="card-sub">상대 취약 공간 및 매치업 유불리</span>
                 </div>
-                <span class="card-chip"><i data-lucide="maximize-2" class="icon-inline"></i> 자세히 보기</span>
+                <span class="card-chip"><i data-lucide="maximize-2" class="icon-inline"></i> 상세</span>
               </div>
               <div class="card-summary-text" id="summaryMatchup">
                 상대 전술의 주요 공격 루트와 수비 취약 공간을 짚어냅니다.
@@ -586,13 +503,79 @@
                   <h5>플랜 A (스타팅 조작법)</h5>
                   <span class="card-sub">원본 대형 존중 & 슬라이더 및 세부 롤</span>
                 </div>
-                <span class="card-chip"><i data-lucide="maximize-2" class="icon-inline"></i> 자세히 보기</span>
+                <span class="card-chip"><i data-lucide="maximize-2" class="icon-inline"></i> 상세</span>
               </div>
               <div class="card-summary-text" id="summaryPlanA">
                 원본 포메이션을 유지하며 손봐야 할 롤과 슬라이더 조작값입니다.
               </div>
             </article>
+          </div>
 
+          <!-- 중앙 열: 고정 세로 피치 보드 -->
+          <div class="trio-col trio-col-center">
+            <div class="glass-card tactical-pitch-card">
+              <div class="pitch-card-header">
+                <div class="pitch-title-box">
+                  <span class="pitch-badge-tag"><i data-lucide="layout-grid" class="icon-inline"></i> TACTICAL PITCH BOARD</span>
+                  <h3 id="pitchFormationTitle">포메이션: 4-3-2-1 비대칭 유지 (공격 시 3-2-4-1 변형)</h3>
+                  <p class="pitch-reason-desc" id="pitchFormationReason">
+                    "상대 4-3-3의 양 풀백 전진 뒷공간을 공략하고 중앙 3-2 빌드업으로 수적 우위를 점하기 위한 합리적 변형입니다."
+                  </p>
+                </div>
+                
+                <div class="pitch-controls-cluster">
+                  <!-- 공/수 동적 전환 토글 스위치 (가로/세로 버튼 완전 제거) -->
+                  <div class="pitch-phase-toggle">
+                    <button type="button" class="phase-btn active" id="phaseAttackBtn" data-phase="attack">
+                      <i data-lucide="swords" class="icon-inline"></i> 공격 시 전개
+                    </button>
+                    <button type="button" class="phase-btn" id="phaseDefenseBtn" data-phase="defense">
+                      <i data-lucide="shield" class="icon-inline"></i> 수비 시 블록
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 실제 축구 피치 인터페이스 (항상 세로 피치 고정) -->
+              <div class="cyber-pitch-wrapper">
+                <!-- 피치 진영 안내 인디케이터 배너 -->
+                <div class="pitch-direction-banner" id="pitchDirectionBanner">
+                  <span class="dir-opp"><i data-lucide="target" class="icon-inline icon-attack"></i> 상대팀 골대 (공격 방향 ⬆)</span>
+                  <span class="dir-mid"><i data-lucide="swords" class="icon-inline"></i> 하프라인</span>
+                  <span class="dir-own">아군 골대 (수비 진영 ⬇) <i data-lucide="shield" class="icon-inline icon-defense"></i></span>
+                </div>
+
+                <div class="cyber-pitch pitch-vertical" id="cyberPitch">
+                  <!-- 피치 공통 센터 라인 마킹 -->
+                  <div class="pitch-line half-way-line"></div>
+                  <div class="pitch-line center-circle"></div>
+                  <div class="pitch-line center-spot"></div>
+                  
+                  <!-- 세로형 마킹 라인 (상/하 골대 및 하프스페이스 레인) -->
+                  <div class="pitch-line penalty-box-top vert-only"></div>
+                  <div class="pitch-line goal-box-top vert-only"></div>
+                  <div class="pitch-line penalty-box-bottom vert-only"></div>
+                  <div class="pitch-line goal-box-bottom vert-only"></div>
+                  <div class="half-space-lane left-lane vert-only"></div>
+                  <div class="half-space-lane right-lane vert-only"></div>
+
+                  <!-- 11명의 선수 노드 (동적 생성 및 애니메이션 글라이딩) -->
+                  <div class="pitch-players-container" id="pitchPlayersContainer">
+                    <!-- 동적 11명 노드 생성 -->
+                  </div>
+                </div>
+
+                <!-- 피치 하단 범례 및 안내 -->
+                <div class="pitch-legend-bar">
+                  <span class="legend-tip"><i data-lucide="sparkles" class="icon-inline icon-neon"></i> 공격 전개 ↔ 수비 블록 클릭 시 선수들이 스르륵 글라이딩합니다.</span>
+                  <span class="legend-current-mode" id="currentPhaseLabel">현재: 공격 전개 대형 (In Possession)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 우측 열: 3. 시나리오별 대처 & 4. 에이스 봉쇄 -->
+          <div class="trio-col trio-col-right">
             <!-- 카드 3: 시나리오별 대처 -->
             <article class="tactical-summary-card" data-modal="scenarios">
               <div class="card-head">
@@ -601,7 +584,7 @@
                   <h5>시나리오별 대처 (플랜 B/C)</h5>
                   <span class="card-sub">2점 리드 잠그기 / 1점 접전 / 열세 역전</span>
                 </div>
-                <span class="card-chip"><i data-lucide="maximize-2" class="icon-inline"></i> 자세히 보기</span>
+                <span class="card-chip"><i data-lucide="maximize-2" class="icon-inline"></i> 상세</span>
               </div>
               <div class="card-summary-text" id="summaryScenarios">
                 점수 차와 시간대에 따른 인게임 대형 전환 및 지침 조절법입니다.
@@ -616,14 +599,14 @@
                   <h5>에이스 봉쇄 & 원포인트</h5>
                   <span class="card-sub">상대 에이스 전담 마킹 & 세트피스 비기</span>
                 </div>
-                <span class="card-chip"><i data-lucide="maximize-2" class="icon-inline"></i> 자세히 보기</span>
+                <span class="card-chip"><i data-lucide="maximize-2" class="icon-inline"></i> 상세</span>
               </div>
               <div class="card-summary-text" id="summaryOnePoint">
                 반드시 틀어막아야 할 상대 키맨과 승부를 가를 세트피스 지침입니다.
               </div>
             </article>
-
           </div>
+
         </div>
 
       </div>
