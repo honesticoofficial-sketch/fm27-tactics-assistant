@@ -4,8 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FM27 Matchday Tactical Playbook | 매치데이 전술 연구소</title>
-  <link rel="stylesheet" href="style.css?v=6">
+  <link rel="stylesheet" href="style.css?v=7">
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 </head>
 <body>
   <div class="dashboard-wrapper">
@@ -269,7 +270,7 @@
         <div class="briefing-meta-tags">
           <span class="meta-badge" id="briefingCoachTag">사령탑: 펩 과르디올라</span>
           <span class="meta-badge" id="briefingTiersTag">체급: 공격 호각 / 미드 호각 / 수비 호각</span>
-          <button id="copySummaryBtn" class="btn btn-sm btn-ghost">📋 전술 텍스트 복사</button>
+          <button id="captureSummaryBtn" class="btn btn-sm btn-primary">📸 전술 카드 캡처 (이미지 저장)</button>
         </div>
       </div>
 
@@ -283,12 +284,12 @@
       <!-- 실제 브리핑 본문 컨테이너 -->
       <div id="briefingContentBox" class="briefing-content-container">
         
-        <!-- 1. 사령탑 라커룸 스피치 -->
+        <!-- 1. 사령탑 경기 전 핵심 게임 키포인트 -->
         <div class="glass-card locker-room-speech-card">
           <div class="speech-avatar" id="speechAvatar">👔</div>
           <div class="speech-body">
-            <span class="speech-author" id="speechAuthor">펩 과르디올라의 경기 전 라커룸 연설:</span>
-            <p class="speech-quote" id="speechQuote">"우리의 경기다. 원본의 뼈대를 살리되, 상대의 빈 공간을 찌르는 핀포인트 롤로 승리를 가져오자."</p>
+            <span class="speech-author" id="speechAuthor">펩 과르디올라 감독의 경기 전 핵심 게임 키포인트:</span>
+            <div class="speech-quote" id="speechQuote">"우리의 경기다. 원본의 뼈대를 살리되, 상대의 빈 공간을 찌르는 핀포인트 롤로 승리를 가져오자."</div>
           </div>
         </div>
 
@@ -303,32 +304,59 @@
               </p>
             </div>
             
-            <!-- 공/수 동적 전환 토글 스위치 -->
-            <div class="pitch-phase-toggle">
-              <button type="button" class="phase-btn active" id="phaseAttackBtn" data-phase="attack">
-                ⚔️ 공격 시 전개 (In Possession)
-              </button>
-              <button type="button" class="phase-btn" id="phaseDefenseBtn" data-phase="defense">
-                🛡️ 수비 시 블록 (Out of Possession)
-              </button>
+            <div class="pitch-controls-cluster">
+              <!-- 피치 방향 회전 토글 스위치 -->
+              <div class="pitch-orientation-toggle">
+                <button type="button" class="orient-btn active" id="orientLandscapeBtn" data-orient="horizontal">
+                  🖥️ 가로 피치 (PC추천)
+                </button>
+                <button type="button" class="orient-btn" id="orientPortraitBtn" data-orient="vertical">
+                  📱 세로 피치
+                </button>
+              </div>
+
+              <!-- 공/수 동적 전환 토글 스위치 -->
+              <div class="pitch-phase-toggle">
+                <button type="button" class="phase-btn active" id="phaseAttackBtn" data-phase="attack">
+                  ⚔️ 공격 시 전개
+                </button>
+                <button type="button" class="phase-btn" id="phaseDefenseBtn" data-phase="defense">
+                  🛡️ 수비 시 블록
+                </button>
+              </div>
             </div>
           </div>
 
           <!-- 실제 축구 피치 인터페이스 -->
           <div class="cyber-pitch-wrapper">
-            <div class="cyber-pitch" id="cyberPitch">
-              <!-- 피치 라인 마킹 -->
+            <!-- 피치 진영 안내 인디케이터 배너 -->
+            <div class="pitch-direction-banner" id="pitchDirectionBanner">
+              <span class="dir-opp">⬅️ 상대팀 진영 (공격 목표)</span>
+              <span class="dir-mid">⚔️ 중앙 하프라인</span>
+              <span class="dir-own">아군 수비 진영 (우리 골대) ➡️</span>
+            </div>
+
+            <div class="cyber-pitch pitch-horizontal" id="cyberPitch">
+              <!-- 피치 공통 센터 라인 마킹 -->
               <div class="pitch-line half-way-line"></div>
               <div class="pitch-line center-circle"></div>
               <div class="pitch-line center-spot"></div>
-              <div class="pitch-line penalty-box-top"></div>
-              <div class="pitch-line goal-box-top"></div>
-              <div class="pitch-line penalty-box-bottom"></div>
-              <div class="pitch-line goal-box-bottom"></div>
               
-              <!-- 하프스페이스 점선 가이드 -->
-              <div class="half-space-lane left-lane"></div>
-              <div class="half-space-lane right-lane"></div>
+              <!-- 세로형 전용 마킹 라인 (상/하 골대) -->
+              <div class="pitch-line penalty-box-top vert-only"></div>
+              <div class="pitch-line goal-box-top vert-only"></div>
+              <div class="pitch-line penalty-box-bottom vert-only"></div>
+              <div class="pitch-line goal-box-bottom vert-only"></div>
+              <div class="half-space-lane left-lane vert-only"></div>
+              <div class="half-space-lane right-lane vert-only"></div>
+
+              <!-- 가로형 전용 마킹 라인 (좌/우 골대) -->
+              <div class="pitch-line penalty-box-left horiz-only"></div>
+              <div class="pitch-line goal-box-left horiz-only"></div>
+              <div class="pitch-line penalty-box-right horiz-only"></div>
+              <div class="pitch-line goal-box-right horiz-only"></div>
+              <div class="half-space-lane top-lane horiz-only"></div>
+              <div class="half-space-lane bottom-lane horiz-only"></div>
 
               <!-- 11명의 선수 노드 (동적 생성 및 애니메이션 글라이딩) -->
               <div class="pitch-players-container" id="pitchPlayersContainer">
@@ -479,6 +507,6 @@
     <canvas id="snapshotCanvas" style="display: none;"></canvas>
   </div>
 
-  <script src="app.js?v=6"></script>
+  <script src="app.js?v=7"></script>
 </body>
 </html>
