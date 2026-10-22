@@ -1,10 +1,10 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>(FM) 풋볼매니저 매치데이 전술 연구소 | Tactical Playbook</title>
-  <link rel="stylesheet" href="style.css?v=10">
+  <link rel="stylesheet" href="style.css?v=11">
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
   <!-- 고화질 이미지 캡처 & 애니메이션 GIF & 사이버네틱 벡터 아이콘 라이브러리 -->
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
@@ -37,6 +37,14 @@
           <span class="online-indicator-dot"></span>
         </button>
       </nav>
+
+      <!-- 상단 글로벌 FM 화면 공유 컨트롤 캡슐 -->
+      <div class="screen-share-capsule">
+        <button type="button" class="global-screen-btn" id="globalScreenShareBtn" title="FM 풋볼매니저 게임 창 연결">
+          <span class="screen-indicator-dot" id="globalScreenDot"></span>
+          <span class="screen-btn-text" id="globalScreenText">🖥️ FM 화면 연결</span>
+        </button>
+      </div>
 
       <div class="api-capsule">
         <div class="key-status-indicator" id="keyStatusDot" title="API 키를 입력해 주세요"></div>
@@ -773,7 +781,13 @@
         <div class="imessage-input-bar">
           
           <!-- 이미지 첨부 버튼 & 숨김 파일 인풋 -->
-          <label class="imessage-attach-btn" for="imessageFileInput" title="스크린샷 첨부">
+          <!-- 실시간 FM 화면 즉시 캡처 버튼 (신설) -->
+          <button type="button" class="imessage-snap-btn" id="imessageSnapBtn" title="화면 공유 중인 (FM) 게임 화면 즉시 캡처">
+            <i data-lucide="camera" style="width: 18px; height: 18px;"></i>
+          </button>
+
+          <!-- 이미지 파일 첨부 버튼 & 숨김 파일 인풋 -->
+          <label class="imessage-attach-btn" for="imessageFileInput" title="이미지 파일 직접 선택">
             <i data-lucide="paperclip" style="width: 18px; height: 18px;"></i>
             <input type="file" id="imessageFileInput" accept="image/*" style="display: none;">
           </label>
@@ -785,7 +799,7 @@
           </div>
 
           <!-- 텍스트 입력창 -->
-          <textarea id="imessageInput" rows="1" placeholder="감독에게 보낼 메시지 입력... (Ctrl+V로 캡처 바로 붙여넣기)" spellcheck="false"></textarea>
+          <textarea id="imessageInput" rows="1" placeholder="감독에게 보낼 메시지 입력... (📷 버튼: FM 화면 캡처, Ctrl+V: 클립보드 붙여넣기)" spellcheck="false"></textarea>
 
           <!-- 전송 버튼 -->
           <button type="button" class="imessage-send-btn" id="imessageSendBtn" title="전송 (Enter)">
@@ -847,8 +861,9 @@
 
     <!-- 숨김 캡처 캔버스 -->
     <canvas id="snapshotCanvas" style="display: none;"></canvas>
+    <video id="globalOffscreenVideo" autoplay playsinline muted style="position: fixed; width: 1px; height: 1px; opacity: 0; pointer-events: none; z-index: -999;"></video>
   </div>
 
-  <script src="app.js?v=10"></script>
+  <script src="app.js?v=11"></script>
 </body>
 </html>
