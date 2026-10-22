@@ -234,6 +234,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const streamStatusPill = document.getElementById('streamStatusPill');
   const liveVideo = document.getElementById('liveVideo');
   const monitorPlaceholder = document.getElementById('monitorPlaceholder');
+  const globalScreenShareBtn = document.getElementById('globalScreenShareBtn');
+  const globalScreenDot = document.getElementById('globalScreenDot');
+  const globalScreenText = document.getElementById('globalScreenText');
+  const globalOffscreenVideo = document.getElementById('globalOffscreenVideo');
+  const imessageSnapBtn = document.getElementById('imessageSnapBtn');
 
   // 다중 캡처 슬롯 요소
   const slot1 = document.getElementById('slot1');
@@ -641,31 +646,150 @@ document.addEventListener('DOMContentLoaded', () => {
   loadTeamDna();
 
   // ------------------------------------------------------------
-  // 9. 대형 화면공유 모니터
+  // 9. 대형 화면공유 모니터 & 무결점 프레임 캡처 엔진
   // ------------------------------------------------------------
+  function updateScreenShareUI(isConnected) {
+    if (isConnected) {
+      if (toggleStreamBtn) {
+        toggleStreamBtn.textContent = '⏹️ 공유 중지';
+        toggleStreamBtn.classList.add('btn-primary');
+        toggleStreamBtn.classList.remove('btn-outline');
+      }
+      if (streamStatusPill) {
+        streamStatusPill.textContent = '실시간 스트리밍 중';
+        streamStatusPill.classList.add('live');
+      }
+      if (globalScreenShareBtn) {
+        globalScreenShareBtn.classList.add('active');
+        globalScreenShareBtn.title = 'FM 화면 연결 중 (클릭 시 공유 중지)';
+      }
+      if (globalScreenText) {
+        globalScreenText.textContent = '🟢 FM 화면 연결 중';
+      }
+      if (imessageSnapBtn) {
+        imessageSnapBtn.classList.add('live');
+        imessageSnapBtn.title = '화면 공유 중인 FM 화면 즉시 캡처 (연결됨)';
+      }
+    } else {
+      if (toggleStreamBtn) {
+        toggleStreamBtn.textContent = '🖥️ 화면 공유 시작';
+        toggleStreamBtn.classList.remove('btn-primary');
+        toggleStreamBtn.classList.add('btn-outline');
+      }
+      if (streamStatusPill) {
+        streamStatusPill.textContent = '대기 중';
+        streamStatusPill.classList.remove('live');
+      }
+      if (globalScreenShareBtn) {
+        globalScreenShareBtn.classList.remove('active');
+        globalScreenShareBtn.title = 'FM 풋볼매니저 게임 창 연결';
+      }
+      if (globalScreenText) {
+        globalScreenText.textContent = '🖥️ FM 화면 연결';
+      }
+      if (imessageSnapBtn) {
+        imessageSnapBtn.classList.remove('live');
+        imessageSnapBtn.title = '화면 공유 중인 (FM) 게임 화면 즉시 캡처';
+      }
+    }
+  }
+
+  async function captureFrameFromStream(stream) {
+    if (!stream || !stream.active) {
+      throw new Error('스트림이 활성화되어 있지 않습니다.');
+    }
+    const track = stream.getVideoTracks()[0];
+    if (!track || track.readyState !== 'live') {
+      throw new Error('비디오 트랙이 활성화되어 있지 않습니다.');
+    }
+
+    // 1순위: ImageCapture API (가장 안정적 & 탭 전환 display:none 영향 0% & 초고화질)
+    if (typeof window.ImageCapture === 'function') {
+      try {
+        const capturer = new window.ImageCapture(track);
+        const bitmap = await capturer.grabFrame();
+        snapshotCanvas.width = bitmap.width;
+        snapshotCanvas.height = bitmap.height;
+        const ctx = snapshotCanvas.getContext('2d');
+        ctx.drawImage(bitmap, 0, 0);
+        return snapshotCanvas.toDataURL('image/jpeg', 0.92);
+      } catch (e) {
+        console.warn('ImageCapture.grabFrame fallback:', e);
+      }
+    }
+
+    // 2순위: 백그라운드 상시 디코딩 비디오 (globalOffscreenVideo)
+    if (globalOffscreenVideo && globalOffscreenVideo.videoWidth > 0) {
+      snapshotCanvas.width = globalOffscreenVideo.videoWidth;
+      snapshotCanvas.height = globalOffscreenVideo.videoHeight;
+      const ctx = snapshotCanvas.getContext('2d');
+      ctx.drawImage(globalOffscreenVideo, 0, 0, snapshotCanvas.width, snapshotCanvas.height);
+      return snapshotCanvas.toDataURL('image/jpeg', 0.92);
+    }
+
+    // 3순위: liveVideo
+    if (liveVideo && liveVideo.videoWidth > 0) {
+      snapshotCanvas.width = liveVideo.videoWidth;
+      snapshotCanvas.height = liveVideo.videoHeight;
+      const ctx = snapshotCanvas.getContext('2d');
+      ctx.drawImage(liveVideo, 0, 0, snapshotCanvas.width, snapshotCanvas.height);
+      return snapshotCanvas.toDataURL('image/jpeg', 0.92);
+    }
+
+    throw new Error('화면 프레임을 읽어오지 못했습니다. 화면 공유 창이 최소화되어 있지 않은지 확인해 주세요.');
+  }
+
   async function startScreenShare() {
     try {
-      const stream = await navigator.mediaDevices.getDisplayMedia({
-        video: { cursor: "always" },
-        audio: false
-      });
+      // Chrome/Edge에서 웹사이트 탭이 기본 선택되어 다른 화면이 찍히는 결함 영구 방지!
+      // selfBrowserSurface: "exclude" -> 현재 웹 탭 제외
+      // preferCurrentTab: false -> 현재 탭 우선 해제
+      // displaySurface: "window" -> '창' 탭 우선 오픈
+      const displayMediaOptions = {
+        video: {
+          cursor: "always",
+          displaySurface: "window"
+        },
+        audio: false,
+        preferCurrentTab: false,
+        selfBrowserSurface: "exclude",
+        surfaceSwitching: "include",
+        systemAudio: "exclude"
+      };
+
+      let stream;
+      try {
+        stream = await navigator.mediaDevices.getDisplayMedia(displayMediaOptions);
+      } catch (e) {
+        console.warn("DisplayMedia with modern options failed, fallback:", e);
+        stream = await navigator.mediaDevices.getDisplayMedia({ video: { cursor: "always" }, audio: false });
+      }
+
       STATE.mediaStream = stream;
+      
+      // 메인 모니터 비디오 연결
       liveVideo.srcObject = stream;
       liveVideo.style.display = 'block';
       monitorPlaceholder.style.display = 'none';
-      toggleStreamBtn.textContent = '⏹️ 공유 중지';
-      toggleStreamBtn.classList.add('btn-primary');
-      toggleStreamBtn.classList.remove('btn-outline');
-      streamStatusPill.textContent = '실시간 스트리밍 중';
-      streamStatusPill.classList.add('live');
+
+      // 탭 전환 시에도 디코딩이 멈추지 않는 상시 백그라운드 비디오 연결
+      if (globalOffscreenVideo) {
+        globalOffscreenVideo.srcObject = stream;
+      }
+
+      updateScreenShareUI(true);
       showToast('🖥️ (FM) 풋볼매니저 화면이 성공적으로 연결되었습니다!');
 
       stream.getVideoTracks()[0].onended = () => {
         stopScreenShare();
       };
+      return stream;
     } catch (err) {
       console.warn("Screen share cancelled/failed:", err);
-      showToast('화면 공유가 취소되었습니다.');
+      if (err.name !== 'NotAllowedError') {
+        showToast('화면 공유가 취소되었습니다.');
+      }
+      return null;
     }
   }
 
@@ -676,12 +800,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     liveVideo.srcObject = null;
     liveVideo.style.display = 'none';
+    if (globalOffscreenVideo) {
+      globalOffscreenVideo.srcObject = null;
+    }
     monitorPlaceholder.style.display = 'flex';
-    toggleStreamBtn.textContent = '🖥️ 화면 공유 시작';
-    toggleStreamBtn.classList.remove('btn-primary');
-    toggleStreamBtn.classList.add('btn-outline');
-    streamStatusPill.textContent = '대기 중';
-    streamStatusPill.classList.remove('live');
+    updateScreenShareUI(false);
+    showToast('화면 공유가 중지되었습니다.');
   }
 
   toggleStreamBtn.addEventListener('click', () => {
@@ -691,6 +815,16 @@ document.addEventListener('DOMContentLoaded', () => {
       startScreenShare();
     }
   });
+
+  if (globalScreenShareBtn) {
+    globalScreenShareBtn.addEventListener('click', () => {
+      if (STATE.mediaStream) {
+        stopScreenShare();
+      } else {
+        startScreenShare();
+      }
+    });
+  }
 
   // ------------------------------------------------------------
   // 10. 다중 캡처 슬롯 조작 & 미니 갤러리 렌더링
@@ -804,17 +938,20 @@ document.addEventListener('DOMContentLoaded', () => {
     clearSlot(2);
   });
 
-  function snapFromLiveVideo(slotNum) {
-    if (!STATE.mediaStream || liveVideo.videoWidth === 0) {
-      showToast('먼저 [화면 공유 시작] 버튼을 눌러 (FM) 풋볼매니저 창을 연결해 주세요!');
-      return;
+  async function snapFromLiveVideo(slotNum) {
+    try {
+      if (!STATE.mediaStream || !STATE.mediaStream.active) {
+        showToast('🖥️ 화면 공유가 연결되지 않았습니다. [창] 탭에서 (FM) 창을 선택해 주세요!');
+        const stream = await startScreenShare();
+        if (!stream) return;
+        await new Promise(r => setTimeout(r, 350));
+      }
+      const dataUrl = await captureFrameFromStream(STATE.mediaStream);
+      addImageToSlot(slotNum, dataUrl);
+    } catch (err) {
+      console.error('snapFromLiveVideo error:', err);
+      showToast(`화면 캡처 실패: ${err.message}`, 4000);
     }
-    snapshotCanvas.width = liveVideo.videoWidth;
-    snapshotCanvas.height = liveVideo.videoHeight;
-    const ctx = snapshotCanvas.getContext('2d');
-    ctx.drawImage(liveVideo, 0, 0, snapshotCanvas.width, snapshotCanvas.height);
-    const dataUrl = snapshotCanvas.toDataURL('image/jpeg', 0.9);
-    addImageToSlot(slotNum, dataUrl);
   }
 
   slot1SnapBtn.addEventListener('click', (e) => {
@@ -948,8 +1085,10 @@ document.addEventListener('DOMContentLoaded', () => {
           const isMessengerActive = messengerSectionWrapper && messengerSectionWrapper.style.display !== 'none';
           if (isMessengerActive) {
             attachImageToMessenger(event.target.result);
+            showToast('📋 클립보드 이미지 첨부 완료 (화면 공유 실시간 캡처는 📷 버튼 클릭)');
           } else {
             addImageToSlot(STATE.activeSlot, event.target.result);
+            showToast(`📋 슬롯 ${STATE.activeSlot}에 클립보드 이미지 등록 완료 (화면 공유 캡처는 📷 캡처 추가 버튼)`);
           }
         };
         reader.readAsDataURL(blob);
@@ -2152,6 +2291,28 @@ ${advancedContext}
         reader.readAsDataURL(file);
       }
     });
+  }
+
+  async function snapToMessenger() {
+    try {
+      if (!STATE.mediaStream || !STATE.mediaStream.active) {
+        showToast('🖥️ 화면 공유가 연결되지 않았습니다. [창] 탭에서 (FM) 창을 선택해 주세요!');
+        const stream = await startScreenShare();
+        if (!stream) return;
+        await new Promise(r => setTimeout(r, 350));
+      }
+      const dataUrl = await captureFrameFromStream(STATE.mediaStream);
+      attachImageToMessenger(dataUrl);
+      showToast('📸 화면 공유 중인 (FM) 게임 화면이 메신저에 첨부되었습니다!');
+      if (imessageInput) imessageInput.focus();
+    } catch (err) {
+      console.error('snapToMessenger error:', err);
+      showToast(`메신저 화면 캡처 실패: ${err.message}`, 4000);
+    }
+  }
+
+  if (imessageSnapBtn) {
+    imessageSnapBtn.addEventListener('click', snapToMessenger);
   }
 
   async function sendMessengerMessage(forcedText = null) {
