@@ -142,7 +142,7 @@ body {
   color: var(--text-muted);
 }
 
-/* 湲濡쒕쾶 2? 硫붾돱 ??諛?(?꾩닠 ?곌뎄??vs 紐낆옣?먭쾶 臾몄옄?섍린) */
+/* 글로벌 2대 메뉴 탭 바 (전술 연구소 vs 명장에게 문자하기) */
 .global-menu-nav {
   display: flex;
   background: rgba(0, 0, 0, 0.5);
@@ -2684,7 +2684,7 @@ body::-webkit-scrollbar-thumb:hover {
 
 
 /* ============================================================
-   [New!] ?좏뵆 iMessage ?ㅽ???1:1 紐낆옣 硫붿떊? ?덉씠?꾩썐
+   [New!] 애플 iMessage 스타일 1:1 명장 메신저 레이아웃
    ============================================================ */
 .imessage-container {
   max-width: 820px;
@@ -2699,7 +2699,7 @@ body::-webkit-scrollbar-thumb:hover {
   backdrop-filter: blur(20px);
 }
 
-/* iMessage ?ㅻ뜑 */
+/* iMessage 헤더 */
 .imessage-header {
   display: flex;
   align-items: center;
@@ -2756,7 +2756,7 @@ body::-webkit-scrollbar-thumb:hover {
   box-shadow: 0 0 6px #22c55e;
 }
 
-/* iMessage 硫붿떆吏 ?쇰뱶 */
+/* iMessage 메시지 피드 */
 .imessage-feed {
   padding: 20px;
   height: 520px;
@@ -2778,7 +2778,7 @@ body::-webkit-scrollbar-thumb:hover {
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-/* 留먰뭾??怨듯넻 */
+/* 말풍선 공통 */
 .imessage-row {
   display: flex;
   align-items: flex-end;
@@ -2825,7 +2825,7 @@ body::-webkit-scrollbar-thumb:hover {
   word-break: break-word;
 }
 
-/* 媛먮룆 留먰뭾??(?ㅽ겕 ?щ젅?댄듃 湲?섏뒪) */
+/* 감독 말풍선 (다크 슬레이트 글래스) */
 .coach-bubble {
   background: var(--apple-bubble-coach);
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -2834,7 +2834,7 @@ body::-webkit-scrollbar-thumb:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-/* ?좎? 留먰뭾??(?좏뵆 iMessage 釉붾（) */
+/* 유저 말풍선 (애플 iMessage 블루) */
 .user-bubble {
   background: var(--apple-bubble-user);
   border-radius: 18px 18px 4px 18px;
@@ -2863,7 +2863,7 @@ body::-webkit-scrollbar-thumb:hover {
   border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
-/* ??댄븨 ?몃뵒耳?댄꽣 (?좏뵆 3???좊땲硫붿씠?? */
+/* 타이핑 인디케이터 (애플 3점 애니메이션) */
 .typing-bubble {
   display: flex;
   align-items: center;
@@ -2890,7 +2890,7 @@ body::-webkit-scrollbar-thumb:hover {
   40% { transform: scale(1.1); opacity: 1; }
 }
 
-/* 鍮좊Ⅸ ?먰겢由?吏덈Ц 移?*/
+/* 빠른 원클릭 질문 칩 */
 .imessage-quick-chips {
   display: flex;
   gap: 8px;
@@ -2924,7 +2924,7 @@ body::-webkit-scrollbar-thumb:hover {
   color: #fff;
 }
 
-/* iMessage ?섎떒 ?낅젰 諛?*/
+/* iMessage 하단 입력 바 */
 .imessage-input-bar {
   display: flex;
   align-items: center;
