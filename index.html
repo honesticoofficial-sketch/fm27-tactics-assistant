@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>(FM) 풋볼매니저 매치데이 전술 연구소 | Tactical Playbook</title>
-  <link rel="stylesheet" href="style.css?v=9">
+  <link rel="stylesheet" href="style.css?v=10">
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
   <!-- 고화질 이미지 캡처 & 애니메이션 GIF & 사이버네틱 벡터 아이콘 라이브러리 -->
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
@@ -25,16 +25,15 @@
         </div>
       </div>
 
-      <!-- 상단 API 키 설정 캡슐 -->
-      <!-- 湲濡쒕쾶 2? 硫붾돱 ??諛?(?꾩닠 ?곌뎄??vs 紐낆옣?먭쾶 臾몄옄?섍린) -->
+      <!-- 글로벌 2대 메뉴 탭 바 (전술 연구소 vs 명장에게 문자하기) -->
       <nav class="global-menu-nav">
         <button type="button" class="global-tab-btn active" id="tabPlaybookBtn" data-tab="playbook">
           <i data-lucide="target" class="tab-icon"></i>
-          <span class="tab-text">留ㅼ튂?곗씠 ?꾩닠 ?곌뎄??/span>
+          <span class="tab-text">매치데이 전술 연구소</span>
         </button>
         <button type="button" class="global-tab-btn" id="tabMessengerBtn" data-tab="messenger">
           <i data-lucide="message-square" class="tab-icon"></i>
-          <span class="tab-text" id="messengerTabTitle">?⑹뿉寃?臾몄옄?섍린</span>
+          <span class="tab-text" id="messengerTabTitle">펩에게 문자하기</span>
           <span class="online-indicator-dot"></span>
         </button>
       </nav>
@@ -711,82 +710,86 @@
     </div> <!-- /#playbookSectionWrapper -->
 
     <!-- ============================================================
-         硫붿씤 ?곸뿭 B: 1:1 紐낆옣 鍮꾨? 臾몄옄 硫붿떊? (iMessage Style)
+         메인 영역 B: 1:1 명장 비밀 문자 메신저 (iMessage Style)
          ============================================================ -->
     <section id="messengerSectionWrapper" class="view-panel" style="display: none;">
       <div class="imessage-container">
         
-        <!-- iMessage ?곷떒 ?ㅻ뜑 -->
+        <!-- iMessage 상단 헤더 -->
         <div class="imessage-header">
           <div class="imessage-contact-info">
             <div class="imessage-avatar-wrap">
-              <img id="imessageCoachAvatar" src="" alt="媛먮룆 ?꾨줈?? class="imessage-avatar-img">
-              <div class="avatar-fallback" id="imessageAvatarFallback" style="display: none;">?몦</div>
+              <img id="imessageCoachAvatar" src="" alt="감독 프로필" class="imessage-avatar-img">
+              <div class="avatar-fallback" id="imessageAvatarFallback" style="display: none;">👔</div>
             </div>
             <div class="imessage-contact-meta">
-              <h3 id="imessageCoachName">??怨쇰Ⅴ?붿삱??/h3>
+              <h3 id="imessageCoachName">펩 과르디올라</h3>
               <span class="imessage-status-badge">
-                <span class="green-dot"></span> iMessage 쨌 ???媛??              </span>
+                <span class="green-dot"></span> iMessage · 대화 가능
+              </span>
             </div>
           </div>
 
           <div class="imessage-header-actions">
-            <button type="button" class="btn btn-sm btn-ghost" id="clearChatBtn" title="????댁슜 珥덇린??>
-              <i data-lucide="trash-2" class="icon-inline"></i> ???鍮꾩슦湲?            </button>
+            <button type="button" class="btn btn-sm btn-ghost" id="clearChatBtn" title="대화 내용 초기화">
+              <i data-lucide="trash-2" class="icon-inline"></i> 대화 비우기
+            </button>
           </div>
         </div>
 
-        <!-- iMessage 硫붿떆吏 ?쇰뱶 -->
+        <!-- iMessage 메시지 피드 -->
         <div class="imessage-feed" id="imessageFeed">
-          <div class="imessage-date-stamp" id="imessageDateStamp">?ㅻ뒛</div>
+          <div class="imessage-date-stamp" id="imessageDateStamp">오늘</div>
           
-          <!-- 湲곕낯 泥??곗뺨 硫붿떆吏 -->
+          <!-- 기본 첫 웰컴 메시지 -->
           <div class="imessage-row coach-row">
             <div class="imessage-avatar-mini">
-              <img id="imessageCoachMiniAvatar" src="" alt="媛먮룆">
+              <img id="imessageCoachMiniAvatar" src="" alt="감독">
             </div>
             <div class="imessage-bubble coach-bubble">
-              <p id="imessageWelcomeText">?대킄, 臾댁뒯 ?쇱씤媛? ?꾩옱 ?ㅼ옘???곹깭???댁쟻 ?덉궛 ?붾㈃???덈떎硫?罹≪쿂?댁꽌 蹂댁뿬二쇨쾶. ?대뼡 怨좊??대뱺 ?붿쭅?섍쾶 ?몄뼱?볦븘 遊?</p>
-              <span class="bubble-time">諛⑷툑 ??/span>
+              <p id="imessageWelcomeText">이봐, 무슨 일인가? 현재 스쿼드 상태나 이적 예산 화면이 있다면 캡처해서 보여주게. 어떤 고민이든 솔직하게 털어놓아 봐.</p>
+              <span class="bubble-time">방금 전</span>
             </div>
           </div>
         </div>
 
-        <!-- 鍮좊Ⅸ ?먰겢由?異붿쿇 吏덈Ц 移?-->
+        <!-- 빠른 원클릭 추천 질문 칩 -->
         <div class="imessage-quick-chips">
-          <button type="button" class="chip-btn" data-query="?뮥 ?꾩옱 ?⑥? ?댁쟻 ?덉궛怨?湲됰즺濡??대뵒瑜?理쒖슦??蹂닿컯?댁빞 ?좉퉴??">
-            ?뮥 ?붿뿬 ?덉궛 蹂닿컯 議곗뼵
+          <button type="button" class="chip-btn" data-query="💰 현재 남은 이적 예산과 급료로 어디를 최우선 보강해야 할까요?">
+            💰 잉여 예산 보강 조언
           </button>
-          <button type="button" class="chip-btn" data-query="?봽 ?곕━ ?ㅼ옘?쒖뿉??諛⑹텧 1?쒖쐞濡??뺣━?댁빞 ???됱뿬 ?먯썝? ?꾧뎄?멸???">
-            ?봽 諛⑹텧 ?됱뿬 ?먯썝 ?뺣━
+          <button type="button" class="chip-btn" data-query="🔄 우리 스쿼드에서 방출 1순위로 정리해야 할 잉여 자원은 누구인가요?">
+            🔄 방출 잉여 자원 정리
           </button>
-          <button type="button" class="chip-btn" data-query="?뫔 1援곗쑝濡?肄쒖뾽??留뚰븳 ?좊쭩二??≪꽦 諛??ъ???由щ퉴???꾨왂???뚮젮二쇱꽭??">
-            ?뫔 ?좊쭩二?肄쒖뾽 & 由щ퉴??          </button>
-          <button type="button" class="chip-btn" data-query="?좑툘 ?쇱빱猷?遺꾩쐞湲곌? 泥섏?怨?二쇱쟾 ?좎닔 遺덈쭔???댁쓣 ???대뼸寃??щ옒???⑸땲源?">
-            ?좑툘 ?좎닔 遺덈쭔 & 硫섑깉 耳??          </button>
+          <button type="button" class="chip-btn" data-query="👶 1군으로 콜업할 만한 유망주 육성 및 유스 리빌딩 전략을 알려주세요.">
+            👶 유망주 콜업 & 리빌딩
+          </button>
+          <button type="button" class="chip-btn" data-query="⚠️ 라커룸 분위기가 처지고 주전 선수 불만이 쌓일 때 어떻게 달래야 합니까?">
+            ⚠️ 선수 불만 & 멘탈 케어
+          </button>
         </div>
 
-        <!-- iMessage ?섎떒 ?낅젰 諛?-->
+        <!-- iMessage 하단 입력 바 -->
         <div class="imessage-input-bar">
           
-          <!-- ?대?吏 泥⑤? 踰꾪듉 & ?④? ?뚯씪 ?명뭼 -->
-          <label class="imessage-attach-btn" for="imessageFileInput" title="?ㅽ겕由곗꺑 泥⑤?">
+          <!-- 이미지 첨부 버튼 & 숨김 파일 인풋 -->
+          <label class="imessage-attach-btn" for="imessageFileInput" title="스크린샷 첨부">
             <i data-lucide="paperclip" style="width: 18px; height: 18px;"></i>
             <input type="file" id="imessageFileInput" accept="image/*" style="display: none;">
           </label>
 
-          <!-- 泥⑤????대?吏 ?몃꽕??誘몃━蹂닿린 (?덉쓣 ?뚮쭔 ?쒖떆) -->
+          <!-- 첨부된 이미지 썸네일 미리보기 (있을 때만 표시) -->
           <div class="imessage-preview-capsule" id="imessagePreviewCapsule" style="display: none;">
-            <img id="imessagePreviewImg" src="" alt="泥⑤? 誘몃━蹂닿린">
-            <button type="button" class="preview-remove-btn" id="imessagePreviewRemoveBtn">??/button>
+            <img id="imessagePreviewImg" src="" alt="첨부 미리보기">
+            <button type="button" class="preview-remove-btn" id="imessagePreviewRemoveBtn">✕</button>
           </div>
 
-          <!-- ?띿뒪???낅젰李?-->
-          <textarea id="imessageInput" rows="1" placeholder="媛먮룆?먭쾶 蹂대궪 硫붿떆吏 ?낅젰... (Ctrl+V濡?罹≪쿂 諛붾줈 遺숈뿬?ｊ린)" spellcheck="false"></textarea>
+          <!-- 텍스트 입력창 -->
+          <textarea id="imessageInput" rows="1" placeholder="감독에게 보낼 메시지 입력... (Ctrl+V로 캡처 바로 붙여넣기)" spellcheck="false"></textarea>
 
-          <!-- ?꾩넚 踰꾪듉 -->
-          <button type="button" class="imessage-send-btn" id="imessageSendBtn" title="?꾩넚 (Enter)">
-            <span class="send-arrow">??/span>
+          <!-- 전송 버튼 -->
+          <button type="button" class="imessage-send-btn" id="imessageSendBtn" title="전송 (Enter)">
+            <span class="send-arrow">↑</span>
           </button>
         </div>
 
@@ -846,6 +849,6 @@
     <canvas id="snapshotCanvas" style="display: none;"></canvas>
   </div>
 
-  <script src="app.js?v=9"></script>
+  <script src="app.js?v=10"></script>
 </body>
 </html>
